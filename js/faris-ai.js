@@ -26,83 +26,143 @@ const farisAge =
 
 
 // ======================================
-// NIVEAUX
+// NIVEAUX FARIS
 // ======================================
 //
+// 7  -> très facile
+// 8  -> facile
+// 9  -> facile +
+// 10 -> moyen
+// 11 -> moyen / sérieux
+// 12 -> fort
+// 13 -> très fort
+// 14 -> fort
+// 15 -> très fort
+// 16 -> très très fort
+// 17 -> extrêmement fort
+// 18 -> STOCKFISH NATIF
+//
 // IMPORTANT :
-//
-// 7 → 17 ans
-//   Stockfish est volontairement limité
-//   avec UCI_LimitStrength + UCI_Elo.
-//
-// 18 ans
-//   AUCUNE limitation Elo.
-//   Stockfish joue à sa force native.
-//
-// Le temps augmente également avec l'âge.
+// Le niveau 18 reste exactement dans
+// la configuration forte que nous avons
+// validée.
 // ======================================
 
 const farisLevels = {
 
+    // ==============================
+    // 7 ANS
+    // ==============================
+
     7: {
-        elo: 1000,
+        elo: 700,
         time: 250,
         useLimitStrength: true
     },
 
+
+    // ==============================
+    // 8 ANS
+    // ==============================
+
     8: {
-        elo: 1100,
+        elo: 850,
         time: 300,
         useLimitStrength: true
     },
 
+
+    // ==============================
+    // 9 ANS
+    // ==============================
+
     9: {
-        elo: 1200,
+        elo: 1000,
         time: 350,
         useLimitStrength: true
     },
 
+
+    // ==============================
+    // 10 ANS
+    // ==============================
+
     10: {
-        elo: 1350,
+        elo: 1150,
         time: 450,
         useLimitStrength: true
     },
 
+
+    // ==============================
+    // 11 ANS
+    // ==============================
+
     11: {
-        elo: 1500,
+        elo: 1300,
         time: 600,
         useLimitStrength: true
     },
 
+
+    // ==============================
+    // 12 ANS
+    // ==============================
+
     12: {
-        elo: 1650,
+        elo: 1450,
         time: 800,
         useLimitStrength: true
     },
 
+
+    // ==============================
+    // 13 ANS
+    // ==============================
+
     13: {
-        elo: 1800,
+        elo: 1600,
         time: 1000,
         useLimitStrength: true
     },
 
+
+    // ==============================
+    // 14 ANS
+    // ==============================
+
     14: {
-        elo: 1950,
+        elo: 1800,
         time: 1400,
         useLimitStrength: true
     },
 
+
+    // ==============================
+    // 15 ANS
+    // ==============================
+
     15: {
-        elo: 2100,
+        elo: 2000,
         time: 1800,
         useLimitStrength: true
     },
 
+
+    // ==============================
+    // 16 ANS
+    // ==============================
+
     16: {
-        elo: 2250,
+        elo: 2200,
         time: 2200,
         useLimitStrength: true
     },
+
+
+    // ==============================
+    // 17 ANS
+    // ==============================
 
     17: {
         elo: 2400,
@@ -110,16 +170,19 @@ const farisLevels = {
         useLimitStrength: true
     },
 
+
+    // ==============================
+    // 18 ANS
+    // ==============================
+    //
+    // NE PAS CHANGER
+    //
+    // Stockfish joue à sa force native.
+    // ==================================
+
     18: {
-        // Valeur affichée dans l'interface.
-        // Stockfish n'utilisera PAS cette valeur
-        // pour se limiter.
         elo: 3200,
-
-        // Temps de recherche.
         time: 4000,
-
-        // FORCE NATIVE STOCKFISH
         useLimitStrength: false
     }
 
@@ -139,10 +202,6 @@ let farisStockfishReady = false;
 
 let farisSearchToken = 0;
 
-
-// ======================================
-// LOG NIVEAU
-// ======================================
 
 console.log(
     `♟️ FARIS: ${farisAge} ans | ${farisLevel.elo} ELO | ${farisLevel.time} ms`
@@ -629,21 +688,18 @@ async function initFarisStockfish(){
     // CONFIGURATION MOTEUR
     // ==================================
 
-    // Ton fichier est "single" :
-    // on garde donc 1 thread.
     farisStockfish.postMessage(
         "setoption name Threads value 1"
     );
 
 
-    // Mémoire raisonnable pour le navigateur.
     farisStockfish.postMessage(
         "setoption name Hash value 64"
     );
 
 
     // ==================================
-    // NIVEAUX 7 → 17
+    // 7 → 17 ANS
     // ==================================
 
     if(
@@ -669,13 +725,11 @@ async function initFarisStockfish(){
 
 
     // ==================================
-    // NIVEAU 18
+    // 18 ANS
     // ==================================
 
     else{
 
-        // IMPORTANT :
-        // on retire la limitation Elo.
         farisStockfish.postMessage(
             "setoption name UCI_LimitStrength value false"
         );
@@ -684,6 +738,7 @@ async function initFarisStockfish(){
         console.log(
             "🔥 FARIS 18 → STOCKFISH FORCE NATIVE"
         );
+
 
         console.log(
             "🔥 FARIS 18 → aucune limitation UCI_Elo"
@@ -866,8 +921,6 @@ function askStockfishForMove(
                 reject;
 
 
-            // Temps maximum d'attente.
-            // Plus généreux pour les gros niveaux.
             const timeout =
                 Math.max(
                     10000,
@@ -927,7 +980,7 @@ function askStockfishForMove(
 
 
             // ==================================
-            // ARRÊTER L'ANCIENNE RECHERCHE
+            // ARRÊTER ANCIENNE RECHERCHE
             // ==================================
 
             farisStockfish.postMessage(
@@ -973,13 +1026,9 @@ function askStockfishForMove(
 // JEUNES
 // ======================================
 //
-// On ne modifie PAS le meilleur coup
-// de Stockfish.
-// Cela évite d'introduire des coups
-// illégaux ou incohérents.
-//
-// La faiblesse des niveaux 7 → 17
-// est déjà obtenue via UCI_Elo.
+// On ne modifie jamais le bestmove.
+// Les premiers niveaux sont affaiblis
+// par UCI_Elo.
 // ======================================
 
 function maybeMakeYoungMistake(
@@ -1145,8 +1194,6 @@ function executeAIMove(
         move.fromCol === 4
     ){
 
-        // Petit roque
-
         if(
             move.toCol === 6
         ){
@@ -1164,8 +1211,6 @@ function executeAIMove(
 
         }
 
-
-        // Grand roque
 
         else if(
             move.toCol === 2
@@ -1390,7 +1435,7 @@ function executeAIMove(
 
 
     // ==================================
-    // RESET SÉLECTION
+    // RESET
     // ==================================
 
     selectedRow =
@@ -1525,7 +1570,7 @@ async function farisPlay(){
     try{
 
         // ==================================
-        // STOCKFISH
+        // DÉMARRAGE STOCKFISH
         // ==================================
 
         await initFarisStockfish();
@@ -1563,7 +1608,7 @@ async function farisPlay(){
 
 
         // ==================================
-        // VÉRIFIER LE TOUR
+        // TOUR
         // ==================================
 
         if(
@@ -1594,7 +1639,7 @@ async function farisPlay(){
 
 
         // ==================================
-        // STOCKFISH CHERCHE
+        // CHERCHER COUP
         // ==================================
 
         const bestUCI =
@@ -1617,7 +1662,7 @@ async function farisPlay(){
 
 
         // ==================================
-        // AUCUN COUP
+        // PAS DE COUP
         // ==================================
 
         if(
@@ -1650,7 +1695,7 @@ async function farisPlay(){
 
 
         // ==================================
-        // UCI -> MOVE
+        // CONVERSION UCI
         // ==================================
 
         let move =
@@ -1670,7 +1715,7 @@ async function farisPlay(){
 
 
         // ==================================
-        // NIVEAUX JEUNES
+        // JEUNES
         // ==================================
 
         move =
@@ -1680,7 +1725,7 @@ async function farisPlay(){
 
 
         // ==================================
-        // PETIT DÉLAI VISUEL
+        // PETIT DÉLAI
         // ==================================
 
         const delay =
@@ -1756,7 +1801,7 @@ async function farisPlay(){
 
 
 // ======================================
-// RESET FARIS AI
+// RESET FARIS
 // ======================================
 
 function resetFarisAI(){
