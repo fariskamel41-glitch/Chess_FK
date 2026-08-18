@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Play Against Faris | CHESS_FK</title>
+
+    <link
+        rel="stylesheet"
+        href="../css/faris-ai.css"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- ======================================
+     BACKGROUND
+====================================== -->
+
+<div class="background-glow glow-one"></div>
+
+<div class="background-glow glow-two"></div>
+
+
+
+<!-- ======================================
+     HEADER
+====================================== -->
+
+<header class="ai-header">
+
+
+    <!-- LOGO -->
+
+    <a
+        href="../index.html"
+        class="ai-logo"
+    >
+        CHESS<span>_FK</span>
+    </a>
+
+
+
+    <!-- HEADER ACTIONS -->
+
+    <div class="header-actions">
+
+
+        <!-- THEME -->
+
+        <button
+            class="theme-toggle"
+            id="themeToggle"
+            type="button"
+        >
+
+            <span class="theme-icon">
+                ◐
+            </span>
+
+            <span>
+                THEME
+            </span>
+
+        </button>
+
+
+
+        <!-- BACK -->
+
+        <a
+            href="../index.html"
+            class="back-button"
+        >
+            ← BACK
+        </a>
+
+
+    </div>
+
+
+</header>
+
+
+
+<!-- ======================================
+     THEME OVERLAY
+====================================== -->
+
+<div
+    class="theme-overlay"
+    id="themeOverlay"
+></div>
+
+
+
+<!-- ======================================
+     THEME PANEL
+====================================== -->
+
+<aside
+    class="theme-panel"
+    id="themePanel"
+>
+
+
+    <div class="theme-panel-header">
+
+        <div>
+
+            <div class="theme-panel-label">
+                CHESS_FK
+            </div>
+
+            <h2>
+                CHOOSE YOUR
+                <span>STYLE.</span>
+            </h2>
+
+        </div>
+
+
+        <button
+            class="theme-close"
+            id="themeClose"
+            type="button"
+        >
+            ×
+        </button>
+
+    </div>
+
+
+
+    <p class="theme-description">
+
+        Customize the look of CHESS_FK.
+        Your choice will stay saved across the site.
+
+    </p>
+
+
+
+    <!-- ==================================
+         THEME CARDS
+    ================================== -->
+
+    <div class="theme-grid">
+
+
+        <!-- RED -->
+
+        <button
+            class="theme-card"
+            data-theme="red"
+            type="button"
+        >
+
+            <div class="theme-preview theme-preview-red">
+
+                <div class="mini-board">
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                </div>
+
+            </div>
+
+
+            <div class="theme-card-info">
+
+                <strong>
+                    RED
+                </strong>
+
+                <small>
+                    CHESS_FK
+                </small>
+
+            </div>
+
+        </button>
+
+
+
+        <!-- BLUE -->
+
+        <button
+            class="theme-card"
+            data-theme="blue"
+            type="button"
+        >
+
+            <div class="theme-preview theme-preview-blue">
+
+                <div class="mini-board">
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                </div>
+
+            </div>
+
+
+            <div class="theme-card-info">
+
+                <strong>
+                    BLUE
+                </strong>
+
+                <small>
+                    OCEAN
+                </small>
+
+            </div>
+
+        </button>
+
+
+
+        <!-- GREEN -->
+
+        <button
+            class="theme-card"
+            data-theme="green"
+            type="button"
+        >
+
+            <div class="theme-preview theme-preview-green">
+
+                <div class="mini-board">
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                </div>
+
+            </div>
+
+
+            <div class="theme-card-info">
+
+                <strong>
+                    GREEN
+                </strong>
+
+                <small>
+                    CLASSIC
+                </small>
+
+            </div>
+
+        </button>
+
+
+
+        <!-- PURPLE -->
+
+        <button
+            class="theme-card"
+            data-theme="purple"
+            type="button"
+        >
+
+            <div class="theme-preview theme-preview-purple">
+
+                <div class="mini-board">
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                </div>
+
+            </div>
+
+
+            <div class="theme-card-info">
+
+                <strong>
+                    PURPLE
+                </strong>
+
+                <small>
+                    ROYAL
+                </small>
+
+            </div>
+
+        </button>
+
+
+    </div>
+
+
+</aside>
+
+
+
+<!-- ======================================
+     MAIN
+====================================== -->
+
+<main>
+
+
+
+<!-- ======================================
+     INTRO
+====================================== -->
+
+<section
+    class="intro-section"
+    id="introSection"
+>
+
+    <div class="intro-content">
+
+
+        <div class="small-label">
+            CHESS_FK EXPERIENCE
+        </div>
+
+
+        <h1>
+
+            PLAY
+
+            <span>
+                AGAINST
+            </span>
+
+            FARIS
+
+        </h1>
+
+
+        <p class="intro-text">
+
+            How far can you go?
+
+            <br>
+
+            Meet Faris at different stages
+            of his chess journey.
+
+        </p>
+
+
+
+        <!-- ==================================
+             CURRENT FARIS
+        ================================== -->
+
+        <div class="current-faris">
+
+
+            <div class="current-image-container">
+
+                <img
+                    src="../images/faris.jpg"
+                    alt="Faris"
+                    class="current-faris-image"
+                >
+
+                <div class="image-glow"></div>
+
+            </div>
+
+
+
+            <div class="current-info">
+
+                <div class="current-label">
+                    THE JOURNEY
+                </div>
+
+
+                <h2>
+
+                    One player.
+
+                    <br>
+
+                    <span>
+                        Different ages.
+                    </span>
+
+                </h2>
+
+
+                <p>
+
+                    From the first discoveries
+                    to the strongest version of Faris.
+
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ==================================
+             START BUTTON
+        ================================== -->
+
+        <button
+            id="startButton"
+            class="start-button"
+            type="button"
+        >
+
+            LET'S START
+
+            <span>
+                ↓
+            </span>
+
+        </button>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- ======================================
+     AGE SELECTION
+====================================== -->
+
+<section
+    class="ages-section"
+    id="agesSection"
+>
+
+
+    <div class="section-heading">
+
+
+        <div class="small-label">
+            CHOOSE YOUR OPPONENT
+        </div>
+
+
+        <h2>
+
+            THE
+
+            <span>
+                FARIS
+            </span>
+
+            JOURNEY
+
+        </h2>
+
+
+        <p>
+
+            Choose an age and discover
+            a different version of Faris.
+
+        </p>
+
+
+    </div>
+
+
+
+    <!-- ==================================
+         AGE TIMELINE
+    ================================== -->
+
+    <div class="age-timeline">
+
+
+
+        <!-- AGE 7 -->
+
+        <article
+            class="age-card"
+            data-age="7"
+        >
+
+            <div class="age-number">
+                07
+            </div>
+
+
+            <a
+                href="plat.html?faris=7"
+                class="age-play-link"
+            >
+
+                <div class="age-image-container">
+
+                    <img
+                        src="../images/faris/faris-7.jpg"
+                        alt="Faris at 7 years old"
+                        class="age-image"
+                    >
+
+                    <div class="age-overlay"></div>
+
+                    <div class="age-play-button">
+                        ▶ PLAY
+                    </div>
+
+                </div>
+
+            </a>
+
+
+            <div class="age-content">
+
+                <div class="age-label">
+                    AGE
+                </div>
+
+                <h3>
+                    7
+                </h3>
+
+                <p>
+                    It all started with curiosity.
+                </p>
+
+                <a
+                    href="plat.html?faris=7"
+                    class="play-age-button"
+                >
+                    PLAY
+                    <span>→</span>
+                </a>
+
+            </div>
+
+        </article>
+
+
+
+        <!-- AGE 8 -->
+
+        <article
+            class="age-card"
+            data-age="8"
+        >
+
+            <div class="age-number">
+                08
+            </div>
+
+
+            <a
+                href="plat.html?faris=8"
+                class="age-play-link"
+            >
+
+                <div class="age-image-container">
+
+                    <img
+                        src="../images/faris/faris-8.jpg"
+                        alt="Faris at 8 years old"
+                        class="age-image"
+                    >
+
+                    <div class="age-overlay"></div>
+
+                    <div class="age-play-button">
+                        ▶ PLAY
+                    </div>
+
+                </div>
+
+            </a>
+
+
+            <div class="age-content">
+
+                <div class="age-label">
+                    AGE
+                </div>
+
+                <h3>
+                    8
+                </h3>
+
+                <p>
+                    The pieces started to make sense.
+                </p>
+
+                <a
+                    href="plat.html?faris=8"
+                    class="play-age-button"
+                >
+                    PLAY
+                    <span>→</span>
+                </a>
+
+            </div>
+
+        </article>
+
+
+
+        <!-- AGE 9 -->
+
+        <article
+            class="age-card"
+            data-age="9"
+        >
+
+            <div class="age-number">
+                09
+            </div>
+
+
+            <a
+                href="plat.html?faris=9"
+                class="age-play-link"
+            >
+
+                <div class="age-image-container">
+
+                    <img
+                        src="../images/faris/faris-9.jpg"
+                        alt="Faris at 9 years old"
+                        class="age-image"
+                    >
+
+                    <div class="age-overlay"></div>
+
+                    <div class="age-play-button">
+                        ▶ PLAY
+                    </div>
+
+                </div>
+
+            </a>
+
+
+            <div class="age-content">
+
+                <div class="age-label">
+                    AGE
+                </div>
+
+                <h3>
+                    9
+                </h3>
+
+                <p>
+                    Learning how to fight for every move.
+                </p>
+
+                <a
+                    href="plat.html?faris=9"
+                    class="play-age-button"
+                >
+                    PLAY
+                    <span>→</span>
+                </a>
+
+            </div>
+
+        </article>
+
+
+
+        <!-- AGE 10 -->
+
+        <article
+            class="age-card"
+            data-age="10"
+        >
+
+            <div class="age-number">
+                10
+            </div>
+
+
+            <a
+                href="plat.html?faris=10"
+                class="age-play-link"
+            >
+
+                <div class="age-image-container">
+
+                    <img
+                        src="../images/faris/faris-10.jpg"
+                        alt="Faris at 10 years old"
+                        class="age-image"
+                    >
+
+                    <div class="age-overlay"></div>
+
+                    <div class="age-play-button">
+                        ▶ PLAY
+                    </div>
+
+                </div>
+
+            </a>
+
+
+            <div class="age-content">
+
+                <div class="age-label">
+                    AGE
+                </div>
+
+                <h3>
+                    10
+                </h3>
+
+                <p>
+                    The game became a real challenge.
+                </p>
+
+                <a
+                    href="plat.html?faris=10"
+                    class="play-age-button"
+                >
+                    PLAY
+                    <span>→</span>
+                </a>
+
+            </div>
+
+        </article>
+
+
+
+        <!-- AGE 11 -->
+
+        <article
+            class="age-card"
+            data-age="11"
+        >
+
+            <div class="age-number">
+                11
+            </div>
+
+
+            <a
+                href="plat.html?faris=11"
+                class="age-play-link"
+            >
+
+                <div class="age-image-container">
+
+                    <img
+                        src="../images/faris/faris-11.jpg"
+                        alt="Faris at 11 years old"
+                        class="age-image"
+                    >
+
+                    <div class="age-overlay"></div>
+
+                    <div class="age-play-button">
+                        ▶ PLAY
+                    </div>
+
+                </div>
+
+            </a>
+
+
+            <div class="age-content">
+
+                <div class="age-label">
+                    AGE
+                </div>
+
+                <h3>
+                    11
+                </h3>
+
+                <p>
+                    Tactics started becoming dangerous.
+                </p>
+
+                <a
+                    href="plat.html?faris=11"
+                    class="play-age-button"
+                >
+                    PLAY
+                    <span>→</span>
+                </a>
+
+            </div>
+
+        </article>
+
+
+
+        <!-- AGE 12 -->
+
+        <article
+            class="age-card"
+            data-age="12"
+        >
+
+            <div class="age-number">
+                12
+            </div>
+
+
+            <a
+                href="plat.html?faris=12"
+                class="age-play-link"
+            >
+
+                <div class="age-image-container">
+
+                    <img
+                        src="../images/faris/faris-12.jpg"
+                        alt="Faris at 12 years old"
+                        class="age-image"
+                    >
+
+                    <div class="age-overlay"></div>
+
+                    <div class="age-play-button">
+                        ▶ PLAY
+                    </div>
+
+                </div>
+
+            </a>
+
+
+            <div class="age-content">
+
+                <div class="age-label">
+                    AGE
+                </div>
+
+                <h3>
+                    12
+                </h3>
+
+                <p>
+                    I started taking chess seriously.
+                </p>
+
+                <a
+                    href="plat.html?faris=12"
+                    class="play-age-button"
+                >
+                    PLAY
+                    <span>→</span>
+                </a>
+
+            </div>
+
+        </article>
+
+
+
+        <!-- AGE 13 -->
+
+        <article
+            class="age-card"
+            data-age="13"
+        >
+
+            <div class="age-number">
+                13
+            </div>
+
+
+            <a
+                href="plat.html?faris=13"
+                class="age-play-link"
+            >
+
+                <div class="age-image-container">
+
+                    <img
+                        src="../images/faris/faris-13.jpg"
+                        alt="Faris at 13 years old"
+                        class="age-image"
+                    >
+
+                    <div class="age-overlay"></div>
+
+                    <div class="age-play-button">
+                        ▶ PLAY
+                    </div>
+
+                </div>
+
+            </a>
+
+
+            <div class="age-content">
+
+                <div class="age-label">
+                    AGE
+                </div>
+
+                <h3>
+                    13
+                </h3>
+
+                <p>
+                    Every move had a purpose.
+                </p>
+
+                <a
+                    href="plat.html?faris=13"
+                    class="play-age-button"
+                >
+                    PLAY
+                    <span>→</span>
+                </a>
+
+            </div>
+
+        </article>
+
+
+
+        <!-- AGE 14 -->
+
+        <article
+            class="age-card"
+            data-age="14"
+        >
+
+            <div class="age-number">
+                14
+            </div>
+
+
+            <a
+                href="plat.html?faris=14"
+                class="age-play-link"
+            >
+
+                <div class="age-image-container">
+
+                    <img
+                        src="../images/faris/faris-14.jpg"
+                        alt="Faris at 14 years old"
+                        class="age-image"
+                    >
+
+                    <div class="age-overlay"></div>
+
+                    <div class="age-play-button">
+                        ▶ PLAY
+                    </div>
+
+                </div>
+
+            </a>
+
+
+            <div class="age-content">
+
+                <div class="age-label">
+                    AGE
+                </div>
+
+                <h3>
+                    14
+                </h3>
+
+                <p>
+                    Calculation became the weapon.
+                </p>
+
+                <a
+                    href="plat.html?faris=14"
+                    class="play-age-button"
+                >
+                    PLAY
+                    <span>→</span>
+                </a>
+
+            </div>
+
+        </article>
+
+
+
+        <!-- AGE 15 -->
+
+        <article
+            class="age-card"
+            data-age="15"
+        >
+
+            <div class="age-number">
+                15
+            </div>
+
+
+            <a
+                href="plat.html?faris=15"
+                class="age-play-link"
+            >
+
+                <div class="age-image-container">
+
+                    <img
+                        src="../images/faris/faris-15.jpg"
+                        alt="Faris at 15 years old"
+                        class="age-image"
+                    >
+
+                    <div class="age-overlay"></div>
+
+                    <div class="age-play-button">
+                        ▶ PLAY
+                    </div>
+
+                </div>
+
+            </a>
+
+
+            <div class="age-content">
+
+                <div class="age-label">
+                    AGE
+                </div>
+
+                <h3>
+                    15
+                </h3>
+
+                <p>
+                    Mistakes became much harder to punish.
+                </p>
+
+                <a
+                    href="plat.html?faris=15"
+                    class="play-age-button"
+                >
+                    PLAY
+                    <span>→</span>
+                </a>
+
+            </div>
+
+        </article>
+
+
+
+        <!-- AGE 16 -->
+
+        <article
+            class="age-card"
+            data-age="16"
+        >
+
+            <div class="age-number">
+                16
+            </div>
+
+
+            <a
+                href="plat.html?faris=16"
+                class="age-play-link"
+            >
+
+                <div class="age-image-container">
+
+                    <img
+                        src="../images/faris/faris-16.jpg"
+                        alt="Faris at 16 years old"
+                        class="age-image"
+                    >
+
+                    <div class="age-overlay"></div>
+
+                    <div class="age-play-button">
+                        ▶ PLAY
+                    </div>
+
+                </div>
+
+            </a>
+
+
+            <div class="age-content">
+
+                <div class="age-label">
+                    AGE
+                </div>
+
+                <h3>
+                    16
+                </h3>
+
+                <p>
+                    The pressure started to feel different.
+                </p>
+
+                <a
+                    href="plat.html?faris=16"
+                    class="play-age-button"
+                >
+                    PLAY
+                    <span>→</span>
+                </a>
+
+            </div>
+
+        </article>
+
+
+
+        <!-- AGE 17 -->
+
+        <article
+            class="age-card"
+            data-age="17"
+        >
+
+            <div class="age-number">
+                17
+            </div>
+
+
+            <a
+                href="plat.html?faris=17"
+                class="age-play-link"
+            >
+
+                <div class="age-image-container">
+
+                    <img
+                        src="../images/faris/faris-17.jpg"
+                        alt="Faris at 17 years old"
+                        class="age-image"
+                    >
+
+                    <div class="age-overlay"></div>
+
+                    <div class="age-play-button">
+                        ▶ PLAY
+                    </div>
+
+                </div>
+
+            </a>
+
+
+            <div class="age-content">
+
+                <div class="age-label">
+                    AGE
+                </div>
+
+                <h3>
+                    17
+                </h3>
+
+                <p>
+                    Almost there. No easy games anymore.
+                </p>
+
+                <a
+                    href="plat.html?faris=17"
+                    class="play-age-button"
+                >
+                    PLAY
+                    <span>→</span>
+                </a>
+
+            </div>
+
+        </article>
+
+
+
+        <!-- AGE 18 -->
+
+        <article
+            class="age-card final-age"
+            data-age="18"
+        >
+
+            <div class="final-badge">
+                PRIME
+            </div>
+
+
+            <div class="age-number">
+                18
+            </div>
+
+
+            <a
+                href="plat.html?faris=18"
+                class="age-play-link"
+            >
+
+                <div class="age-image-container">
+
+                    <img
+                        src="../images/faris/faris-18.jpg"
+                        alt="Faris at 18 years old"
+                        class="age-image"
+                    >
+
+                    <div class="age-overlay"></div>
+
+                    <div class="age-play-button">
+                        ▶ PLAY
+                    </div>
+
+                </div>
+
+            </a>
+
+
+            <div class="age-content">
+
+                <div class="age-label">
+                    AGE
+                </div>
+
+                <h3>
+                    18
+                </h3>
+
+                <p>
+                    This is where the real challenge begins.
+                </p>
+
+                <a
+                    href="plat.html?faris=18"
+                    class="play-age-button"
+                >
+                    PLAY
+                    <span>→</span>
+                </a>
+
+            </div>
+
+        </article>
+
+
+    </div>
+
+</section>
+
+
+
+<!-- ======================================
+     LOADING SCREEN
+====================================== -->
+
+<div
+    class="loading-screen"
+    id="loadingScreen"
+>
+
+    <div class="loading-box">
+
+        <div class="loading-logo">
+            CHESS<span>_FK</span>
+        </div>
+
+
+        <div
+            class="loading-age"
+            id="loadingAge"
+        >
+            FARIS
+        </div>
+
+
+        <div class="loading-line">
+
+            <div class="loading-progress"></div>
+
+        </div>
+
+
+        <p>
+            Preparing your opponent...
+        </p>
+
+    </div>
+
+</div>
+
+
+
+</main>
+
+
+
+<!-- ======================================
+     JAVASCRIPT
+====================================== -->
+
+<script src="../js/theme.js"></script>
+
+<script src="../js/faris-ai.js"></script>
+
+
+</body>
+
+</html>

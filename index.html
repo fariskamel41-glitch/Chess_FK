@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CHESS_FK | Play Chess</title>
+
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+
+<body>
+
+    <!-- ================= HEADER ================= -->
+
+    <header class="header">
+
+        <div class="logo">
+            CHESS<span>_FK</span>
+        </div>
+
+        <nav>
+
+            <a href="index.html">PLAY</a>
+            <a href="#train">TRAIN</a>
+            <a href="#faris">FARIS</a>
+            <a href="#tournaments">TOURNAMENTS</a>
+
+        </nav>
+
+
+        <div class="header-actions">
+
+            <!-- THEME BUTTON -->
+
+            <button
+                class="theme-toggle"
+                id="themeToggle"
+                aria-label="Choose theme"
+            >
+                <span class="theme-toggle-icon">◐</span>
+                THEME
+            </button>
+
+
+            <button class="login-btn">
+                SIGN IN
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- ================= THEME PANEL ================= -->
+
+    <div
+        class="theme-overlay"
+        id="themeOverlay"
+    ></div>
+
+
+    <aside
+        class="theme-panel"
+        id="themePanel"
+    >
+
+        <div class="theme-panel-header">
+
+            <div>
+
+                <p class="theme-label">
+                    CHESS_FK CUSTOMIZATION
+                </p>
+
+                <h2>
+                    CHOOSE YOUR<br>
+                    <span>STYLE.</span>
+                </h2>
+
+            </div>
+
+            <button
+                class="theme-close"
+                id="themeClose"
+                aria-label="Close theme selector"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <p class="theme-description">
+            Choose the visual style that matches
+            your chess personality.
+        </p>
+
+
+        <!-- ================= THEME GRID ================= -->
+
+        <div class="theme-grid">
+
+
+            <!-- RED -->
+
+            <button
+                class="theme-card active"
+                data-theme="red"
+            >
+
+                <div class="theme-board red-board">
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                </div>
+
+                <div class="theme-card-info">
+
+                    <div>
+                        <strong>RED / BLACK</strong>
+                        <small>THE ORIGINAL</small>
+                    </div>
+
+                    <span class="theme-check">✓</span>
+
+                </div>
+
+            </button>
+
+
+            <!-- BLUE -->
+
+            <button
+                class="theme-card"
+                data-theme="blue"
+            >
+
+                <div class="theme-board blue-board">
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                </div>
+
+                <div class="theme-card-info">
+
+                    <div>
+                        <strong>BLUE / WHITE</strong>
+                        <small>ICE MODE</small>
+                    </div>
+
+                    <span class="theme-check">✓</span>
+
+                </div>
+
+            </button>
+
+
+            <!-- GREEN -->
+
+            <button
+                class="theme-card"
+                data-theme="green"
+            >
+
+                <div class="theme-board green-board">
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                </div>
+
+                <div class="theme-card-info">
+
+                    <div>
+                        <strong>GREEN / WHITE</strong>
+                        <small>CLASSIC MODE</small>
+                    </div>
+
+                    <span class="theme-check">✓</span>
+
+                </div>
+
+            </button>
+
+
+            <!-- PURPLE -->
+
+            <button
+                class="theme-card"
+                data-theme="purple"
+            >
+
+                <div class="theme-board purple-board">
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                </div>
+
+                <div class="theme-card-info">
+
+                    <div>
+                        <strong>PURPLE / BLACK</strong>
+                        <small>FUTURE MODE</small>
+                    </div>
+
+                    <span class="theme-check">✓</span>
+
+                </div>
+
+            </button>
+
+        </div>
+
+
+        <div class="theme-panel-footer">
+
+            <span class="theme-footer-dot"></span>
+
+            YOUR STYLE.
+            YOUR BOARD.
+            YOUR GAME.
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- ================= HERO ================= -->
+
+    <main>
+
+        <section class="hero">
+
+            <div class="hero-content">
+
+                <p class="red-label">
+                    ♟ THE CHESS PLATFORM BY FARIS
+                </p>
+
+                <h1>
+                    PLAY.<br>
+                    <span>THINK.</span><br>
+                    DOMINATE.
+                </h1>
+
+                <p class="hero-description">
+
+                    Play chess. Improve your game.
+                    Challenge players from around the world
+                    and discover the story behind Faris' chess journey.
+
+                </p>
+
+
+                <div class="hero-buttons">
+
+                    <a
+                        href="pages/plat.html"
+                        class="btn-main"
+                    >
+                        ♟ PLAY CHESS
+                    </a>
+
+
+                    <a
+                        href="pages/faris-ai.html"
+                        class="btn-secondary"
+                    >
+                        PLAY AGAINST FARIS →
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= CHESS GLOW ================= -->
+
+            <div class="hero-chess">
+
+                <div class="red-glow"></div>
+
+                <div class="chess-piece">
+                    ♛
+                </div>
+
+                <img
+                    src="images/playfaris.jpg"
+                    alt="Faris"
+                    class="faris-photo"
+                >
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= FEATURES ================= -->
+
+        <section
+            class="features"
+            id="train"
+        >
+
+            <div class="section-title">
+
+                <p>
+                    DISCOVER CHESS_FK
+                </p>
+
+                <h2>
+                    MORE THAN<br>
+                    <span>JUST CHESS.</span>
+                </h2>
+
+            </div>
+
+
+            <div class="feature-grid">
+
+
+                <!-- PLAY -->
+
+                <div class="feature-card">
+
+                    <div class="feature-number">
+                        01
+                    </div>
+
+                    <div class="feature-icon">
+                        ♟
+                    </div>
+
+                    <h3>
+                        PLAY
+                    </h3>
+
+                    <p>
+                        Play chess against the computer
+                        or challenge other players.
+                    </p>
+
+                    <a
+                        href="pages/plat.html"
+                        class="card-btn"
+                    >
+                        PLAY CHESS →
+                    </a>
+
+                </div>
+
+
+                <!-- TRAIN -->
+
+                <div class="feature-card">
+
+                    <div class="feature-number">
+                        02
+                    </div>
+
+                    <div class="feature-icon">
+                        🧠
+                    </div>
+
+                    <h3>
+                        TRAIN
+                    </h3>
+
+                    <p>
+                        Improve your tactics, analyse
+                        your games and become stronger.
+                    </p>
+
+                </div>
+
+
+                <!-- FARIS -->
+
+                <div
+                    class="feature-card faris-card"
+                    id="faris"
+                >
+
+                    <div class="feature-number">
+                        03
+                    </div>
+
+                    <div class="feature-icon">
+                        ⚔️
+                    </div>
+
+                    <h3>
+                        PLAY AGAINST FARIS
+                    </h3>
+
+                    <p>
+                        Challenge different versions
+                        of Faris throughout his chess journey.
+                    </p>
+
+                    <a
+                        href="pages/faris-ai.html"
+                        class="card-btn"
+                    >
+                        CHALLENGE FARIS →
+                    </a>
+
+                </div>
+
+
+                <!-- TOURNAMENTS -->
+
+                <div
+                    class="feature-card"
+                    id="tournaments"
+                >
+
+                    <div class="feature-number">
+                        04
+                    </div>
+
+                    <div class="feature-icon">
+                        🏆
+                    </div>
+
+                    <h3>
+                        TOURNAMENTS
+                    </h3>
+
+                    <p>
+                        Discover championships,
+                        achievements and competitions.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= FARIS STORY ================= -->
+
+        <section class="faris-section">
+
+            <div class="faris-line"></div>
+
+            <p class="red-label">
+                THE STORY
+            </p>
+
+            <h2>
+                FROM A YOUNG<br>
+                <span>CHESS PLAYER</span><br>
+                TO CHESS_FK.
+            </h2>
+
+            <p>
+
+                Discover Faris' journey through chess,
+                from his first games to competitions,
+                championships and everything in between.
+
+            </p>
+
+            <a
+                href="#"
+                class="outline-btn"
+            >
+                DISCOVER THE JOURNEY →
+            </a>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        <div class="footer-logo">
+            CHESS<span>_FK</span>
+        </div>
+
+        <p>
+            © 2026 CHESS_FK — Built by Faris
+        </p>
+
+    </footer>
+
+
+    <script src="js/theme.js"></script>
+
+</body>
+
+</html>

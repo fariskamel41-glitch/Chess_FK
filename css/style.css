@@ -1,0 +1,1753 @@
+/* =========================================
+   CHESS_FK
+   MULTI THEME DESIGN SYSTEM
+   ========================================= */
+
+
+/* =========================================
+   THEME VARIABLES
+   ========================================= */
+
+:root {
+
+    /* MAIN */
+
+    --primary: #ff1717;
+    --primary-bright: #ff3030;
+    --primary-dark: #c90000;
+
+    /* BACKGROUNDS */
+
+    --bg-main: #050505;
+    --bg-section: #080808;
+    --bg-card: #0d0d0d;
+    --bg-header: rgba(5,5,5,0.92);
+
+    /* TEXT */
+
+    --text-main: #ffffff;
+    --text-soft: #dddddd;
+    --text-muted: #777777;
+    --text-dark: #444444;
+
+    /* BORDERS */
+
+    --border: #222222;
+    --border-soft: #151515;
+    --border-card: #202020;
+
+    /* GLOW */
+
+    --glow-primary:
+        rgba(255,0,0,0.25);
+
+    --glow-strong:
+        rgba(255,0,0,0.55);
+
+    /* IMAGE */
+
+    --image-glow:
+        rgba(255,0,0,0.75);
+
+}
+
+
+/* =========================================
+   BLUE THEME
+   ========================================= */
+
+body[data-theme="blue"] {
+
+    --primary: #2f8cff;
+    --primary-bright: #55a5ff;
+    --primary-dark: #1768c4;
+
+    --bg-main: #050b12;
+    --bg-section: #08111c;
+    --bg-card: #0d1926;
+    --bg-header: rgba(5,11,18,0.94);
+
+    --text-main: #ffffff;
+    --text-soft: #e5f1ff;
+    --text-muted: #8294a8;
+    --text-dark: #506174;
+
+    --border: #1b2b3d;
+    --border-soft: #101d2a;
+    --border-card: #1b3045;
+
+    --glow-primary:
+        rgba(47,140,255,0.25);
+
+    --glow-strong:
+        rgba(47,140,255,0.55);
+
+    --image-glow:
+        rgba(47,140,255,0.75);
+
+}
+
+
+/* =========================================
+   GREEN THEME
+   ========================================= */
+
+body[data-theme="green"] {
+
+    --primary: #29c46a;
+    --primary-bright: #43e884;
+    --primary-dark: #15944b;
+
+    --bg-main: #050b08;
+    --bg-section: #07110c;
+    --bg-card: #0c1811;
+    --bg-header: rgba(5,11,8,0.94);
+
+    --text-main: #ffffff;
+    --text-soft: #edf8f1;
+    --text-muted: #82968a;
+    --text-dark: #4f6256;
+
+    --border: #1d2d23;
+    --border-soft: #111d16;
+    --border-card: #1c3626;
+
+    --glow-primary:
+        rgba(41,196,106,0.25);
+
+    --glow-strong:
+        rgba(41,196,106,0.55);
+
+    --image-glow:
+        rgba(41,196,106,0.75);
+
+}
+
+
+/* =========================================
+   PURPLE THEME
+   ========================================= */
+
+body[data-theme="purple"] {
+
+    --primary: #a855f7;
+    --primary-bright: #c084fc;
+    --primary-dark: #7e22ce;
+
+    --bg-main: #08050d;
+    --bg-section: #0c0812;
+    --bg-card: #130d1b;
+    --bg-header: rgba(8,5,13,0.94);
+
+    --text-main: #ffffff;
+    --text-soft: #f2eaff;
+    --text-muted: #9485a4;
+    --text-dark: #5c4f69;
+
+    --border: #292036;
+    --border-soft: #17111f;
+    --border-card: #30233d;
+
+    --glow-primary:
+        rgba(168,85,247,0.25);
+
+    --glow-strong:
+        rgba(168,85,247,0.55);
+
+    --image-glow:
+        rgba(168,85,247,0.75);
+
+}
+
+
+/* =========================================
+   RESET
+   ========================================= */
+
+* {
+
+    margin: 0;
+    padding: 0;
+
+    box-sizing: border-box;
+
+}
+
+
+html {
+
+    scroll-behavior: smooth;
+
+}
+
+
+body {
+
+    background: var(--bg-main);
+
+    color: var(--text-main);
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    min-height: 100vh;
+
+    overflow-x: hidden;
+
+    transition:
+        background 0.4s ease,
+        color 0.4s ease;
+
+}
+
+
+/* =========================================
+   HEADER
+   ========================================= */
+
+.header {
+
+    height: 82px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 0 6%;
+
+    background: var(--bg-header);
+
+    border-bottom: 1px solid var(--border);
+
+    position: relative;
+
+    z-index: 100;
+
+    backdrop-filter: blur(12px);
+
+}
+
+
+.logo {
+
+    font-size: 25px;
+
+    font-weight: 900;
+
+    letter-spacing: 3px;
+
+}
+
+
+.logo span {
+
+    color: var(--primary);
+
+    transition: color 0.3s ease;
+
+}
+
+
+nav {
+
+    display: flex;
+
+    gap: 35px;
+
+}
+
+
+nav a {
+
+    color: var(--text-muted);
+
+    text-decoration: none;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    letter-spacing: 1.5px;
+
+    transition: 0.3s;
+
+}
+
+
+nav a:hover {
+
+    color: var(--primary);
+
+    text-shadow:
+        0 0 15px var(--primary);
+
+}
+
+
+/* =========================================
+   HEADER ACTIONS
+   ========================================= */
+
+.header-actions {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+}
+
+
+/* =========================================
+   THEME BUTTON
+   ========================================= */
+
+.theme-toggle {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    background: transparent;
+
+    border: 1px solid var(--border);
+
+    color: var(--text-soft);
+
+    padding: 10px 14px;
+
+    font-size: 10px;
+
+    font-weight: 900;
+
+    letter-spacing: 1px;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+
+}
+
+
+.theme-toggle-icon {
+
+    font-size: 15px;
+
+    color: var(--primary);
+
+    transition: 0.3s;
+
+}
+
+
+.theme-toggle:hover {
+
+    border-color: var(--primary);
+
+    color: var(--primary);
+
+    box-shadow:
+        0 0 18px var(--glow-primary);
+
+}
+
+
+.theme-toggle:hover
+.theme-toggle-icon {
+
+    transform: rotate(180deg);
+
+}
+
+
+/* =========================================
+   LOGIN
+   ========================================= */
+
+.login-btn {
+
+    background: transparent;
+
+    border: 1px solid var(--border);
+
+    color: var(--text-main);
+
+    padding: 11px 20px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+
+}
+
+
+.login-btn:hover {
+
+    border-color: var(--primary);
+
+    color: var(--primary);
+
+    box-shadow:
+        0 0 15px var(--glow-primary);
+
+}
+
+
+/* =========================================
+   THEME OVERLAY
+   ========================================= */
+
+.theme-overlay {
+
+    position: fixed;
+
+    inset: 0;
+
+    background: rgba(0,0,0,0.65);
+
+    backdrop-filter: blur(5px);
+
+    z-index: 500;
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    transition:
+        opacity 0.35s ease,
+        visibility 0.35s ease;
+
+}
+
+
+.theme-overlay.active {
+
+    opacity: 1;
+
+    visibility: visible;
+
+}
+
+
+/* =========================================
+   THEME PANEL
+   ========================================= */
+
+.theme-panel {
+
+    position: fixed;
+
+    top: 0;
+
+    right: 0;
+
+    width: min(460px, 92vw);
+
+    height: 100vh;
+
+    padding: 45px 35px;
+
+    background: var(--bg-card);
+
+    border-left: 1px solid var(--border);
+
+    z-index: 600;
+
+    transform: translateX(100%);
+
+    transition:
+        transform 0.45s cubic-bezier(.22,.61,.36,1);
+
+    overflow-y: auto;
+
+}
+
+
+.theme-panel.active {
+
+    transform: translateX(0);
+
+}
+
+
+/* =========================================
+   THEME PANEL HEADER
+   ========================================= */
+
+.theme-panel-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: flex-start;
+
+    margin-bottom: 20px;
+
+}
+
+
+.theme-label {
+
+    color: var(--primary);
+
+    font-size: 9px;
+
+    font-weight: 900;
+
+    letter-spacing: 3px;
+
+    margin-bottom: 12px;
+
+}
+
+
+.theme-panel h2 {
+
+    font-size: 34px;
+
+    line-height: 0.95;
+
+    letter-spacing: -2px;
+
+}
+
+
+.theme-panel h2 span {
+
+    color: var(--primary);
+
+}
+
+
+.theme-close {
+
+    width: 40px;
+
+    height: 40px;
+
+    background: transparent;
+
+    border: 1px solid var(--border);
+
+    color: var(--text-muted);
+
+    font-size: 27px;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+
+}
+
+
+.theme-close:hover {
+
+    color: var(--primary);
+
+    border-color: var(--primary);
+
+    transform: rotate(90deg);
+
+}
+
+
+/* =========================================
+   THEME DESCRIPTION
+   ========================================= */
+
+.theme-description {
+
+    color: var(--text-muted);
+
+    font-size: 13px;
+
+    line-height: 1.6;
+
+    margin-bottom: 30px;
+
+}
+
+
+/* =========================================
+   THEME GRID
+   ========================================= */
+
+.theme-grid {
+
+    display: grid;
+
+    grid-template-columns: repeat(2,1fr);
+
+    gap: 14px;
+
+}
+
+
+/* =========================================
+   THEME CARD
+   ========================================= */
+
+.theme-card {
+
+    background: var(--bg-main);
+
+    border: 1px solid var(--border);
+
+    padding: 10px;
+
+    cursor: pointer;
+
+    text-align: left;
+
+    position: relative;
+
+    transition:
+        transform 0.3s ease,
+        border-color 0.3s ease,
+        box-shadow 0.3s ease;
+
+}
+
+
+.theme-card:hover {
+
+    transform: translateY(-4px);
+
+    border-color: var(--primary);
+
+    box-shadow:
+        0 12px 35px var(--glow-primary);
+
+}
+
+
+.theme-card.active {
+
+    border-color: var(--primary);
+
+    box-shadow:
+        0 0 0 1px var(--primary),
+        0 12px 35px var(--glow-primary);
+
+}
+
+
+/* =========================================
+   MINI CHESS BOARD
+   ========================================= */
+
+.theme-board {
+
+    width: 100%;
+
+    aspect-ratio: 1 / 0.72;
+
+    display: grid;
+
+    grid-template-columns: repeat(4,1fr);
+
+    overflow: hidden;
+
+    margin-bottom: 12px;
+
+}
+
+
+.theme-board span {
+
+    display: block;
+
+}
+
+
+.red-board span:nth-child(odd) {
+
+    background: #181818;
+
+}
+
+
+.red-board span:nth-child(even) {
+
+    background: #e50909;
+
+}
+
+
+.blue-board span:nth-child(odd) {
+
+    background: #f3f8ff;
+
+}
+
+
+.blue-board span:nth-child(even) {
+
+    background: #2778d8;
+
+}
+
+
+.green-board span:nth-child(odd) {
+
+    background: #f4f1df;
+
+}
+
+
+.green-board span:nth-child(even) {
+
+    background: #287c4c;
+
+}
+
+
+.purple-board span:nth-child(odd) {
+
+    background: #17121d;
+
+}
+
+
+.purple-board span:nth-child(even) {
+
+    background: #933dcc;
+
+}
+
+
+/* =========================================
+   THEME CARD INFO
+   ========================================= */
+
+.theme-card-info {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+}
+
+
+.theme-card strong {
+
+    display: block;
+
+    color: var(--text-main);
+
+    font-size: 10px;
+
+    letter-spacing: 1px;
+
+}
+
+
+.theme-card small {
+
+    display: block;
+
+    color: var(--text-muted);
+
+    font-size: 8px;
+
+    letter-spacing: 1px;
+
+    margin-top: 4px;
+
+}
+
+
+.theme-check {
+
+    width: 22px;
+
+    height: 22px;
+
+    border: 1px solid var(--border);
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: transparent;
+
+    font-size: 11px;
+
+}
+
+
+.theme-card.active
+.theme-check {
+
+    color: var(--primary);
+
+    border-color: var(--primary);
+
+    background: var(--glow-primary);
+
+}
+
+
+/* =========================================
+   THEME PANEL FOOTER
+   ========================================= */
+
+.theme-panel-footer {
+
+    margin-top: 35px;
+
+    padding-top: 20px;
+
+    border-top: 1px solid var(--border);
+
+    color: var(--text-dark);
+
+    font-size: 9px;
+
+    font-weight: 900;
+
+    letter-spacing: 2px;
+
+    line-height: 1.8;
+
+}
+
+
+.theme-footer-dot {
+
+    display: inline-block;
+
+    width: 6px;
+
+    height: 6px;
+
+    background: var(--primary);
+
+    border-radius: 50%;
+
+    margin-right: 7px;
+
+    box-shadow:
+        0 0 10px var(--primary);
+
+}
+
+
+/* =========================================
+   HERO
+   ========================================= */
+
+.hero {
+
+    min-height: 720px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 70px 9%;
+
+    position: relative;
+
+    overflow: hidden;
+
+}
+
+
+.hero::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 500px;
+
+    height: 500px;
+
+    background: var(--primary);
+
+    filter: blur(180px);
+
+    opacity: 0.08;
+
+    left: -200px;
+
+    top: 100px;
+
+    transition:
+        background 0.4s ease;
+
+}
+
+
+.hero-content {
+
+    max-width: 700px;
+
+    position: relative;
+
+    z-index: 2;
+
+}
+
+
+.red-label {
+
+    color: var(--primary);
+
+    font-size: 12px;
+
+    font-weight: 900;
+
+    letter-spacing: 4px;
+
+    margin-bottom: 25px;
+
+}
+
+
+.hero h1 {
+
+    font-size: clamp(65px, 9vw, 125px);
+
+    line-height: 0.82;
+
+    letter-spacing: -7px;
+
+    font-weight: 950;
+
+    margin-bottom: 35px;
+
+}
+
+
+.hero h1 span {
+
+    color: var(--primary);
+
+    text-shadow:
+
+        0 0 10px var(--glow-strong),
+
+        0 0 35px var(--glow-primary);
+
+}
+
+
+.hero-description {
+
+    color: var(--text-muted);
+
+    font-size: 16px;
+
+    line-height: 1.7;
+
+    max-width: 540px;
+
+    margin-bottom: 35px;
+
+}
+
+
+/* =========================================
+   BUTTONS
+   ========================================= */
+
+.hero-buttons {
+
+    display: flex;
+
+    gap: 15px;
+
+    flex-wrap: wrap;
+
+}
+
+
+.btn-main {
+
+    padding: 16px 28px;
+
+    background: var(--primary-dark);
+
+    color: white;
+
+    text-decoration: none;
+
+    font-size: 12px;
+
+    font-weight: 900;
+
+    letter-spacing: 1px;
+
+    box-shadow:
+
+        0 0 20px var(--glow-primary),
+
+        inset 0 0 15px rgba(255,255,255,0.08);
+
+    transition: 0.3s;
+
+}
+
+
+.btn-main:hover {
+
+    background: var(--primary);
+
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 0 35px var(--glow-strong);
+
+}
+
+
+.btn-secondary {
+
+    padding: 15px 28px;
+
+    border: 1px solid var(--border);
+
+    color: var(--text-soft);
+
+    text-decoration: none;
+
+    font-size: 12px;
+
+    font-weight: 900;
+
+    letter-spacing: 1px;
+
+    transition: 0.3s;
+
+}
+
+
+.btn-secondary:hover {
+
+    border-color: var(--primary);
+
+    color: var(--primary);
+
+}
+
+
+/* =========================================
+   HERO CHESS
+   ========================================= */
+
+.hero-chess {
+
+    width: 430px;
+
+    height: 600px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    position: relative;
+
+}
+
+
+.red-glow {
+
+    position: absolute;
+
+    width: 350px;
+
+    height: 500px;
+
+    background: var(--primary);
+
+    filter: blur(120px);
+
+    opacity: 0.25;
+
+    z-index: 0;
+
+    transition:
+        background 0.4s ease;
+
+}
+
+
+.chess-piece {
+
+    position: relative;
+
+    z-index: 2;
+
+    font-size: 190px;
+
+    line-height: 1;
+
+    color: var(--bg-main);
+
+    margin-bottom: 5px;
+
+    text-shadow:
+
+        0 0 2px var(--primary),
+
+        0 0 10px var(--primary),
+
+        0 0 25px var(--primary),
+
+        0 0 55px var(--glow-strong);
+
+    animation: chessGlow 3s ease-in-out infinite;
+
+}
+
+
+.faris-photo {
+
+    position: relative;
+
+    z-index: 2;
+
+    width: 360px;
+
+    height: 400px;
+
+    object-fit: cover;
+
+    border-radius: 12px;
+
+    filter:
+        brightness(0.82)
+        contrast(1.1);
+
+    box-shadow:
+
+        0 0 15px var(--image-glow),
+
+        0 0 35px var(--glow-strong),
+
+        0 0 70px var(--glow-primary);
+
+    animation: photoGlow 3s ease-in-out infinite;
+
+}
+
+
+/* =========================================
+   ANIMATIONS
+   ========================================= */
+
+@keyframes photoGlow {
+
+    0%, 100% {
+
+        box-shadow:
+
+            0 0 15px var(--image-glow),
+            0 0 35px var(--glow-strong),
+            0 0 65px var(--glow-primary);
+
+    }
+
+    50% {
+
+        box-shadow:
+
+            0 0 20px var(--image-glow),
+            0 0 50px var(--glow-strong),
+            0 0 90px var(--glow-primary);
+
+    }
+
+}
+
+
+@keyframes chessGlow {
+
+    0%,100% {
+
+        filter: brightness(0.9);
+
+    }
+
+    50% {
+
+        filter: brightness(1.3);
+
+    }
+
+}
+
+
+/* =========================================
+   FEATURES
+   ========================================= */
+
+.features {
+
+    padding: 100px 9%;
+
+    background: var(--bg-section);
+
+    border-top: 1px solid var(--border-soft);
+
+    transition:
+        background 0.4s ease;
+
+}
+
+
+.section-title {
+
+    margin-bottom: 55px;
+
+}
+
+
+.section-title p {
+
+    color: var(--primary);
+
+    font-size: 11px;
+
+    font-weight: 900;
+
+    letter-spacing: 4px;
+
+    margin-bottom: 15px;
+
+}
+
+
+.section-title h2 {
+
+    font-size: 55px;
+
+    line-height: 0.95;
+
+    letter-spacing: -3px;
+
+}
+
+
+.section-title span {
+
+    color: var(--primary);
+
+}
+
+
+.feature-grid {
+
+    display: grid;
+
+    grid-template-columns: repeat(4,1fr);
+
+    gap: 15px;
+
+}
+
+
+.feature-card {
+
+    min-height: 280px;
+
+    padding: 28px;
+
+    background: var(--bg-card);
+
+    border: 1px solid var(--border-card);
+
+    position: relative;
+
+    transition: 0.35s;
+
+}
+
+
+.feature-card:hover {
+
+    border-color: var(--primary);
+
+    transform: translateY(-7px);
+
+    box-shadow:
+
+        0 15px 40px var(--glow-primary);
+
+}
+
+
+.feature-number {
+
+    color: var(--text-dark);
+
+    font-size: 11px;
+
+    font-weight: bold;
+
+}
+
+
+.feature-icon {
+
+    font-size: 40px;
+
+    margin: 40px 0 25px;
+
+}
+
+
+.feature-card h3 {
+
+    font-size: 17px;
+
+    margin-bottom: 12px;
+
+}
+
+
+.feature-card p {
+
+    color: var(--text-muted);
+
+    line-height: 1.6;
+
+    font-size: 13px;
+
+}
+
+
+.card-btn {
+
+    display: inline-block;
+
+    margin-top: 20px;
+
+    color: var(--primary);
+
+    text-decoration: none;
+
+    font-size: 10px;
+
+    font-weight: 900;
+
+    letter-spacing: 1px;
+
+    transition: 0.3s;
+
+}
+
+
+.card-btn:hover {
+
+    letter-spacing: 2px;
+
+}
+
+
+.faris-card {
+
+    border-color: var(--glow-strong);
+
+}
+
+
+/* =========================================
+   FARIS STORY
+   ========================================= */
+
+.faris-section {
+
+    min-height: 550px;
+
+    padding: 110px 9%;
+
+    position: relative;
+
+    overflow: hidden;
+
+}
+
+
+.faris-section::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 400px;
+
+    height: 400px;
+
+    background: var(--primary);
+
+    filter: blur(180px);
+
+    opacity: 0.08;
+
+    right: -150px;
+
+    top: 80px;
+
+}
+
+
+.faris-line {
+
+    width: 60px;
+
+    height: 3px;
+
+    background: var(--primary);
+
+    margin-bottom: 35px;
+
+    box-shadow:
+        0 0 15px var(--primary);
+
+}
+
+
+.faris-section h2 {
+
+    font-size: clamp(50px,7vw,90px);
+
+    line-height: 0.9;
+
+    letter-spacing: -4px;
+
+    margin-bottom: 30px;
+
+}
+
+
+.faris-section h2 span {
+
+    color: var(--primary);
+
+    text-shadow:
+        0 0 25px var(--glow-primary);
+
+}
+
+
+.faris-section > p:not(.red-label) {
+
+    color: var(--text-muted);
+
+    max-width: 500px;
+
+    line-height: 1.7;
+
+    margin-bottom: 30px;
+
+}
+
+
+.outline-btn {
+
+    display: inline-block;
+
+    padding: 14px 25px;
+
+    border: 1px solid var(--border);
+
+    color: var(--text-main);
+
+    text-decoration: none;
+
+    font-size: 11px;
+
+    font-weight: bold;
+
+    letter-spacing: 1px;
+
+    transition: 0.3s;
+
+}
+
+
+.outline-btn:hover {
+
+    border-color: var(--primary);
+
+    color: var(--primary);
+
+    box-shadow:
+        0 0 20px var(--glow-primary);
+
+}
+
+
+/* =========================================
+   FOOTER
+   ========================================= */
+
+footer {
+
+    border-top: 1px solid var(--border-soft);
+
+    padding: 30px 9%;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+}
+
+
+.footer-logo {
+
+    font-weight: 900;
+
+    letter-spacing: 2px;
+
+}
+
+
+.footer-logo span {
+
+    color: var(--primary);
+
+}
+
+
+footer p {
+
+    color: var(--text-dark);
+
+    font-size: 11px;
+
+}
+
+
+/* =========================================
+   CERCLE — CLIC DROIT
+   ========================================= */
+
+.marked-square {
+
+    position: relative;
+
+}
+
+
+.marked-square::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 58%;
+
+    height: 58%;
+
+    left: 50%;
+
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+
+    border: 4px solid var(--primary);
+
+    border-radius: 50%;
+
+    box-shadow:
+
+        0 0 8px var(--primary),
+
+        0 0 18px var(--glow-primary);
+
+    pointer-events: none;
+
+    z-index: 20;
+
+}
+
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+
+@media(max-width:1000px) {
+
+    nav {
+
+        gap: 15px;
+
+    }
+
+    .hero {
+
+        padding: 60px 5%;
+
+    }
+
+    .hero-chess {
+
+        width: 330px;
+
+    }
+
+    .chess-piece {
+
+        font-size: 270px;
+
+    }
+
+    .feature-grid {
+
+        grid-template-columns: repeat(2,1fr);
+
+    }
+
+}
+
+
+@media(max-width:700px) {
+
+    .header {
+
+        height: auto;
+
+        padding: 20px;
+
+        flex-direction: column;
+
+        gap: 20px;
+
+    }
+
+    nav {
+
+        flex-wrap: wrap;
+
+        justify-content: center;
+
+    }
+
+    .header-actions {
+
+        width: 100%;
+
+        justify-content: center;
+
+    }
+
+    .login-btn {
+
+        display: none;
+
+    }
+
+    .hero {
+
+        flex-direction: column;
+
+        text-align: center;
+
+        padding: 70px 20px;
+
+    }
+
+    .hero-description {
+
+        margin-left: auto;
+
+        margin-right: auto;
+
+    }
+
+    .hero-buttons {
+
+        justify-content: center;
+
+    }
+
+    .hero-chess {
+
+        height: 300px;
+
+        width: 300px;
+
+    }
+
+    .chess-piece {
+
+        font-size: 220px;
+
+    }
+
+    .features {
+
+        padding: 70px 20px;
+
+    }
+
+    .feature-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+    .section-title h2 {
+
+        font-size: 45px;
+
+    }
+
+    .faris-section {
+
+        padding: 80px 20px;
+
+    }
+
+    footer {
+
+        flex-direction: column;
+
+        gap: 15px;
+
+    }
+
+    .theme-panel {
+
+        padding: 35px 20px;
+
+    }
+
+}
+
+
+@media(max-width:400px) {
+
+    .theme-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+}

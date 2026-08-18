@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Chess FK - Play</title>
+
+    <link rel="stylesheet" href="board.css">
+
+</head>
+
+
+<body>
+
+<!-- ======================================
+     TITRE
+====================================== -->
+
+<h1>♟️ CHESS <span>FK</span> ♟️</h1>
+
+<p class="turn">⚪ White to move</p>
+
+
+<!-- ======================================
+     ZONE PRINCIPALE
+====================================== -->
+
+<main class="chess-page">
+
+
+    <!-- ==================================
+         COLONNE GAUCHE : NOTATION
+    ================================== -->
+
+    <aside class="move-list">
+
+        <h3>♟️ MOVES</h3>
+
+        <div id="moves"></div>
+
+    </aside>
+
+
+    <!-- ==================================
+         CENTRE : ÉCHIQUIER
+    ================================== -->
+
+    <section class="chess-center">
+
+
+        <!-- ==================================
+             JOUEUR NOIR
+        ================================== -->
+
+        <div class="player black-player">
+
+            <h2>⚫ Black</h2>
+
+            <div class="clock">10:00</div>
+
+        </div>
+
+
+        <!-- ==================================
+             ÉCHIQUIER + COORDONNÉES
+        ================================== -->
+
+        <div class="board-wrapper">
+
+
+            <!-- NUMÉROS 8 → 1 -->
+
+            <div class="numbers">
+
+                <span>8</span>
+                <span>7</span>
+                <span>6</span>
+                <span>5</span>
+                <span>4</span>
+                <span>3</span>
+                <span>2</span>
+                <span>1</span>
+
+            </div>
+
+
+            <div class="board-column">
+
+
+                <!-- ==================================
+                     PLATEAU
+                ================================== -->
+
+                <div class="board-container">
+
+                    <div id="board"></div>
+
+                </div>
+
+
+                <!-- ==================================
+                     LETTRES a → h
+                ================================== -->
+
+                <div class="letters">
+
+                    <span>a</span>
+                    <span>b</span>
+                    <span>c</span>
+                    <span>d</span>
+                    <span>e</span>
+                    <span>f</span>
+                    <span>g</span>
+                    <span>h</span>
+
+                </div>
+
+
+                <!-- ==================================
+                     CONTRÔLES TAILLE
+                ================================== -->
+
+                <div class="board-controls">
+
+                    <button
+                        id="decreaseBoard"
+                        title="Réduire l'échiquier">
+                        −
+                    </button>
+
+                    <span id="boardSizeLabel">
+                        60
+                    </span>
+
+                    <button
+                        id="increaseBoard"
+                        title="Agrandir l'échiquier">
+                        +
+                    </button>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- ==================================
+             JOUEUR BLANC
+        ================================== -->
+
+        <div class="player white-player">
+
+            <h2>⚪ White</h2>
+
+            <div class="clock">10:00</div>
+
+        </div>
+
+
+        <!-- ==================================
+             BOUTONS DE PARTIE
+        ================================== -->
+
+        <div class="game-buttons">
+
+
+            <button id="undoButton">
+                ↩️ revnire 
+            </button>
+
+
+            <button id="drawButton">
+                🤝 Proposer nulle
+            </button>
+
+
+            <button id="resignButton">
+                🏳️ Abandonner
+            </button>
+
+
+            <button id="homeButton">
+                🏠 Accueil
+            </button>
+
+
+        </div>
+
+
+    </section>
+
+
+</main>
+
+<!-- ======================================
+     JAVASCRIPT
+====================================== -->
+<script src="../engine/stockfish-18-lite-single.js"></script>
+
+<script src="../js/s stockfish-loader.js"></script>
+<script src="../js/faris-ai.js"></script>
+<script src="../js/theme.js"></script>
+
+<script src="pieces.js"></script>
+<script src="board.js"></script>
+
+</body>
+
+</html>

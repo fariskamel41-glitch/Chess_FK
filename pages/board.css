@@ -1,0 +1,1300 @@
+/* =========================================
+   CHESS FK — BOARD CSS
+   THEME SYSTEM
+========================================= */
+
+
+/* =========================================
+   VARIABLES PAR DÉFAUT
+   ROUGE / NOIR
+========================================= */
+
+:root {
+
+    --theme-primary: #ff1717;
+    --theme-primary-light: #ff3030;
+    --theme-glow: rgba(255, 0, 0, 0.45);
+
+    --page-bg: #080808;
+    --panel-bg: #101010;
+    --panel-bg-2: #0d0d0d;
+
+    --border: #333;
+    --border-soft: #202020;
+
+    --text-main: #ffffff;
+    --text-secondary: #aaa;
+
+    /* ÉCHIQUIER */
+
+    --board-light: #e8d7c0;
+    --board-dark: #8b2525;
+
+    --board-border: #1c1c1c;
+
+}
+
+
+/* =========================================
+   THÈME ROUGE
+========================================= */
+
+body[data-theme="red"] {
+
+    --theme-primary: #ff1717;
+    --theme-primary-light: #ff3030;
+    --theme-glow: rgba(255, 0, 0, 0.45);
+
+    --page-bg: #080808;
+    --panel-bg: #101010;
+
+    --board-light: #e8d7c0;
+    --board-dark: #8b2525;
+
+}
+
+
+/* =========================================
+   THÈME BLEU
+========================================= */
+
+body[data-theme="blue"] {
+
+    --theme-primary: #238cff;
+    --theme-primary-light: #4da3ff;
+    --theme-glow: rgba(35, 140, 255, 0.45);
+
+    --page-bg: #05080d;
+    --panel-bg: #0b1119;
+
+    --board-light: #f0f2f5;
+    --board-dark: #3d6fa8;
+
+}
+
+
+/* =========================================
+   THÈME VERT
+========================================= */
+
+body[data-theme="green"] {
+
+    --theme-primary: #22c55e;
+    --theme-primary-light: #4ade80;
+    --theme-glow: rgba(34, 197, 94, 0.45);
+
+    --page-bg: #050b07;
+    --panel-bg: #0b120e;
+
+    --board-light: #f0ead8;
+    --board-dark: #4d8057;
+
+}
+
+
+/* =========================================
+   THÈME VIOLET
+========================================= */
+
+body[data-theme="purple"] {
+
+    --theme-primary: #a855f7;
+    --theme-primary-light: #c084fc;
+    --theme-glow: rgba(168, 85, 247, 0.45);
+
+    --page-bg: #09060d;
+    --panel-bg: #120c19;
+
+    --board-light: #eee7f5;
+    --board-dark: #68418a;
+
+}
+
+
+/* =========================================
+   THÈME ORANGE
+========================================= */
+
+body[data-theme="orange"] {
+
+    --theme-primary: #ff7a18;
+    --theme-primary-light: #ff9b4a;
+    --theme-glow: rgba(255, 122, 24, 0.45);
+
+    --page-bg: #0c0805;
+    --panel-bg: #15100b;
+
+    --board-light: #f2e5cf;
+    --board-dark: #a65d32;
+
+}
+
+
+/* =========================================
+   RESET
+========================================= */
+
+* {
+
+    margin: 0;
+    padding: 0;
+
+    box-sizing: border-box;
+
+}
+
+
+/* =========================================
+   PAGE
+========================================= */
+
+body {
+
+    min-height: 100vh;
+
+    background: var(--page-bg);
+
+    color: var(--text-main);
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    padding: 15px;
+
+    overflow-x: hidden;
+
+    transition:
+        background 0.35s ease,
+        color 0.35s ease;
+
+}
+
+
+/* =========================================
+   TITRE
+========================================= */
+
+h1 {
+
+    margin: 0 0 4px 0;
+
+    font-size: 34px;
+
+    font-weight: bold;
+
+    color: white;
+
+    text-shadow:
+
+        0 0 8px var(--theme-primary),
+
+        0 0 20px var(--theme-glow);
+
+    transition: 0.35s;
+
+}
+
+
+h1 span {
+
+    color: var(--theme-primary);
+
+}
+
+
+/* =========================================
+   TOUR
+========================================= */
+
+.turn {
+
+    margin-bottom: 10px;
+
+    font-size: 18px;
+
+    color: #ddd;
+
+    text-shadow:
+
+        0 0 8px var(--theme-glow);
+
+}
+
+
+/* =========================================
+   ZONE PRINCIPALE
+========================================= */
+
+.chess-page {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: center;
+
+    gap: 25px;
+
+    width: 100%;
+
+    max-width: 1100px;
+
+}
+
+
+/* =========================================
+   NOTATION À GAUCHE
+========================================= */
+
+.move-list {
+
+    width: 190px;
+
+    height: 480px;
+
+    background: var(--panel-bg);
+
+    border: 1px solid var(--border);
+
+    border-radius: 10px;
+
+    padding: 12px;
+
+    box-shadow:
+
+        0 0 15px var(--theme-glow);
+
+    overflow: hidden;
+
+    transition:
+        background 0.35s,
+        border-color 0.35s,
+        box-shadow 0.35s;
+
+}
+
+
+/* =========================================
+   TITRE NOTATION
+========================================= */
+
+.move-list h3 {
+
+    margin-bottom: 10px;
+
+    text-align: center;
+
+    color: var(--theme-primary);
+
+    font-size: 18px;
+
+}
+
+
+/* =========================================
+   LISTE
+========================================= */
+
+#moves {
+
+    height: 420px;
+
+    overflow-y: auto;
+
+    color: white;
+
+    font-size: 15px;
+
+    line-height: 1.8;
+
+}
+
+
+/* =========================================
+   SCROLLBAR
+========================================= */
+
+#moves::-webkit-scrollbar {
+
+    width: 5px;
+
+}
+
+
+#moves::-webkit-scrollbar-thumb {
+
+    background: var(--theme-primary);
+
+    border-radius: 5px;
+
+}
+
+
+/* =========================================
+   CENTRE
+========================================= */
+
+.chess-center {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+}
+
+
+/* =========================================
+   JOUEUR
+========================================= */
+
+.player {
+
+    width: 480px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 6px;
+
+}
+
+
+.player h2 {
+
+    font-size: 19px;
+
+    margin: 0;
+
+}
+
+
+/* =========================================
+   HORLOGE
+========================================= */
+
+.clock {
+
+    min-width: 90px;
+
+    padding: 7px 12px;
+
+    background: var(--panel-bg);
+
+    border: 2px solid var(--border);
+
+    border-radius: 7px;
+
+    text-align: center;
+
+    font-size: 21px;
+
+    font-weight: bold;
+
+    box-shadow:
+
+        0 0 10px var(--theme-glow);
+
+    transition:
+        background 0.35s,
+        border-color 0.35s,
+        box-shadow 0.35s;
+
+}
+
+
+/* =========================================
+   PLATEAU + COORDONNÉES
+========================================= */
+
+.board-wrapper {
+
+    display: flex;
+
+    align-items: flex-start;
+
+}
+
+
+/* =========================================
+   CHIFFRES 8 → 1
+========================================= */
+
+.numbers {
+
+    width: 25px;
+
+    height: 480px;
+
+    display: flex;
+
+    flex-direction: column;
+
+}
+
+
+.numbers span {
+
+    width: 25px;
+
+    height: 60px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    color: var(--text-secondary);
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+    transition: color 0.35s;
+
+}
+
+
+/* =========================================
+   COLONNE DU PLATEAU
+========================================= */
+
+.board-column {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+}
+
+
+/* =========================================
+   CONTENEUR DU PLATEAU
+========================================= */
+
+.board-container {
+
+    position: relative;
+
+    display: block;
+
+}
+
+
+/* =========================================
+   ÉCHIQUIER
+========================================= */
+
+#board {
+
+    width: 480px;
+
+    height: 480px;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(8, 60px);
+
+    grid-template-rows:
+        repeat(8, 60px);
+
+    border: 5px solid var(--board-border);
+
+    border-radius: 6px;
+
+    overflow: hidden;
+
+    box-shadow:
+
+        0 0 15px var(--theme-glow),
+
+        0 0 40px var(--theme-glow);
+
+    transition:
+
+        border-color 0.35s,
+
+        box-shadow 0.35s;
+
+}
+
+
+/* =========================================
+   CASES
+========================================= */
+
+.square {
+
+    width: 60px;
+
+    height: 60px;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    position: relative;
+
+    cursor: pointer;
+
+    user-select: none;
+
+    transition:
+
+        filter 0.15s ease,
+
+        background 0.35s ease;
+
+}
+
+
+/* =========================================
+   CASE CLAIRE
+========================================= */
+
+.white {
+
+    background: var(--board-light);
+
+}
+
+
+/* =========================================
+   CASE FONCÉE
+========================================= */
+
+.black {
+
+    background: var(--board-dark);
+
+}
+
+
+/* =========================================
+   PIÈCES
+========================================= */
+
+.piece {
+
+    font-size: 45px;
+
+    line-height: 1;
+
+    position: relative;
+
+    z-index: 2;
+
+}
+
+
+/* =========================================
+   PIÈCES BLANCHES
+========================================= */
+
+.white-piece {
+
+    color: white;
+
+    text-shadow:
+
+        0 2px 2px black,
+
+        0 0 6px rgba(255,255,255,0.7);
+
+}
+
+
+/* =========================================
+   PIÈCES NOIRES
+========================================= */
+
+.black-piece {
+
+    color: #111;
+
+    text-shadow:
+
+        0 2px 3px white,
+
+        0 0 8px black;
+
+}
+
+
+/* =========================================
+   HOVER
+========================================= */
+
+.square:hover {
+
+    filter: brightness(1.12);
+
+}
+
+
+/* =========================================
+   MOUVEMENTS POSSIBLES
+========================================= */
+
+.possible-move {
+
+    box-shadow:
+
+        inset 0 0 12px var(--theme-glow),
+
+        0 0 10px var(--theme-primary),
+
+        0 0 22px var(--theme-glow);
+
+    animation:
+        themeGlow 0.8s infinite alternate;
+
+}
+
+
+@keyframes themeGlow {
+
+    from {
+
+        box-shadow:
+
+            inset 0 0 8px var(--theme-glow),
+
+            0 0 8px var(--theme-primary);
+
+    }
+
+    to {
+
+        box-shadow:
+
+            inset 0 0 18px var(--theme-glow),
+
+            0 0 25px var(--theme-primary);
+
+    }
+
+}
+
+
+/* =========================================
+   ROI EN ÉCHEC
+========================================= */
+
+.king-in-check {
+
+    background:
+        var(--theme-primary) !important;
+
+    box-shadow:
+
+        inset 0 0 15px var(--theme-primary),
+
+        0 0 15px var(--theme-primary),
+
+        0 0 35px var(--theme-glow);
+
+    animation:
+        kingCheck 0.7s infinite alternate;
+
+}
+
+
+@keyframes kingCheck {
+
+    from {
+
+        box-shadow:
+
+            inset 0 0 10px var(--theme-primary),
+
+            0 0 15px var(--theme-primary);
+
+    }
+
+    to {
+
+        box-shadow:
+
+            inset 0 0 20px var(--theme-primary),
+
+            0 0 40px var(--theme-primary);
+
+    }
+
+}
+
+
+/* =========================================
+   LETTRES a → h
+========================================= */
+
+.letters {
+
+    width: 480px;
+
+    height: 25px;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(8, 60px);
+
+    margin-top: 4px;
+
+}
+
+
+.letters span {
+
+    width: 60px;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    color: var(--text-secondary);
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+    transition: color 0.35s;
+
+}
+
+
+/* =========================================
+   BOUTONS
+========================================= */
+
+.game-buttons {
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 10px;
+
+    margin-top: 15px;
+
+}
+
+
+.game-buttons button {
+
+    padding: 9px 15px;
+
+    background: var(--panel-bg);
+
+    color: white;
+
+    border: 1px solid var(--border);
+
+    border-radius: 7px;
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+    transition:
+
+        0.2s;
+
+}
+
+
+.game-buttons button:hover {
+
+    border-color: var(--theme-primary);
+
+    color: var(--theme-primary);
+
+    box-shadow:
+
+        0 0 10px var(--theme-glow);
+
+    transform: translateY(-2px);
+
+}
+
+
+/* =========================================
+   CONTRÔLES TAILLE ÉCHIQUIER
+========================================= */
+
+.board-controls {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    margin-top: 8px;
+
+}
+
+
+.board-controls button {
+
+    width: 30px;
+
+    height: 28px;
+
+    background: var(--panel-bg);
+
+    color: white;
+
+    border: 1px solid var(--border);
+
+    border-radius: 6px;
+
+    font-size: 20px;
+
+    line-height: 20px;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+
+}
+
+
+.board-controls button:hover {
+
+    border-color: var(--theme-primary);
+
+    color: var(--theme-primary);
+
+    box-shadow:
+        0 0 10px var(--theme-glow);
+
+}
+
+
+#boardSizeLabel {
+
+    min-width: 38px;
+
+    text-align: center;
+
+    color: var(--text-secondary);
+
+    font-size: 12px;
+
+}
+
+
+/* =========================================
+   ÉCRAN DE RÉSULTAT
+========================================= */
+
+#gameResult {
+
+    position: fixed;
+
+    inset: 0;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    background:
+        rgba(0,0,0,0.75);
+
+    opacity: 0;
+
+    visibility: hidden;
+
+    transition: 0.25s;
+
+    z-index: 1000;
+
+}
+
+
+#gameResult.show {
+
+    opacity: 1;
+
+    visibility: visible;
+
+}
+
+
+.result-box {
+
+    width: min(420px, 90vw);
+
+    padding: 28px;
+
+    background: var(--panel-bg);
+
+    border: 1px solid var(--border);
+
+    border-radius: 14px;
+
+    text-align: center;
+
+    box-shadow:
+
+        0 0 25px var(--theme-glow),
+
+        0 0 60px var(--theme-glow);
+
+}
+
+
+.result-title {
+
+    font-size: 25px;
+
+    font-weight: bold;
+
+    color: white;
+
+    margin-bottom: 15px;
+
+}
+
+
+.result-message {
+
+    color: #ddd;
+
+    font-size: 18px;
+
+    margin-bottom: 22px;
+
+}
+
+
+.result-buttons {
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 10px;
+
+}
+
+
+.result-buttons button {
+
+    padding: 9px 15px;
+
+    background: var(--panel-bg);
+
+    color: white;
+
+    border: 1px solid var(--border);
+
+    border-radius: 7px;
+
+    cursor: pointer;
+
+}
+
+
+.result-buttons button:hover {
+
+    border-color: var(--theme-primary);
+
+    color: var(--theme-primary);
+
+    box-shadow:
+        0 0 10px var(--theme-glow);
+
+}
+
+
+/* =========================================
+   RESPONSIVE — ÉCRANS MOYENS
+========================================= */
+
+@media (max-width: 900px) {
+
+    .chess-page {
+
+        gap: 15px;
+
+    }
+
+
+    .move-list {
+
+        width: 160px;
+
+    }
+
+}
+
+
+/* =========================================
+   RESPONSIVE — PETIT ÉCRAN
+========================================= */
+
+@media (max-width: 700px) {
+
+    body {
+
+        padding: 10px;
+
+    }
+
+
+    h1 {
+
+        font-size: 27px;
+
+    }
+
+
+    .chess-page {
+
+        flex-direction: column;
+
+        align-items: center;
+
+    }
+
+
+    .move-list {
+
+        order: 2;
+
+        width: 480px;
+
+        height: 180px;
+
+    }
+
+
+    #moves {
+
+        height: 125px;
+
+    }
+
+
+    .game-buttons {
+
+        flex-wrap: wrap;
+
+    }
+
+}
+
+
+/* =========================================
+   ÉCRAN PETIT EN HAUTEUR
+========================================= */
+
+@media (max-height: 750px) and (min-width: 701px) {
+
+    body {
+
+        padding: 8px;
+
+    }
+
+
+    h1 {
+
+        font-size: 28px;
+
+    }
+
+
+    .turn {
+
+        margin-bottom: 5px;
+
+    }
+
+
+    .player {
+
+        margin-bottom: 3px;
+
+    }
+
+
+    #board {
+
+        width: 416px;
+
+        height: 416px;
+
+        grid-template-columns:
+            repeat(8, 52px);
+
+        grid-template-rows:
+            repeat(8, 52px);
+
+    }
+
+
+    .square {
+
+        width: 52px;
+
+        height: 52px;
+
+    }
+
+
+    .piece {
+
+        font-size: 39px;
+
+    }
+
+
+    .numbers {
+
+        height: 416px;
+
+    }
+
+
+    .numbers span {
+
+        height: 52px;
+
+    }
+
+
+    .letters {
+
+        width: 416px;
+
+        grid-template-columns:
+            repeat(8, 52px);
+
+    }
+
+
+    .letters span {
+
+        width: 52px;
+
+    }
+
+
+    .move-list {
+
+        height: 416px;
+
+    }
+
+
+    #moves {
+
+        height: 360px;
+
+    }
+
+
+    .player {
+
+        width: 416px;
+
+    }
+
+}
+
+
+/* =========================================
+   CERCLE — CLIC DROIT
+========================================= */
+
+.marked-square {
+
+    position: relative;
+
+}
+
+
+.marked-square::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 58%;
+
+    height: 58%;
+
+    left: 50%;
+
+    top: 50%;
+
+    transform:
+        translate(-50%, -50%);
+
+    border:
+        4px solid var(--theme-primary);
+
+    border-radius: 50%;
+
+    box-shadow:
+
+        0 0 8px var(--theme-primary),
+
+        0 0 18px var(--theme-glow);
+
+    pointer-events: none;
+
+    z-index: 20;
+
+}
+
+
+/* =========================================
+   TRANSITION GLOBALE
+========================================= */
+
+body,
+#board,
+.square,
+.move-list,
+.clock,
+.game-buttons button,
+.board-controls button,
+.result-box {
+
+    transition:
+
+        background-color 0.35s ease,
+        border-color 0.35s ease,
+        box-shadow 0.35s ease,
+        color 0.35s ease;
+
+}
