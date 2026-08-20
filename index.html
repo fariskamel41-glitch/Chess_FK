@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -30,7 +31,9 @@
 <header class="header">
 
     <div class="logo">
+
         CHESS<span>_FK</span>
+
     </div>
 
 
@@ -58,12 +61,15 @@
     <div class="header-actions">
 
 
-        <!-- THEME -->
+        <!-- ==================================================
+             THEME BUTTON
+        ================================================== -->
 
         <button
             class="theme-toggle"
             id="themeToggle"
             aria-label="Choose theme"
+            type="button"
         >
 
             <span class="theme-toggle-icon">
@@ -75,11 +81,17 @@
         </button>
 
 
-        <!-- LOGIN -->
+        <!-- ==================================================
+             LOGIN BUTTON
+             
+             IMPORTANT :
+             auth.js utilise cet ID.
+        ================================================== -->
 
         <button
             class="login-btn"
             id="loginButton"
+            type="button"
         >
 
             SIGN IN
@@ -116,11 +128,15 @@
 
     <div class="theme-panel-header">
 
+
         <div>
 
             <p class="theme-label">
+
                 CHESS_FK CUSTOMIZATION
+
             </p>
+
 
             <h2>
 
@@ -140,6 +156,7 @@
             class="theme-close"
             id="themeClose"
             aria-label="Close theme selector"
+            type="button"
         >
 
             ×
@@ -166,11 +183,14 @@
     <div class="theme-grid">
 
 
-        <!-- RED -->
+        <!-- ==================================================
+             RED
+        ================================================== -->
 
         <button
             class="theme-card active"
             data-theme="red"
+            type="button"
         >
 
             <div class="theme-board red-board">
@@ -200,6 +220,7 @@
 
             <div class="theme-card-info">
 
+
                 <div>
 
                     <strong>
@@ -217,17 +238,21 @@
                     ✓
                 </span>
 
+
             </div>
 
         </button>
 
 
 
-        <!-- BLUE -->
+        <!-- ==================================================
+             BLUE
+        ================================================== -->
 
         <button
             class="theme-card"
             data-theme="blue"
+            type="button"
         >
 
             <div class="theme-board blue-board">
@@ -257,6 +282,7 @@
 
             <div class="theme-card-info">
 
+
                 <div>
 
                     <strong>
@@ -274,17 +300,21 @@
                     ✓
                 </span>
 
+
             </div>
 
         </button>
 
 
 
-        <!-- GREEN -->
+        <!-- ==================================================
+             GREEN
+        ================================================== -->
 
         <button
             class="theme-card"
             data-theme="green"
+            type="button"
         >
 
             <div class="theme-board green-board">
@@ -314,6 +344,7 @@
 
             <div class="theme-card-info">
 
+
                 <div>
 
                     <strong>
@@ -331,17 +362,21 @@
                     ✓
                 </span>
 
+
             </div>
 
         </button>
 
 
 
-        <!-- PURPLE -->
+        <!-- ==================================================
+             PURPLE
+        ================================================== -->
 
         <button
             class="theme-card"
             data-theme="purple"
+            type="button"
         >
 
             <div class="theme-board purple-board">
@@ -371,6 +406,7 @@
 
             <div class="theme-card-info">
 
+
                 <div>
 
                     <strong>
@@ -388,6 +424,7 @@
                     ✓
                 </span>
 
+
             </div>
 
         </button>
@@ -396,6 +433,10 @@
     </div>
 
 
+
+    <!-- ==================================================
+         THEME FOOTER
+    ================================================== -->
 
     <div class="theme-panel-footer">
 
@@ -413,354 +454,369 @@
 
 
 <!-- ======================================================
-     HERO
+     MAIN
 ====================================================== -->
 
 <main>
 
 
-<section class="hero">
+    <!-- ==================================================
+         HERO
+    ================================================== -->
+
+    <section class="hero">
 
 
-    <div class="hero-content">
+        <div class="hero-content">
+
+
+            <p class="red-label">
+
+                ♟ THE CHESS PLATFORM BY FARIS
+
+            </p>
+
+
+
+            <h1>
+
+                PLAY.<br>
+
+                <span>
+                    THINK.
+                </span><br>
+
+                DOMINATE.
+
+            </h1>
+
+
+
+            <p class="hero-description">
+
+                Play chess. Improve your game.
+                Challenge players from around the world
+                and discover the story behind Faris' chess journey.
+
+            </p>
+
+
+
+            <div class="hero-buttons">
+
+
+                <a
+                    href="pages/plat.html"
+                    class="btn-main"
+                >
+
+                    ♟ PLAY CHESS
+
+                </a>
+
+
+
+                <a
+                    href="pages/faris-ai.html"
+                    class="btn-secondary"
+                >
+
+                    PLAY AGAINST FARIS →
+
+                </a>
+
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- ==================================================
+             HERO CHESS
+        ================================================== -->
+
+        <div class="hero-chess">
+
+
+            <div class="red-glow"></div>
+
+
+            <div class="chess-piece">
+                ♛
+            </div>
+
+
+            <img
+                src="images/playfaris.jpg"
+                alt="Faris"
+                class="faris-photo"
+            >
+
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- ==================================================
+         FEATURES
+    ================================================== -->
+
+    <section
+        class="features"
+        id="train"
+    >
+
+
+        <div class="section-title">
+
+
+            <p>
+                DISCOVER CHESS_FK
+            </p>
+
+
+            <h2>
+
+                MORE THAN<br>
+
+                <span>
+                    JUST CHESS.
+                </span>
+
+            </h2>
+
+
+        </div>
+
+
+
+        <div class="feature-grid">
+
+
+            <!-- ==================================================
+                 PLAY
+            ================================================== -->
+
+            <div class="feature-card">
+
+
+                <div class="feature-number">
+                    01
+                </div>
+
+
+                <div class="feature-icon">
+                    ♟
+                </div>
+
+
+                <h3>
+                    PLAY
+                </h3>
+
+
+                <p>
+
+                    Play chess against the computer
+                    or challenge other players.
+
+                </p>
+
+
+                <a
+                    href="pages/plat.html"
+                    class="card-btn"
+                >
+
+                    PLAY CHESS →
+
+                </a>
+
+
+            </div>
+
+
+
+            <!-- ==================================================
+                 TRAIN
+            ================================================== -->
+
+            <div class="feature-card">
+
+
+                <div class="feature-number">
+                    02
+                </div>
+
+
+                <div class="feature-icon">
+                    🧠
+                </div>
+
+
+                <h3>
+                    TRAIN
+                </h3>
+
+
+                <p>
+
+                    Improve your tactics, analyse
+                    your games and become stronger.
+
+                </p>
+
+
+            </div>
+
+
+
+            <!-- ==================================================
+                 FARIS
+            ================================================== -->
+
+            <div
+                class="feature-card faris-card"
+                id="faris"
+            >
+
+
+                <div class="feature-number">
+                    03
+                </div>
+
+
+                <div class="feature-icon">
+                    ⚔️
+                </div>
+
+
+                <h3>
+                    PLAY AGAINST FARIS
+                </h3>
+
+
+                <p>
+
+                    Challenge different versions
+                    of Faris throughout his chess journey.
+
+                </p>
+
+
+                <a
+                    href="pages/faris-ai.html"
+                    class="card-btn"
+                >
+
+                    CHALLENGE FARIS →
+
+                </a>
+
+
+            </div>
+
+
+
+            <!-- ==================================================
+                 TOURNAMENTS
+            ================================================== -->
+
+            <div
+                class="feature-card"
+                id="tournaments"
+            >
+
+
+                <div class="feature-number">
+                    04
+                </div>
+
+
+                <div class="feature-icon">
+                    🏆
+                </div>
+
+
+                <h3>
+                    TOURNAMENTS
+                </h3>
+
+
+                <p>
+
+                    Discover championships,
+                    achievements and competitions.
+
+                </p>
+
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- ==================================================
+         FARIS STORY
+    ================================================== -->
+
+    <section class="faris-section">
+
+
+        <div class="faris-line"></div>
 
 
         <p class="red-label">
-
-            ♟ THE CHESS PLATFORM BY FARIS
-
+            THE STORY
         </p>
 
-
-
-        <h1>
-
-            PLAY.<br>
-
-            <span>
-                THINK.
-            </span><br>
-
-            DOMINATE.
-
-        </h1>
-
-
-
-        <p class="hero-description">
-
-            Play chess. Improve your game.
-            Challenge players from around the world
-            and discover the story behind Faris' chess journey.
-
-        </p>
-
-
-
-        <div class="hero-buttons">
-
-
-            <a
-                href="pages/plat.html"
-                class="btn-main"
-            >
-
-                ♟ PLAY CHESS
-
-            </a>
-
-
-
-            <a
-                href="pages/faris-ai.html"
-                class="btn-secondary"
-            >
-
-                PLAY AGAINST FARIS →
-
-            </a>
-
-
-        </div>
-
-
-    </div>
-
-
-
-    <!-- CHESS GLOW -->
-
-    <div class="hero-chess">
-
-
-        <div class="red-glow"></div>
-
-
-        <div class="chess-piece">
-
-            ♛
-
-        </div>
-
-
-        <img
-            src="images/playfaris.jpg"
-            alt="Faris"
-            class="faris-photo"
-        >
-
-
-    </div>
-
-
-</section>
-
-
-
-<!-- ======================================================
-     FEATURES
-====================================================== -->
-
-<section
-    class="features"
-    id="train"
->
-
-
-    <div class="section-title">
-
-
-        <p>
-            DISCOVER CHESS_FK
-        </p>
 
 
         <h2>
 
-            MORE THAN<br>
+            FROM A YOUNG<br>
 
             <span>
-                JUST CHESS.
-            </span>
+                CHESS PLAYER
+            </span><br>
+
+            TO CHESS_FK.
 
         </h2>
 
 
-    </div>
+
+        <p>
+
+            Discover Faris' journey through chess,
+            from his first games to competitions,
+            championships and everything in between.
+
+        </p>
 
 
 
-    <div class="feature-grid">
-
-
-        <!-- PLAY -->
-
-        <div class="feature-card">
-
-
-            <div class="feature-number">
-                01
-            </div>
-
-
-            <div class="feature-icon">
-                ♟
-            </div>
-
-
-            <h3>
-                PLAY
-            </h3>
-
-
-            <p>
-
-                Play chess against the computer
-                or challenge other players.
-
-            </p>
-
-
-            <a
-                href="pages/plat.html"
-                class="card-btn"
-            >
-
-                PLAY CHESS →
-
-            </a>
-
-
-        </div>
-
-
-
-        <!-- TRAIN -->
-
-        <div class="feature-card">
-
-
-            <div class="feature-number">
-                02
-            </div>
-
-
-            <div class="feature-icon">
-                🧠
-            </div>
-
-
-            <h3>
-                TRAIN
-            </h3>
-
-
-            <p>
-
-                Improve your tactics, analyse
-                your games and become stronger.
-
-            </p>
-
-
-        </div>
-
-
-
-        <!-- FARIS -->
-
-        <div
-            class="feature-card faris-card"
-            id="faris"
+        <a
+            href="#"
+            class="outline-btn"
         >
 
+            DISCOVER THE JOURNEY →
 
-            <div class="feature-number">
-                03
-            </div>
-
-
-            <div class="feature-icon">
-                ⚔️
-            </div>
+        </a>
 
 
-            <h3>
-                PLAY AGAINST FARIS
-            </h3>
-
-
-            <p>
-
-                Challenge different versions
-                of Faris throughout his chess journey.
-
-            </p>
-
-
-            <a
-                href="pages/faris-ai.html"
-                class="card-btn"
-            >
-
-                CHALLENGE FARIS →
-
-            </a>
-
-
-        </div>
-
-
-
-        <!-- TOURNAMENTS -->
-
-        <div
-            class="feature-card"
-            id="tournaments"
-        >
-
-
-            <div class="feature-number">
-                04
-            </div>
-
-
-            <div class="feature-icon">
-                🏆
-            </div>
-
-
-            <h3>
-                TOURNAMENTS
-            </h3>
-
-
-            <p>
-
-                Discover championships,
-                achievements and competitions.
-
-            </p>
-
-
-        </div>
-
-
-    </div>
-
-
-</section>
-
-
-
-<!-- ======================================================
-     FARIS STORY
-====================================================== -->
-
-<section class="faris-section">
-
-
-    <div class="faris-line"></div>
-
-
-    <p class="red-label">
-        THE STORY
-    </p>
-
-
-    <h2>
-
-        FROM A YOUNG<br>
-
-        <span>
-            CHESS PLAYER
-        </span><br>
-
-        TO CHESS_FK.
-
-    </h2>
-
-
-    <p>
-
-        Discover Faris' journey through chess,
-        from his first games to competitions,
-        championships and everything in between.
-
-    </p>
-
-
-    <a
-        href="#"
-        class="outline-btn"
-    >
-
-        DISCOVER THE JOURNEY →
-
-    </a>
-
-
-</section>
+    </section>
 
 
 </main>
@@ -793,7 +849,7 @@
 
 
 <!-- ======================================================
-     SUPABASE
+     SUPABASE JS
 ====================================================== -->
 
 <script
@@ -801,167 +857,31 @@
 ></script>
 
 
+
+<!-- ======================================================
+     CHESS_FK SUPABASE CONFIG
+====================================================== -->
+
 <script src="js/supabase.js"></script>
-
-
-<script src="js/theme.js"></script>
 
 
 
 <!-- ======================================================
-     CHESS_FK LOGIN SYSTEM
+     CHESS_FK AUTHENTICATION
 ====================================================== -->
 
-<script>
-
-document.addEventListener(
-    "DOMContentLoaded",
-    async function () {
+<script src="js/auth.js"></script>
 
 
-        const loginButton =
-            document.getElementById(
-                "loginButton"
-            );
 
+<!-- ======================================================
+     CHESS_FK THEME
+====================================================== -->
 
-        if (!loginButton) {
-
-            console.error(
-                "❌ CHESS_FK: loginButton introuvable"
-            );
-
-            return;
-
-        }
-
-
-        // ==============================================
-        // CHECK USER
-        // ==============================================
-
-        const user =
-            await window.getChessFKUser();
-
-
-        if (user) {
-
-            loginButton.textContent =
-                "ACCOUNT";
-
-            loginButton.classList.add(
-                "logged-in"
-            );
-
-        }
-
-
-        // ==============================================
-        // LOGIN BUTTON
-        // ==============================================
-
-        loginButton.addEventListener(
-            "click",
-            async function () {
-
-
-                const currentUser =
-                    await window.getChessFKUser();
-
-
-                if (currentUser) {
-
-                    console.log(
-                        "👤 Déjà connecté:",
-                        currentUser.email
-                    );
-
-                    alert(
-                        "Tu es connecté avec :\n\n" +
-                        currentUser.email
-                    );
-
-                    return;
-
-                }
-
-
-                await window.signInWithGoogle();
-
-            }
-        );
-
-
-        // ==============================================
-        // USER CONNECTED
-        // ==============================================
-
-        window.addEventListener(
-            "chessfk-user-connected",
-            function (event) {
-
-
-                const user =
-                    event.detail;
-
-
-                if (!user) {
-                    return;
-                }
-
-
-                loginButton.textContent =
-                    "ACCOUNT";
-
-
-                loginButton.classList.add(
-                    "logged-in"
-                );
-
-
-                console.log(
-                    "♟️ CHESS_FK ACCOUNT CONNECTED"
-                );
-
-
-                console.log(
-                    "Email:",
-                    user.email
-                );
-
-
-            }
-        );
-
-
-        // ==============================================
-        // USER DISCONNECTED
-        // ==============================================
-
-        window.addEventListener(
-            "chessfk-user-disconnected",
-            function () {
-
-
-                loginButton.textContent =
-                    "SIGN IN";
-
-
-                loginButton.classList.remove(
-                    "logged-in"
-                );
-
-
-            }
-        );
-
-
-    }
-);
-
-</script>
+<script src="js/theme.js"></script>
 
 
 </body>
 
 </html>
+```
