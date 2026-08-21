@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -18,6 +17,108 @@
         href="css/style.css"
     >
 
+    <style>
+
+        /* =========================================
+           ACCOUNT BUTTON
+        ========================================= */
+
+        .account-area {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .login-btn,
+        .profile-button {
+            cursor: pointer;
+        }
+
+        .profile-button {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.05);
+            color: white;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-weight: 700;
+        }
+
+        .profile-button img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .profile-button.logged-in {
+            display: flex;
+        }
+
+        .profile-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: calc(100% + 12px);
+            width: 280px;
+            padding: 18px;
+            background: #17110e;
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 14px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            z-index: 9999;
+        }
+
+        .profile-menu.active {
+            display: block;
+        }
+
+        .profile-menu-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .profile-menu-header img {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .profile-menu-name {
+            color: white;
+            font-weight: 800;
+        }
+
+        .profile-menu-email {
+            color: #999;
+            font-size: 12px;
+            margin-top: 3px;
+            word-break: break-word;
+        }
+
+        .profile-menu button {
+            width: 100%;
+            margin-top: 14px;
+            padding: 11px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .logout-button {
+            background: #d62828;
+            color: white;
+        }
+
+    </style>
+
 </head>
 
 
@@ -31,9 +132,7 @@
 <header class="header">
 
     <div class="logo">
-
         CHESS<span>_FK</span>
-
     </div>
 
 
@@ -61,15 +160,13 @@
     <div class="header-actions">
 
 
-        <!-- ==================================================
-             THEME BUTTON
-        ================================================== -->
+        <!-- THEME -->
 
         <button
             class="theme-toggle"
             id="themeToggle"
-            aria-label="Choose theme"
             type="button"
+            aria-label="Choose theme"
         >
 
             <span class="theme-toggle-icon">
@@ -81,23 +178,101 @@
         </button>
 
 
-        <!-- ==================================================
-             LOGIN BUTTON
-             
-             IMPORTANT :
-             auth.js utilise cet ID.
-        ================================================== -->
+        <!-- =================================================
+             ACCOUNT
+        ================================================= -->
 
-        <button
-            class="login-btn"
-            id="loginButton"
-            type="button"
-        >
+        <div class="account-area">
 
-            SIGN IN
 
-        </button>
+            <!-- SIGN IN -->
 
+            <button
+                class="login-btn"
+                id="loginButton"
+                type="button"
+            >
+
+                SIGN IN
+
+            </button>
+
+
+            <!-- PROFILE -->
+
+            <button
+                class="profile-button"
+                id="profileButton"
+                type="button"
+            >
+
+                <img
+                    id="profileAvatar"
+                    src=""
+                    alt="Profile"
+                >
+
+                <span id="profileName">
+                    PLAYER
+                </span>
+
+            </button>
+
+
+            <!-- PROFILE MENU -->
+
+            <div
+                class="profile-menu"
+                id="profileMenu"
+            >
+
+                <div class="profile-menu-header">
+
+                    <img
+                        id="menuAvatar"
+                        src=""
+                        alt="Profile"
+                    >
+
+                    <div>
+
+                        <div
+                            class="profile-menu-name"
+                            id="menuName"
+                        >
+                            PLAYER
+                        </div>
+
+                        <div
+                            class="profile-menu-email"
+                            id="menuEmail"
+                        >
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    id="myProfileButton"
+                    type="button"
+                >
+                    MY PROFILE
+                </button>
+
+
+                <button
+                    id="logoutButton"
+                    class="logout-button"
+                    type="button"
+                >
+                    SIGN OUT
+                </button>
+
+            </div>
+
+        </div>
 
     </div>
 
@@ -115,7 +290,6 @@
 ></div>
 
 
-
 <!-- ======================================================
      THEME PANEL
 ====================================================== -->
@@ -125,46 +299,31 @@
     id="themePanel"
 >
 
-
     <div class="theme-panel-header">
-
 
         <div>
 
             <p class="theme-label">
-
                 CHESS_FK CUSTOMIZATION
-
             </p>
 
-
             <h2>
-
-                CHOOSE YOUR
-                <br>
-
-                <span>
-                    STYLE.
-                </span>
-
+                CHOOSE YOUR<br>
+                <span>STYLE.</span>
             </h2>
 
         </div>
 
-
         <button
             class="theme-close"
             id="themeClose"
-            aria-label="Close theme selector"
             type="button"
+            aria-label="Close theme selector"
         >
-
             ×
-
         </button>
 
     </div>
-
 
 
     <p class="theme-description">
@@ -175,17 +334,10 @@
     </p>
 
 
-
-    <!-- ==================================================
-         THEME GRID
-    ================================================== -->
-
     <div class="theme-grid">
 
 
-        <!-- ==================================================
-             RED
-        ================================================== -->
+        <!-- RED -->
 
         <button
             class="theme-card active"
@@ -195,31 +347,21 @@
 
             <div class="theme-board red-board">
 
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span>
+                <span></span><span></span>
 
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span>
+                <span></span><span></span>
 
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span>
+                <span></span><span></span>
 
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span>
+                <span></span><span></span>
 
             </div>
 
-
             <div class="theme-card-info">
-
 
                 <div>
 
@@ -233,21 +375,16 @@
 
                 </div>
 
-
                 <span class="theme-check">
                     ✓
                 </span>
-
 
             </div>
 
         </button>
 
 
-
-        <!-- ==================================================
-             BLUE
-        ================================================== -->
+        <!-- BLUE -->
 
         <button
             class="theme-card"
@@ -257,31 +394,21 @@
 
             <div class="theme-board blue-board">
 
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span>
+                <span></span><span></span>
 
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span>
+                <span></span><span></span>
 
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span>
+                <span></span><span></span>
 
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span>
+                <span></span><span></span>
 
             </div>
 
-
             <div class="theme-card-info">
-
 
                 <div>
 
@@ -295,21 +422,16 @@
 
                 </div>
 
-
                 <span class="theme-check">
                     ✓
                 </span>
-
 
             </div>
 
         </button>
 
 
-
-        <!-- ==================================================
-             GREEN
-        ================================================== -->
+        <!-- GREEN -->
 
         <button
             class="theme-card"
@@ -319,31 +441,21 @@
 
             <div class="theme-board green-board">
 
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span>
+                <span></span><span></span>
 
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span>
+                <span></span><span></span>
 
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span>
+                <span></span><span></span>
 
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span>
+                <span></span><span></span>
 
             </div>
 
-
             <div class="theme-card-info">
-
 
                 <div>
 
@@ -357,21 +469,16 @@
 
                 </div>
 
-
                 <span class="theme-check">
                     ✓
                 </span>
-
 
             </div>
 
         </button>
 
 
-
-        <!-- ==================================================
-             PURPLE
-        ================================================== -->
+        <!-- PURPLE -->
 
         <button
             class="theme-card"
@@ -381,31 +488,21 @@
 
             <div class="theme-board purple-board">
 
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span>
+                <span></span><span></span>
 
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span>
+                <span></span><span></span>
 
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span>
+                <span></span><span></span>
 
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span>
+                <span></span><span></span>
 
             </div>
 
-
             <div class="theme-card-info">
-
 
                 <div>
 
@@ -419,24 +516,16 @@
 
                 </div>
 
-
                 <span class="theme-check">
                     ✓
                 </span>
-
 
             </div>
 
         </button>
 
-
     </div>
 
-
-
-    <!-- ==================================================
-         THEME FOOTER
-    ================================================== -->
 
     <div class="theme-panel-footer">
 
@@ -447,7 +536,6 @@
         YOUR GAME.
 
     </div>
-
 
 </aside>
 
@@ -460,22 +548,15 @@
 <main>
 
 
-    <!-- ==================================================
-         HERO
-    ================================================== -->
+    <!-- HERO -->
 
     <section class="hero">
 
-
         <div class="hero-content">
 
-
             <p class="red-label">
-
                 ♟ THE CHESS PLATFORM BY FARIS
-
             </p>
-
 
 
             <h1>
@@ -491,7 +572,6 @@
             </h1>
 
 
-
             <p class="hero-description">
 
                 Play chess. Improve your game.
@@ -501,44 +581,29 @@
             </p>
 
 
-
             <div class="hero-buttons">
-
 
                 <a
                     href="pages/plat.html"
                     class="btn-main"
                 >
-
                     ♟ PLAY CHESS
-
                 </a>
-
 
 
                 <a
                     href="pages/faris-ai.html"
                     class="btn-secondary"
                 >
-
                     PLAY AGAINST FARIS →
-
                 </a>
 
-
             </div>
-
 
         </div>
 
 
-
-        <!-- ==================================================
-             HERO CHESS
-        ================================================== -->
-
         <div class="hero-chess">
-
 
             <div class="red-glow"></div>
 
@@ -554,31 +619,24 @@
                 class="faris-photo"
             >
 
-
         </div>
-
 
     </section>
 
 
 
-    <!-- ==================================================
-         FEATURES
-    ================================================== -->
+    <!-- FEATURES -->
 
     <section
         class="features"
         id="train"
     >
 
-
         <div class="section-title">
-
 
             <p>
                 DISCOVER CHESS_FK
             </p>
-
 
             <h2>
 
@@ -590,35 +648,25 @@
 
             </h2>
 
-
         </div>
-
 
 
         <div class="feature-grid">
 
 
-            <!-- ==================================================
-                 PLAY
-            ================================================== -->
-
             <div class="feature-card">
-
 
                 <div class="feature-number">
                     01
                 </div>
 
-
                 <div class="feature-icon">
                     ♟
                 </div>
 
-
                 <h3>
                     PLAY
                 </h3>
-
 
                 <p>
 
@@ -627,42 +675,30 @@
 
                 </p>
 
-
                 <a
                     href="pages/plat.html"
                     class="card-btn"
                 >
-
                     PLAY CHESS →
-
                 </a>
-
 
             </div>
 
 
 
-            <!-- ==================================================
-                 TRAIN
-            ================================================== -->
-
             <div class="feature-card">
-
 
                 <div class="feature-number">
                     02
                 </div>
 
-
                 <div class="feature-icon">
                     🧠
                 </div>
 
-
                 <h3>
                     TRAIN
                 </h3>
-
 
                 <p>
 
@@ -671,35 +707,26 @@
 
                 </p>
 
-
             </div>
 
 
-
-            <!-- ==================================================
-                 FARIS
-            ================================================== -->
 
             <div
                 class="feature-card faris-card"
                 id="faris"
             >
 
-
                 <div class="feature-number">
                     03
                 </div>
-
 
                 <div class="feature-icon">
                     ⚔️
                 </div>
 
-
                 <h3>
                     PLAY AGAINST FARIS
                 </h3>
-
 
                 <p>
 
@@ -708,45 +735,33 @@
 
                 </p>
 
-
                 <a
                     href="pages/faris-ai.html"
                     class="card-btn"
                 >
-
                     CHALLENGE FARIS →
-
                 </a>
-
 
             </div>
 
 
-
-            <!-- ==================================================
-                 TOURNAMENTS
-            ================================================== -->
 
             <div
                 class="feature-card"
                 id="tournaments"
             >
 
-
                 <div class="feature-number">
                     04
                 </div>
-
 
                 <div class="feature-icon">
                     🏆
                 </div>
 
-
                 <h3>
                     TOURNAMENTS
                 </h3>
-
 
                 <p>
 
@@ -755,31 +770,23 @@
 
                 </p>
 
-
             </div>
 
-
         </div>
-
 
     </section>
 
 
 
-    <!-- ==================================================
-         FARIS STORY
-    ================================================== -->
+    <!-- FARIS STORY -->
 
     <section class="faris-section">
 
-
         <div class="faris-line"></div>
-
 
         <p class="red-label">
             THE STORY
         </p>
-
 
 
         <h2>
@@ -795,7 +802,6 @@
         </h2>
 
 
-
         <p>
 
             Discover Faris' journey through chess,
@@ -805,19 +811,14 @@
         </p>
 
 
-
         <a
             href="#"
             class="outline-btn"
         >
-
             DISCOVER THE JOURNEY →
-
         </a>
 
-
     </section>
-
 
 </main>
 
@@ -829,54 +830,41 @@
 
 <footer>
 
-
     <div class="footer-logo">
 
-        CHESS<span>_FK</span>
+        CHESS<span>
+            _FK
+        </span>
 
     </div>
 
 
     <p>
-
         © 2026 CHESS_FK — Built by Faris
-
     </p>
-
 
 </footer>
 
 
 
 <!-- ======================================================
-     SUPABASE JS
+     SCRIPTS
 ====================================================== -->
+
+<!-- Supabase library -->
 
 <script
     src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
 ></script>
 
 
-
-<!-- ======================================================
-     CHESS_FK SUPABASE CONFIG
-====================================================== -->
-
-<script src="js/supabase.js"></script>
-
-
-
-<!-- ======================================================
-     CHESS_FK AUTHENTICATION
-====================================================== -->
+<!-- IMPORTANT:
+     NE PAS charger supabase.js ici.
+     auth.js crée déjà son client Supabase.
+-->
 
 <script src="js/auth.js"></script>
 
-
-
-<!-- ======================================================
-     CHESS_FK THEME
-====================================================== -->
 
 <script src="js/theme.js"></script>
 
@@ -884,4 +872,3 @@
 </body>
 
 </html>
-```
