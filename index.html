@@ -1,938 +1,255 @@
 <!DOCTYPE html>
+
 <html lang="fr">
 
 <head>
-
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <meta
-        name="description"
-        content="CHESS_FK — Play chess, challenge Faris AI and build your chess profile."
-    >
-
-    <meta name="theme-color" content="#17110e">
-
-    <title>CHESS_FK — Play Chess</title>
-
-    <!-- ==========================================
-         GOOGLE FONTS
-    =========================================== -->
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@600;700;800&display=swap"
-        rel="stylesheet"
-    >
-
-    <!-- ==========================================
-         MAIN CSS
-    =========================================== -->
-
-    <link
-        rel="stylesheet"
-        href="css/style.css"
-    >
-
-    <style>
-
-        /* ==================================================
-           CHESS_FK HOMEPAGE
-           Fallback / professional homepage styling
-        ================================================== */
-
-        :root {
-            --fk-bg: #100b09;
-            --fk-panel: rgba(28, 19, 15, 0.88);
-            --fk-panel-light: rgba(255,255,255,0.05);
-            --fk-text: #f7efe6;
-            --fk-muted: #b9aaa0;
-            --fk-red: #c32636;
-            --fk-red-light: #ed4051;
-            --fk-gold: #d6a85f;
-            --fk-border: rgba(255,255,255,0.09);
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            margin: 0;
-            min-height: 100vh;
-            background:
-                radial-gradient(
-                    circle at 20% 10%,
-                    rgba(195, 38, 54, 0.13),
-                    transparent 30%
-                ),
-                radial-gradient(
-                    circle at 80% 20%,
-                    rgba(214, 168, 95, 0.08),
-                    transparent 28%
-                ),
-                var(--fk-bg);
-            color: var(--fk-text);
-            font-family: "Inter", Arial, sans-serif;
-        }
-
-        a {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        button {
-            font-family: inherit;
-        }
-
-        /* ==================================================
-           HEADER
-        ================================================== */
-
-        .fk-header {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-
-            width: 100%;
-
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-
-            padding: 18px 5%;
-
-            background: rgba(12, 8, 7, 0.86);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-
-            border-bottom: 1px solid var(--fk-border);
-        }
-
-        .fk-logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-
-            font-family: "Orbitron", sans-serif;
-            font-size: 20px;
-            font-weight: 800;
-            letter-spacing: 1px;
-        }
-
-        .fk-logo-piece {
-            font-size: 28px;
-        }
-
-        .fk-nav {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .fk-nav a {
-            padding: 10px 15px;
-            border-radius: 10px;
-
-            color: #cfc3bb;
-
-            font-size: 13px;
-            font-weight: 700;
-            letter-spacing: .4px;
-
-            transition:
-                background .2s ease,
-                color .2s ease,
-                transform .2s ease;
-        }
-
-        .fk-nav a:hover {
-            background: rgba(255,255,255,.06);
-            color: white;
-            transform: translateY(-1px);
-        }
-
-        .fk-actions {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        #loginButton {
-            border: 1px solid rgba(255,255,255,.12);
-            border-radius: 10px;
-
-            padding: 10px 17px;
-
-            background: linear-gradient(
-                135deg,
-                #c32636,
-                #8e1725
-            );
-
-            color: white;
-
-            font-weight: 800;
-            cursor: pointer;
-
-            box-shadow:
-                0 8px 25px rgba(195,38,54,.18);
-
-            transition:
-                transform .2s ease,
-                box-shadow .2s ease;
-        }
-
-        #loginButton:hover {
-            transform: translateY(-2px);
-
-            box-shadow:
-                0 12px 30px rgba(195,38,54,.3);
-        }
-
-        .fk-theme-button {
-            width: 42px;
-            height: 42px;
-
-            border: 1px solid var(--fk-border);
-            border-radius: 10px;
-
-            background: rgba(255,255,255,.04);
-            color: white;
-
-            cursor: pointer;
-            font-size: 17px;
-        }
-
-        /* ==================================================
-           HERO
-        ================================================== */
-
-        .fk-hero {
-            position: relative;
-            overflow: hidden;
-
-            min-height: 650px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            padding: 80px 5%;
-
-            text-align: center;
-        }
-
-        .fk-hero::before {
-            content: "";
-
-            position: absolute;
-            inset: 0;
-
-            opacity: .16;
-
-            background-image:
-                linear-gradient(
-                    45deg,
-                    rgba(255,255,255,.05) 25%,
-                    transparent 25%,
-                    transparent 75%,
-                    rgba(255,255,255,.05) 75%
-                );
-
-            background-size: 110px 110px;
-
-            pointer-events: none;
-        }
-
-        .fk-hero::after {
-            content: "";
-
-            position: absolute;
-
-            width: 500px;
-            height: 500px;
-
-            background: rgba(195,38,54,.12);
-
-            filter: blur(100px);
-            border-radius: 50%;
-
-            pointer-events: none;
-        }
-
-        .fk-hero-content {
-            position: relative;
-            z-index: 2;
-
-            max-width: 900px;
-        }
-
-        .fk-eyebrow {
-            margin: 0 0 16px;
-
-            color: var(--fk-gold);
-
-            font-size: 12px;
-            font-weight: 800;
-
-            letter-spacing: 4px;
-            text-transform: uppercase;
-        }
-
-        .fk-title {
-            margin: 0;
-
-            font-family: "Orbitron", sans-serif;
-
-            font-size: clamp(52px, 9vw, 105px);
-            line-height: .95;
-
-            letter-spacing: -4px;
-
-            text-shadow:
-                0 0 40px rgba(195,38,54,.2);
-        }
-
-        .fk-title span {
-            color: var(--fk-red-light);
-        }
-
-        .fk-subtitle {
-            max-width: 650px;
-
-            margin: 25px auto 0;
-
-            color: var(--fk-muted);
-
-            font-size: clamp(16px, 2vw, 20px);
-            line-height: 1.7;
-        }
-
-        .fk-hero-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 14px;
-
-            margin-top: 35px;
-
-            flex-wrap: wrap;
-        }
-
-        .fk-button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-
-            min-width: 190px;
-
-            padding: 14px 24px;
-
-            border-radius: 12px;
-
-            font-weight: 800;
-            font-size: 14px;
-
-            transition:
-                transform .2s ease,
-                box-shadow .2s ease,
-                background .2s ease;
-        }
-
-        .fk-button:hover {
-            transform: translateY(-3px);
-        }
-
-        .fk-button-primary {
-            background: linear-gradient(
-                135deg,
-                #d52c40,
-                #9f1827
-            );
-
-            box-shadow:
-                0 15px 40px rgba(195,38,54,.22);
-        }
-
-        .fk-button-primary:hover {
-            box-shadow:
-                0 20px 50px rgba(195,38,54,.35);
-        }
-
-        .fk-button-secondary {
-            border: 1px solid var(--fk-border);
-            background: rgba(255,255,255,.05);
-        }
-
-        .fk-button-secondary:hover {
-            background: rgba(255,255,255,.09);
-        }
-
-        /* ==================================================
-           FEATURES
-        ================================================== */
-
-        .fk-section {
-            width: min(1180px, 90%);
-
-            margin: 0 auto;
-
-            padding: 75px 0;
-        }
-
-        .fk-section-heading {
-            margin-bottom: 35px;
-        }
-
-        .fk-section-heading small {
-            color: var(--fk-red-light);
-
-            font-size: 11px;
-            font-weight: 800;
-
-            letter-spacing: 3px;
-        }
-
-        .fk-section-heading h2 {
-            margin: 8px 0 0;
-
-            font-size: 32px;
-        }
-
-        .fk-section-heading p {
-            margin-top: 10px;
-
-            color: var(--fk-muted);
-        }
-
-        .fk-features {
-            display: grid;
-
-            grid-template-columns:
-                repeat(4, minmax(0, 1fr));
-
-            gap: 16px;
-        }
-
-        .fk-card {
-            padding: 25px;
-
-            min-height: 190px;
-
-            border: 1px solid var(--fk-border);
-            border-radius: 18px;
-
-            background:
-                linear-gradient(
-                    145deg,
-                    rgba(255,255,255,.055),
-                    rgba(255,255,255,.018)
-                );
-
-            transition:
-                transform .25s ease,
-                border-color .25s ease,
-                background .25s ease;
-        }
-
-        .fk-card:hover {
-            transform: translateY(-6px);
-
-            border-color:
-                rgba(195,38,54,.4);
-
-            background:
-                linear-gradient(
-                    145deg,
-                    rgba(195,38,54,.10),
-                    rgba(255,255,255,.02)
-                );
-        }
-
-        .fk-card-icon {
-            width: 48px;
-            height: 48px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            margin-bottom: 18px;
-
-            border-radius: 13px;
-
-            background: rgba(195,38,54,.12);
-
-            font-size: 24px;
-        }
-
-        .fk-card h3 {
-            margin: 0 0 9px;
-
-            font-size: 17px;
-        }
-
-        .fk-card p {
-            margin: 0;
-
-            color: var(--fk-muted);
-
-            font-size: 13px;
-            line-height: 1.6;
-        }
-
-        /* ==================================================
-           CTA
-        ================================================== */
-
-        .fk-cta {
-            position: relative;
-            overflow: hidden;
-
-            padding: 55px 30px;
-
-            border: 1px solid rgba(195,38,54,.25);
-            border-radius: 25px;
-
-            background:
-                radial-gradient(
-                    circle at center,
-                    rgba(195,38,54,.17),
-                    transparent 60%
-                ),
-                rgba(255,255,255,.025);
-
-            text-align: center;
-        }
-
-        .fk-cta h2 {
-            margin: 0;
-
-            font-size: 34px;
-        }
-
-        .fk-cta p {
-            max-width: 600px;
-
-            margin: 13px auto 25px;
-
-            color: var(--fk-muted);
-        }
-
-        /* ==================================================
-           FOOTER
-        ================================================== */
-
-        .fk-footer {
-            padding: 30px 5%;
-
-            border-top: 1px solid var(--fk-border);
-
-            color: #84766e;
-
-            text-align: center;
-
-            font-size: 12px;
-        }
-
-        /* ==================================================
-           RESPONSIVE
-        ================================================== */
-
-        @media (max-width: 850px) {
-
-            .fk-nav {
-                display: none;
-            }
-
-            .fk-features {
-                grid-template-columns:
-                    repeat(2, minmax(0, 1fr));
-            }
-
-        }
-
-        @media (max-width: 550px) {
-
-            .fk-header {
-                padding: 14px 4%;
-            }
-
-            .fk-logo {
-                font-size: 16px;
-            }
-
-            .fk-logo-piece {
-                font-size: 23px;
-            }
-
-            .fk-hero {
-                min-height: 570px;
-                padding: 60px 5%;
-            }
-
-            .fk-title {
-                letter-spacing: -2px;
-            }
-
-            .fk-features {
-                grid-template-columns: 1fr;
-            }
-
-            .fk-button {
-                width: 100%;
-            }
-
-            .fk-hero-buttons {
-                flex-direction: column;
-            }
-
-        }
-
-    </style>
+```
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CHESS_FK</title>
+
+<meta
+    name="description"
+    content="CHESS_FK - Play chess, challenge Faris AI and improve your game."
+>
+
+<!-- CSS PRINCIPAL -->
+<link rel="stylesheet" href="css/style.css">
+```
 
 </head>
 
-
 <body>
 
-    <!-- ==================================================
-         HEADER
-    ================================================== -->
+```
+<!-- =========================================
+     HEADER
+========================================== -->
 
-    <header class="fk-header">
+<header class="site-header">
 
-        <a
-            href="index.html"
-            class="fk-logo"
-            aria-label="CHESS FK Home"
-        >
+    <div class="logo">
+        ♟️ CHESS_FK
+    </div>
 
-            <span class="fk-logo-piece">♟</span>
+    <nav class="main-nav">
 
-            <span>CHESS_FK</span>
-
+        <a href="index.html">
+            HOME
         </a>
 
+        <a href="pages/plat.html">
+            PLAY
+        </a>
 
-        <nav
-            class="fk-nav"
-            aria-label="Navigation principale"
+        <a href="pages/faris-ai.html">
+            FARIS AI
+        </a>
+
+    </nav>
+
+    <div class="header-actions">
+
+        <button
+            id="loginButton"
+            type="button"
         >
+            SIGN IN
+        </button>
 
-            <a href="index.html">
-                HOME
-            </a>
+        <button
+            id="themeToggle"
+            class="theme-toggle"
+            type="button"
+            aria-label="Choose theme"
+        >
+            🎨
+        </button>
 
-            <a href="pages/plat.html">
-                PLAY
-            </a>
+    </div>
 
-            <a href="pages/faris-ai.html">
-                FARIS AI
-            </a>
+</header>
 
-        </nav>
 
+<!-- =========================================
+     THEME PANEL
+========================================== -->
 
-        <div class="fk-actions">
+<aside
+    id="themePanel"
+    class="theme-panel"
+>
 
-            <!-- IMPORTANT :
-                 auth.js cherche exactement #loginButton -->
+    <div class="theme-card">
+        🔴 RED
+    </div>
 
-            <button
-                id="loginButton"
-                type="button"
-            >
-                SIGN IN
-            </button>
+    <div class="theme-card">
+        🔵 BLUE
+    </div>
 
+    <div class="theme-card">
+        🟢 GREEN
+    </div>
 
-            <!-- IMPORTANT :
-                 theme.js cherche exactement #themeToggle -->
+    <div class="theme-card">
+        🟣 PURPLE
+    </div>
 
-            <button
-                id="themeToggle"
-                class="fk-theme-button"
-                type="button"
-                aria-label="Choose theme"
-            >
-                🎨
-            </button>
+</aside>
 
-        </div>
 
-    </header>
+<!-- =========================================
+     HERO
+========================================== -->
 
+<main>
 
-    <!-- ==================================================
-         THEME PANEL
-         IDs conservés pour theme.js
-    ================================================== -->
+    <section class="hero">
 
-    <aside
-        id="themePanel"
-        class="theme-panel"
-        aria-hidden="true"
-    >
+        <div class="hero-content">
 
-        <div class="theme-card">
-            🔴 RED
-        </div>
+            <p class="hero-small">
+                WELCOME TO
+            </p>
 
-        <div class="theme-card">
-            🔵 BLUE
-        </div>
+            <h1>
+                CHESS_FK
+            </h1>
 
-        <div class="theme-card">
-            🟢 GREEN
-        </div>
+            <p>
+                Play chess. Improve your game.
+                Challenge Faris AI.
+            </p>
 
-        <div class="theme-card">
-            🟣 PURPLE
-        </div>
-
-    </aside>
-
-
-    <!-- ==================================================
-         HERO
-    ================================================== -->
-
-    <main>
-
-        <section class="fk-hero">
-
-            <div class="fk-hero-content">
-
-                <p class="fk-eyebrow">
-                    WELCOME TO THE CHESS ARENA
-                </p>
-
-
-                <h1 class="fk-title">
-                    CHESS<span>_FK</span>
-                </h1>
-
-
-                <p class="fk-subtitle">
-
-                    Play chess, challenge Faris AI,
-                    improve your game and build your
-                    own CHESS_FK profile.
-
-                </p>
-
-
-                <div class="fk-hero-buttons">
-
-                    <a
-                        href="pages/plat.html"
-                        class="fk-button fk-button-primary"
-                    >
-                        ♟️ PLAY CHESS
-                    </a>
-
-
-                    <a
-                        href="pages/faris-ai.html"
-                        class="fk-button fk-button-secondary"
-                    >
-                        🤖 CHALLENGE FARIS AI
-                    </a>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- ==================================================
-             FEATURES
-        ================================================== -->
-
-        <section class="fk-section">
-
-            <div class="fk-section-heading">
-
-                <small>
-                    CHESS_FK EXPERIENCE
-                </small>
-
-                <h2>
-                    Everything you need to play.
-                </h2>
-
-                <p>
-                    Your chess journey starts here.
-                </p>
-
-            </div>
-
-
-            <div class="fk-features">
-
-
-                <article class="fk-card">
-
-                    <div class="fk-card-icon">
-                        ♟️
-                    </div>
-
-                    <h3>
-                        PLAY CHESS
-                    </h3>
-
-                    <p>
-                        Play chess directly on
-                        CHESS_FK and test your skills.
-                    </p>
-
-                </article>
-
-
-                <article class="fk-card">
-
-                    <div class="fk-card-icon">
-                        🤖
-                    </div>
-
-                    <h3>
-                        FARIS AI
-                    </h3>
-
-                    <p>
-                        Challenge the Faris AI and
-                        choose your difficulty level.
-                    </p>
-
-                </article>
-
-
-                <article class="fk-card">
-
-                    <div class="fk-card-icon">
-                        🏆
-                    </div>
-
-                    <h3>
-                        IMPROVE
-                    </h3>
-
-                    <p>
-                        Play more games, learn from
-                        your mistakes and become stronger.
-                    </p>
-
-                </article>
-
-
-                <article class="fk-card">
-
-                    <div class="fk-card-icon">
-                        👤
-                    </div>
-
-                    <h3>
-                        YOUR PROFILE
-                    </h3>
-
-                    <p>
-                        Sign in with Google and build
-                        your CHESS_FK player identity.
-                    </p>
-
-                </article>
-
-
-            </div>
-
-        </section>
-
-
-        <!-- ==================================================
-             CTA
-        ================================================== -->
-
-        <section class="fk-section">
-
-            <div class="fk-cta">
-
-                <h2>
-                    Ready to play?
-                </h2>
-
-                <p>
-                    Enter the board and start your
-                    next chess game.
-                </p>
-
+            <div class="hero-buttons">
 
                 <a
                     href="pages/plat.html"
-                    class="fk-button fk-button-primary"
+                    class="btn-primary"
                 >
-                    START PLAYING ♟️
+                    ♟️ PLAY CHESS
+                </a>
+
+                <a
+                    href="pages/faris-ai.html"
+                    class="btn-secondary"
+                >
+                    🤖 FARIS AI
                 </a>
 
             </div>
 
-        </section>
+        </div>
 
-    </main>
-
-
-    <!-- ==================================================
-         FOOTER
-    ================================================== -->
-
-    <footer class="fk-footer">
-
-        <p>
-            © 2026 CHESS_FK — Play. Improve. Compete.
-        </p>
-
-    </footer>
+    </section>
 
 
-    <!-- ==================================================
-         SUPABASE
-         
-         ORDRE TRÈS IMPORTANT :
-         
-         1. Bibliothèque Supabase
-         2. supabase.js
-         3. auth.js
-         4. theme.js
-    ================================================== -->
+    <!-- =========================================
+         FEATURES
+    ========================================== -->
 
-    <script
-        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
-    ></script>
+    <section class="features">
 
+        <div class="feature-card">
 
-    <script
-        src="js/supabase.js"
-    ></script>
+            <div class="feature-icon">
+                ♟️
+            </div>
 
+            <h2>
+                PLAY CHESS
+            </h2>
 
-    <script
-        src="js/auth.js"
-    ></script>
+            <p>
+                Play chess directly on CHESS_FK.
+            </p>
+
+        </div>
 
 
-    <script
-        src="js/theme.js"
-    ></script>
+        <div class="feature-card">
 
+            <div class="feature-icon">
+                🤖
+            </div>
+
+            <h2>
+                FARIS AI
+            </h2>
+
+            <p>
+                Challenge Faris AI at different
+                levels and improve your chess.
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                🏆
+            </div>
+
+            <h2>
+                COMPETE
+            </h2>
+
+            <p>
+                Improve your level and become
+                a stronger player.
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <div class="feature-icon">
+                👤
+            </div>
+
+            <h2>
+                YOUR PROFILE
+            </h2>
+
+            <p>
+                Create your CHESS_FK player
+                profile.
+            </p>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- =========================================
+     SUPABASE
+     
+     ORDRE IMPORTANT :
+     1. Supabase
+     2. supabase.js
+     3. auth.js
+========================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script src="js/supabase.js"></script>
+
+<script src="js/auth.js"></script>
+
+
+<!-- =========================================
+     THEME
+========================================== -->
+
+<script src="js/theme.js"></script>
+```
 
 </body>
 
