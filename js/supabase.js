@@ -1,84 +1,109 @@
 // ======================================================
-// CHESS_FK - SUPABASE CONNECTION
+// CHESS_FK
+// SUPABASE CONNECTION
+// ONE SINGLE SUPABASE CLIENT
 // ======================================================
 
-const SUPABASE_URL = "https://rqwmipinrjwanvxjiobj.supabase.co";
+console.log("♟️ CHESS_FK SUPABASE STARTING...");
 
-const SUPABASE_PUBLISHABLE_KEY =
+
+// ======================================================
+// CONFIGURATION
+// ======================================================
+
+const CHESSFK_SUPABASE_URL =
+    "https://rqwmipinrjwanvxjiobj.supabase.co";
+
+const CHESSFK_SUPABASE_KEY =
     "sb_publishable_d_9h8Joh38G85ru69uprAQ_ELbbHM5n";
 
-// Création du client Supabase
-window.chessFKSupabase = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_PUBLISHABLE_KEY
-);
-
-console.log("♟️ CHESS_FK SUPABASE READY");
-
 
 // ======================================================
-// GOOGLE LOGIN
+// CHECK SUPABASE LIBRARY
 // ======================================================
 
-window.signInWithGoogle = async function () {
+if (!window.supabase) {
 
-    console.log("🔵 CHESS_FK → Google Login...");
-
-    const { data, error } =
-        await window.chessFKSupabase.auth.signInWithOAuth({
-
-            provider: "google",
-
-            options: {
-
-                redirectTo:
-                    "https://fariskamel41-glitch.github.io/Chess_FK/"
-
-            }
-
-        });
-
-
-    if (error) {
-
-        console.error(
-            "❌ Google Login Error:",
-            error
-        );
-
-        alert(
-            "Impossible de se connecter avec Google.\n\n" +
-            error.message
-        );
-
-        return;
-
-    }
-
-
-    console.log(
-        "✅ Redirection vers Google..."
+    console.error(
+        "❌ Supabase JS n'est pas chargé."
     );
 
-};
+} else {
+
+    console.log(
+        "✅ Supabase JS détecté"
+    );
+
+}
+
+
+// ======================================================
+// CREATE ONE SINGLE CLIENT
+// ======================================================
+
+const supabaseClient =
+    window.supabase.createClient(
+        CHESSFK_SUPABASE_URL,
+        CHESSFK_SUPABASE_KEY
+    );
+
+
+// Make it accessible to the other ChessFK files
+window.chessfkSupabase =
+    supabaseClient;
+
+
+console.log(
+    "♟️ CHESS_FK SUPABASE READY"
+);
 
 
 // ======================================================
 // GET CURRENT USER
 // ======================================================
 
-window.getChessFKUser = async function () {
+async function getChessFKUser() {
 
-    const {
-        data,
-        error
-    } = await window.chessFKSupabase.auth.getUser();
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient.auth.getUser();
 
 
-    if (error) {
+        if (error) {
+
+            // No session = normal when nobody is logged in
+            if (
+                error.name ===
+                "AuthSessionMissingError"
+            ) {
+
+                return null;
+
+            }
+
+
+            console.error(
+                "❌ Impossible de récupérer l'utilisateur:",
+                error
+            );
+
+            return null;
+
+        }
+
+
+        return data?.user || null;
+
+    }
+
+    catch (error) {
 
         console.error(
-            "❌ Impossible de récupérer l'utilisateur:",
+            "🔥 getChessFKUser error:",
             error
         );
 
@@ -86,95 +111,198 @@ window.getChessFKUser = async function () {
 
     }
 
+}
 
-    return data.user;
 
-};
+// ======================================================
+// GET CURRENT SESSION
+// ======================================================
+
+async function getChessFKSession() {
+
+    try {
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient.auth.getSession();
+
+
+        if (error) {
+
+            console.error(
+                "❌ Impossible de récupérer la session:",
+                error
+            );
+
+            return null;
+
+        }
+
+
+        return data?.session || null;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "🔥 getChessFKSession error:",
+            error
+        );
+
+        return null;
+
+    }
+
+}
+
+
+// ======================================================
+// GOOGLE LOGIN
+// ======================================================
+
+async function signInWithGoogle() {
+
+    console.log(
+        "🔐 CHESS_FK: Google login starting..."
+    );
+
+
+    try {
+
+        const redirectURL =
+            window.location.origin +
+            window.location.pathname;
+
+
+        console.log(
+            "↩️ Redirect URL:",
+            redirectURL
+        );
+
+
+        const {
+            data,
+            error
+        } =
+            await supabaseClient.auth.signInWithOAuth({
+
+                provider: "google",
+
+                options: {
+
+                    redirectTo:
+                        redirectURL
+
+                }
+
+            });
+
+
+        if (error) {
+
+            console.error(
+                "❌ Google login error:",
+                error
+            );
+
+            alert(
+                "Impossible de se connecter avec Google.\n\n" +
+                error.message
+            );
+
+            return null;
+
+        }
+
+
+        console.log(
+            "✅ Google authentication started"
+        );
+
+
+        return data;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "🔥 Google login exception:",
+            error
+        );
+
+        alert(
+            "Une erreur est survenue pendant la connexion Google."
+        );
+
+        return null;
+
+    }
+
+}
 
 
 // ======================================================
 // LOGOUT
 // ======================================================
 
-window.signOutChessFK = async function () {
+async function signOutChessFK() {
 
-    const {
-        error
-    } = await window.chessFKSupabase.auth.signOut();
+    try {
+
+        const {
+            error
+        } =
+            await supabaseClient.auth.signOut();
 
 
-    if (error) {
+        if (error) {
+
+            console.error(
+                "❌ Logout error:",
+                error
+            );
+
+            return false;
+
+        }
+
+
+        console.log(
+            "🚪 CHESS_FK user signed out"
+        );
+
+
+        return true;
+
+    }
+
+    catch (error) {
 
         console.error(
-            "❌ Logout error:",
+            "🔥 Logout exception:",
             error
         );
 
-        return;
+        return false;
 
     }
 
-
-    console.log(
-        "👋 CHESS_FK → Déconnexion"
-    );
-
-    window.location.reload();
-
-};
+}
 
 
 // ======================================================
-// CHECK AUTH STATE
+// AUTH STATE LISTENER
 // ======================================================
 
-window.checkChessFKAuth = async function () {
-
-    const user =
-        await window.getChessFKUser();
-
-
-    if (!user) {
-
-        console.log(
-            "👤 Aucun utilisateur connecté"
-        );
-
-        return;
-
-    }
-
-
-    console.log(
-        "👤 Utilisateur connecté:",
-        user.email
-    );
-
-    console.log(
-        "🆔 User ID:",
-        user.id
-    );
-
-
-    // Notification pour index.html
-    window.dispatchEvent(
-        new CustomEvent(
-            "chessfk-user-connected",
-            {
-                detail: user
-            }
-        )
-    );
-
-};
-
-
-// ======================================================
-// LISTEN FOR LOGIN / LOGOUT
-// ======================================================
-
-window.chessFKSupabase.auth.onAuthStateChange(
-    function (event, session) {
+supabaseClient.auth.onAuthStateChange(
+    function (
+        event,
+        session
+    ) {
 
         console.log(
             "🔐 Auth event:",
@@ -182,24 +310,31 @@ window.chessFKSupabase.auth.onAuthStateChange(
         );
 
 
-        if (session && session.user) {
+        const user =
+            session?.user || null;
+
+
+        // User connected
+        if (user) {
 
             console.log(
-                "✅ CHESS_FK USER CONNECTED:",
-                session.user.email
+                "👤 CHESS_FK USER:",
+                user.email
             );
+
 
             window.dispatchEvent(
                 new CustomEvent(
                     "chessfk-user-connected",
                     {
-                        detail: session.user
+                        detail: user
                     }
                 )
             );
 
         }
 
+        // User disconnected
         else {
 
             window.dispatchEvent(
@@ -215,14 +350,50 @@ window.chessFKSupabase.auth.onAuthStateChange(
 
 
 // ======================================================
-// INITIAL CHECK
+// GLOBAL FUNCTIONS
 // ======================================================
 
-window.addEventListener(
-    "DOMContentLoaded",
-    function () {
+window.getChessFKUser =
+    getChessFKUser;
 
-        window.checkChessFKAuth();
+window.getChessFKSession =
+    getChessFKSession;
+
+window.signInWithGoogle =
+    signInWithGoogle;
+
+window.signOutChessFK =
+    signOutChessFK;
+
+
+// ======================================================
+// INITIAL SESSION CHECK
+// ======================================================
+
+(async function () {
+
+    const session =
+        await getChessFKSession();
+
+
+    if (session?.user) {
+
+        console.log(
+            "👤 Existing ChessFK session:",
+            session.user.email
+        );
+
+    } else {
+
+        console.log(
+            "👤 Aucun utilisateur connecté"
+        );
 
     }
+
+})();
+
+
+console.log(
+    "🚀 CHESS_FK SUPABASE SYSTEM READY"
 );
