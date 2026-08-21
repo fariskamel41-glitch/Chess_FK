@@ -1,5 +1,6 @@
+```html
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
 
@@ -10,114 +11,17 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>CHESS_FK | Play Chess</title>
+    <title>CHESS_FK</title>
+
+    <meta
+        name="description"
+        content="CHESS_FK - Play chess, compete and improve."
+    >
 
     <link
         rel="stylesheet"
         href="css/style.css"
     >
-
-    <style>
-
-        /* =========================================
-           ACCOUNT BUTTON
-        ========================================= */
-
-        .account-area {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
-        .login-btn,
-        .profile-button {
-            cursor: pointer;
-        }
-
-        .profile-button {
-            display: none;
-            align-items: center;
-            gap: 10px;
-            border: 1px solid rgba(255,255,255,0.15);
-            background: rgba(255,255,255,0.05);
-            color: white;
-            padding: 8px 14px;
-            border-radius: 10px;
-            font-weight: 700;
-        }
-
-        .profile-button img {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .profile-button.logged-in {
-            display: flex;
-        }
-
-        .profile-menu {
-            display: none;
-            position: absolute;
-            right: 0;
-            top: calc(100% + 12px);
-            width: 280px;
-            padding: 18px;
-            background: #17110e;
-            border: 1px solid rgba(255,255,255,0.12);
-            border-radius: 14px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            z-index: 9999;
-        }
-
-        .profile-menu.active {
-            display: block;
-        }
-
-        .profile-menu-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .profile-menu-header img {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .profile-menu-name {
-            color: white;
-            font-weight: 800;
-        }
-
-        .profile-menu-email {
-            color: #999;
-            font-size: 12px;
-            margin-top: 3px;
-            word-break: break-word;
-        }
-
-        .profile-menu button {
-            width: 100%;
-            margin-top: 14px;
-            padding: 11px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-weight: 700;
-        }
-
-        .logout-button {
-            background: #d62828;
-            color: white;
-        }
-
-    </style>
 
 </head>
 
@@ -125,750 +29,276 @@
 <body>
 
 
-<!-- ======================================================
-     HEADER
-====================================================== -->
+    <!-- ==========================================
+         HEADER
+    =========================================== -->
 
-<header class="header">
+    <header class="site-header">
 
-    <div class="logo">
-        CHESS<span>_FK</span>
-    </div>
-
-
-    <nav>
-
-        <a href="index.html">
-            PLAY
-        </a>
-
-        <a href="#train">
-            TRAIN
-        </a>
-
-        <a href="#faris">
-            FARIS
-        </a>
-
-        <a href="#tournaments">
-            TOURNAMENTS
-        </a>
-
-    </nav>
+        <div class="logo">
+            ♟️ CHESS_FK
+        </div>
 
 
-    <div class="header-actions">
+        <nav class="main-nav">
+
+            <a href="index.html">
+                HOME
+            </a>
+
+            <a href="pages/plat.html">
+                PLAY
+            </a>
+
+            <a href="pages/faris-ai.html">
+                FARIS AI
+            </a>
+
+        </nav>
 
 
-        <!-- THEME -->
+        <div class="header-actions">
 
-        <button
-            class="theme-toggle"
-            id="themeToggle"
-            type="button"
-            aria-label="Choose theme"
-        >
-
-            <span class="theme-toggle-icon">
-                ◐
-            </span>
-
-            THEME
-
-        </button>
-
-
-        <!-- =================================================
-             ACCOUNT
-        ================================================= -->
-
-        <div class="account-area">
-
-
-            <!-- SIGN IN -->
-
+            <!-- LOGIN -->
             <button
-                class="login-btn"
                 id="loginButton"
                 type="button"
             >
-
                 SIGN IN
-
             </button>
 
 
-            <!-- PROFILE -->
-
+            <!-- THEME -->
             <button
-                class="profile-button"
-                id="profileButton"
+                id="themeToggle"
+                class="theme-toggle"
                 type="button"
+                aria-label="Choose theme"
             >
-
-                <img
-                    id="profileAvatar"
-                    src=""
-                    alt="Profile"
-                >
-
-                <span id="profileName">
-                    PLAYER
-                </span>
-
+                🎨
             </button>
 
-
-            <!-- PROFILE MENU -->
-
-            <div
-                class="profile-menu"
-                id="profileMenu"
-            >
-
-                <div class="profile-menu-header">
-
-                    <img
-                        id="menuAvatar"
-                        src=""
-                        alt="Profile"
-                    >
-
-                    <div>
-
-                        <div
-                            class="profile-menu-name"
-                            id="menuName"
-                        >
-                            PLAYER
-                        </div>
-
-                        <div
-                            class="profile-menu-email"
-                            id="menuEmail"
-                        >
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <button
-                    id="myProfileButton"
-                    type="button"
-                >
-                    MY PROFILE
-                </button>
-
-
-                <button
-                    id="logoutButton"
-                    class="logout-button"
-                    type="button"
-                >
-                    SIGN OUT
-                </button>
-
-            </div>
-
         </div>
 
-    </div>
+    </header>
 
-</header>
 
+    <!-- ==========================================
+         THEME PANEL
+    =========================================== -->
 
-
-<!-- ======================================================
-     THEME OVERLAY
-====================================================== -->
-
-<div
-    class="theme-overlay"
-    id="themeOverlay"
-></div>
-
-
-<!-- ======================================================
-     THEME PANEL
-====================================================== -->
-
-<aside
-    class="theme-panel"
-    id="themePanel"
->
-
-    <div class="theme-panel-header">
-
-        <div>
-
-            <p class="theme-label">
-                CHESS_FK CUSTOMIZATION
-            </p>
-
-            <h2>
-                CHOOSE YOUR<br>
-                <span>STYLE.</span>
-            </h2>
-
-        </div>
-
-        <button
-            class="theme-close"
-            id="themeClose"
-            type="button"
-            aria-label="Close theme selector"
-        >
-            ×
-        </button>
-
-    </div>
-
-
-    <p class="theme-description">
-
-        Choose the visual style that matches
-        your chess personality.
-
-    </p>
-
-
-    <div class="theme-grid">
-
-
-        <!-- RED -->
-
-        <button
-            class="theme-card active"
-            data-theme="red"
-            type="button"
-        >
-
-            <div class="theme-board red-board">
-
-                <span></span><span></span>
-                <span></span><span></span>
-
-                <span></span><span></span>
-                <span></span><span></span>
-
-                <span></span><span></span>
-                <span></span><span></span>
-
-                <span></span><span></span>
-                <span></span><span></span>
-
-            </div>
-
-            <div class="theme-card-info">
-
-                <div>
-
-                    <strong>
-                        RED / BLACK
-                    </strong>
-
-                    <small>
-                        THE ORIGINAL
-                    </small>
-
-                </div>
-
-                <span class="theme-check">
-                    ✓
-                </span>
-
-            </div>
-
-        </button>
-
-
-        <!-- BLUE -->
-
-        <button
-            class="theme-card"
-            data-theme="blue"
-            type="button"
-        >
-
-            <div class="theme-board blue-board">
-
-                <span></span><span></span>
-                <span></span><span></span>
-
-                <span></span><span></span>
-                <span></span><span></span>
-
-                <span></span><span></span>
-                <span></span><span></span>
-
-                <span></span><span></span>
-                <span></span><span></span>
-
-            </div>
-
-            <div class="theme-card-info">
-
-                <div>
-
-                    <strong>
-                        BLUE / WHITE
-                    </strong>
-
-                    <small>
-                        ICE MODE
-                    </small>
-
-                </div>
-
-                <span class="theme-check">
-                    ✓
-                </span>
-
-            </div>
-
-        </button>
-
-
-        <!-- GREEN -->
-
-        <button
-            class="theme-card"
-            data-theme="green"
-            type="button"
-        >
-
-            <div class="theme-board green-board">
-
-                <span></span><span></span>
-                <span></span><span></span>
-
-                <span></span><span></span>
-                <span></span><span></span>
-
-                <span></span><span></span>
-                <span></span><span></span>
-
-                <span></span><span></span>
-                <span></span><span></span>
-
-            </div>
-
-            <div class="theme-card-info">
-
-                <div>
-
-                    <strong>
-                        GREEN / WHITE
-                    </strong>
-
-                    <small>
-                        CLASSIC MODE
-                    </small>
-
-                </div>
-
-                <span class="theme-check">
-                    ✓
-                </span>
-
-            </div>
-
-        </button>
-
-
-        <!-- PURPLE -->
-
-        <button
-            class="theme-card"
-            data-theme="purple"
-            type="button"
-        >
-
-            <div class="theme-board purple-board">
-
-                <span></span><span></span>
-                <span></span><span></span>
-
-                <span></span><span></span>
-                <span></span><span></span>
-
-                <span></span><span></span>
-                <span></span><span></span>
-
-                <span></span><span></span>
-                <span></span><span></span>
-
-            </div>
-
-            <div class="theme-card-info">
-
-                <div>
-
-                    <strong>
-                        PURPLE / BLACK
-                    </strong>
-
-                    <small>
-                        FUTURE MODE
-                    </small>
-
-                </div>
-
-                <span class="theme-check">
-                    ✓
-                </span>
-
-            </div>
-
-        </button>
-
-    </div>
-
-
-    <div class="theme-panel-footer">
-
-        <span class="theme-footer-dot"></span>
-
-        YOUR STYLE.
-        YOUR BOARD.
-        YOUR GAME.
-
-    </div>
-
-</aside>
-
-
-
-<!-- ======================================================
-     MAIN
-====================================================== -->
-
-<main>
-
-
-    <!-- HERO -->
-
-    <section class="hero">
-
-        <div class="hero-content">
-
-            <p class="red-label">
-                ♟ THE CHESS PLATFORM BY FARIS
-            </p>
-
-
-            <h1>
-
-                PLAY.<br>
-
-                <span>
-                    THINK.
-                </span><br>
-
-                DOMINATE.
-
-            </h1>
-
-
-            <p class="hero-description">
-
-                Play chess. Improve your game.
-                Challenge players from around the world
-                and discover the story behind Faris' chess journey.
-
-            </p>
-
-
-            <div class="hero-buttons">
-
-                <a
-                    href="pages/plat.html"
-                    class="btn-main"
-                >
-                    ♟ PLAY CHESS
-                </a>
-
-
-                <a
-                    href="pages/faris-ai.html"
-                    class="btn-secondary"
-                >
-                    PLAY AGAINST FARIS →
-                </a>
-
-            </div>
-
-        </div>
-
-
-        <div class="hero-chess">
-
-            <div class="red-glow"></div>
-
-
-            <div class="chess-piece">
-                ♛
-            </div>
-
-
-            <img
-                src="images/playfaris.jpg"
-                alt="Faris"
-                class="faris-photo"
-            >
-
-        </div>
-
-    </section>
-
-
-
-    <!-- FEATURES -->
-
-    <section
-        class="features"
-        id="train"
+    <aside
+        id="themePanel"
+        class="theme-panel"
     >
 
-        <div class="section-title">
-
-            <p>
-                DISCOVER CHESS_FK
-            </p>
-
-            <h2>
-
-                MORE THAN<br>
-
-                <span>
-                    JUST CHESS.
-                </span>
-
-            </h2>
-
+        <div class="theme-card">
+            🔴 RED
         </div>
 
+        <div class="theme-card">
+            🔵 BLUE
+        </div>
 
-        <div class="feature-grid">
+        <div class="theme-card">
+            🟢 GREEN
+        </div>
 
+        <div class="theme-card">
+            🟣 PURPLE
+        </div>
+
+    </aside>
+
+
+    <!-- ==========================================
+         MAIN
+    =========================================== -->
+
+    <main>
+
+
+        <!-- ======================================
+             HERO
+        ======================================= -->
+
+        <section class="hero">
+
+            <div class="hero-content">
+
+                <p class="hero-small">
+                    WELCOME TO
+                </p>
+
+
+                <h1>
+                    CHESS_FK
+                </h1>
+
+
+                <p>
+                    Play chess. Improve your game.
+                    Challenge Faris AI.
+                </p>
+
+
+                <div class="hero-buttons">
+
+                    <a
+                        href="pages/plat.html"
+                        class="btn-primary"
+                    >
+                        ♟️ PLAY CHESS
+                    </a>
+
+
+                    <a
+                        href="pages/faris-ai.html"
+                        class="btn-secondary"
+                    >
+                        🤖 FARIS AI
+                    </a>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ======================================
+             FEATURES
+        ======================================= -->
+
+        <section class="features">
+
+
+            <!-- PLAY CHESS -->
 
             <div class="feature-card">
 
-                <div class="feature-number">
-                    01
-                </div>
-
                 <div class="feature-icon">
-                    ♟
+                    ♟️
                 </div>
 
-                <h3>
-                    PLAY
-                </h3>
+                <h2>
+                    PLAY CHESS
+                </h2>
 
                 <p>
-
-                    Play chess against the computer
-                    or challenge other players.
-
+                    Play chess directly on CHESS_FK.
                 </p>
-
-                <a
-                    href="pages/plat.html"
-                    class="card-btn"
-                >
-                    PLAY CHESS →
-                </a>
 
             </div>
 
 
+            <!-- FARIS AI -->
 
             <div class="feature-card">
 
-                <div class="feature-number">
-                    02
-                </div>
-
                 <div class="feature-icon">
-                    🧠
+                    🤖
                 </div>
 
-                <h3>
-                    TRAIN
-                </h3>
+                <h2>
+                    FARIS AI
+                </h2>
 
                 <p>
-
-                    Improve your tactics, analyse
-                    your games and become stronger.
-
+                    Challenge the Faris AI at
+                    different levels.
                 </p>
 
             </div>
 
 
+            <!-- COMPETE -->
 
-            <div
-                class="feature-card faris-card"
-                id="faris"
-            >
-
-                <div class="feature-number">
-                    03
-                </div>
-
-                <div class="feature-icon">
-                    ⚔️
-                </div>
-
-                <h3>
-                    PLAY AGAINST FARIS
-                </h3>
-
-                <p>
-
-                    Challenge different versions
-                    of Faris throughout his chess journey.
-
-                </p>
-
-                <a
-                    href="pages/faris-ai.html"
-                    class="card-btn"
-                >
-                    CHALLENGE FARIS →
-                </a>
-
-            </div>
-
-
-
-            <div
-                class="feature-card"
-                id="tournaments"
-            >
-
-                <div class="feature-number">
-                    04
-                </div>
+            <div class="feature-card">
 
                 <div class="feature-icon">
                     🏆
                 </div>
 
-                <h3>
-                    TOURNAMENTS
-                </h3>
+                <h2>
+                    COMPETE
+                </h2>
 
                 <p>
-
-                    Discover championships,
-                    achievements and competitions.
-
+                    Improve your level and become
+                    stronger.
                 </p>
 
             </div>
 
-        </div>
 
-    </section>
+            <!-- PROFILE -->
 
+            <div class="feature-card">
 
+                <div class="feature-icon">
+                    👤
+                </div>
 
-    <!-- FARIS STORY -->
+                <h2>
+                    YOUR PROFILE
+                </h2>
 
-    <section class="faris-section">
+                <p>
+                    Create your CHESS_FK player
+                    profile.
+                </p>
 
-        <div class="faris-line"></div>
-
-        <p class="red-label">
-            THE STORY
-        </p>
-
-
-        <h2>
-
-            FROM A YOUNG<br>
-
-            <span>
-                CHESS PLAYER
-            </span><br>
-
-            TO CHESS_FK.
-
-        </h2>
+            </div>
 
 
-        <p>
-
-            Discover Faris' journey through chess,
-            from his first games to competitions,
-            championships and everything in between.
-
-        </p>
+        </section>
 
 
-        <a
-            href="#"
-            class="outline-btn"
-        >
-            DISCOVER THE JOURNEY →
-        </a>
-
-    </section>
-
-</main>
+    </main>
 
 
-
-<!-- ======================================================
-     FOOTER
-====================================================== -->
-
-<footer>
-
-    <div class="footer-logo">
-
-        CHESS<span>
-            _FK
-        </span>
-
-    </div>
+    <!-- ==========================================
+         JAVASCRIPT
+         
+         ⚠️ ORDRE TRÈS IMPORTANT
+         
+         1. Supabase CDN
+         2. supabase.js
+         3. auth.js
+         4. theme.js
+    =========================================== -->
 
 
-    <p>
-        © 2026 CHESS_FK — Built by Faris
-    </p>
+    <!-- 1️⃣ SUPABASE LIBRARY -->
 
-</footer>
-
-
-
-<!-- ======================================================
-     SCRIPTS
-====================================================== -->
-
-<!-- Supabase library -->
-
-<script
-    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
-></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    ></script>
 
 
-<!-- IMPORTANT:
-     NE PAS charger supabase.js ici.
-     auth.js crée déjà son client Supabase.
--->
+    <!-- 2️⃣ CHESS_FK SUPABASE CLIENT -->
 
-<script src="js/auth.js"></script>
+    <script
+        src="js/supabase.js"
+    ></script>
 
 
-<script src="js/theme.js"></script>
+    <!-- 3️⃣ CHESS_FK AUTHENTICATION -->
+
+    <script
+        src="js/auth.js"
+    ></script>
+
+
+    <!-- 4️⃣ THEME SYSTEM -->
+
+    <script
+        src="js/theme.js"
+    ></script>
 
 
 </body>
 
 </html>
+```
