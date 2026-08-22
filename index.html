@@ -1,256 +1,539 @@
+```html
 <!DOCTYPE html>
-
 <html lang="fr">
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-```
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CHESS_FK — Play Chess</title>
 
-<title>CHESS_FK</title>
+    <meta
+        name="description"
+        content="CHESS_FK — Play chess online, challenge Faris AI and improve your game."
+    >
 
-<meta
-    name="description"
-    content="CHESS_FK - Play chess, challenge Faris AI and improve your game."
->
-
-<!-- CSS PRINCIPAL -->
-<link rel="stylesheet" href="css/style.css">
-```
-
+    <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
 
-```
-<!-- =========================================
-     HEADER
-========================================== -->
+    <!-- =========================
+         BACKGROUND EFFECTS
+    ========================== -->
 
-<header class="site-header">
+    <div class="background-grid"></div>
+    <div class="background-glow glow-left"></div>
+    <div class="background-glow glow-right"></div>
 
-    <div class="logo">
-        ♟️ CHESS_FK
-    </div>
 
-    <nav class="main-nav">
+    <!-- =========================
+         HEADER
+    ========================== -->
 
-        <a href="index.html">
-            HOME
+    <header class="site-header">
+
+        <a href="index.html" class="logo">
+            <span class="logo-piece">♟</span>
+            <span>CHESS</span><b>_FK</b>
         </a>
 
-        <a href="pages/plat.html">
-            PLAY
-        </a>
+        <nav class="main-nav">
 
-        <a href="pages/faris-ai.html">
-            FARIS AI
-        </a>
+            <a href="index.html" class="active">
+                HOME
+            </a>
 
-    </nav>
+            <a href="pages/plat.html">
+                PLAY
+            </a>
 
-    <div class="header-actions">
+            <a href="pages/faris-ai.html">
+                FARIS AI
+            </a>
 
-        <button
-            id="loginButton"
-            type="button"
-        >
-            SIGN IN
-        </button>
+        </nav>
 
-        <button
-            id="themeToggle"
-            class="theme-toggle"
-            type="button"
-            aria-label="Choose theme"
-        >
-            🎨
-        </button>
+        <div class="header-actions">
 
-    </div>
+            <button
+                id="loginButton"
+                class="login-btn"
+                type="button"
+            >
+                SIGN IN
+            </button>
 
-</header>
+            <button
+                id="themeToggle"
+                class="theme-toggle"
+                type="button"
+                aria-label="Choose theme"
+            >
+                🎨
+            </button>
 
+        </div>
 
-<!-- =========================================
-     THEME PANEL
-========================================== -->
-
-<aside
-    id="themePanel"
-    class="theme-panel"
->
-
-    <div class="theme-card">
-        🔴 RED
-    </div>
-
-    <div class="theme-card">
-        🔵 BLUE
-    </div>
-
-    <div class="theme-card">
-        🟢 GREEN
-    </div>
-
-    <div class="theme-card">
-        🟣 PURPLE
-    </div>
-
-</aside>
+    </header>
 
 
-<!-- =========================================
-     HERO
-========================================== -->
+    <!-- =========================
+         HERO
+    ========================== -->
 
-<main>
+    <main>
 
-    <section class="hero">
+        <section class="hero">
 
-        <div class="hero-content">
+            <div class="hero-content">
 
-            <p class="hero-small">
-                WELCOME TO
-            </p>
+                <div class="status-line">
+                    <span class="status-dot"></span>
+                    CHESS_FK IS READY
+                </div>
 
-            <h1>
-                CHESS_FK
-            </h1>
+                <p class="hero-kicker">
+                    WELCOME TO YOUR CHESS WORLD
+                </p>
 
-            <p>
-                Play chess. Improve your game.
-                Challenge Faris AI.
-            </p>
+                <h1>
+                    PLAY
+                    <span>CHESS.</span>
+                </h1>
 
-            <div class="hero-buttons">
+                <p class="hero-description">
+                    Play, improve and challenge yourself.
+                    Face <strong>Faris AI</strong>, play with
+                    your friends and build your chess journey.
+                </p>
+
+
+                <!-- =========================
+                     MAIN ACTIONS
+                ========================== -->
+
+                <div class="hero-buttons">
+
+                    <a
+                        href="pages/plat.html"
+                        class="btn-primary"
+                    >
+                        <span>♟</span>
+                        JOUER AUX ÉCHECS
+                    </a>
+
+                    <a
+                        href="pages/faris-ai.html"
+                        class="btn-ai"
+                    >
+                        <span>🤖</span>
+                        JOUER CONTRE FARIS AI
+                    </a>
+
+                </div>
+
+
+                <div class="hero-mini-info">
+
+                    <div>
+                        <strong>♟</strong>
+                        <span>CHESS BOARD</span>
+                    </div>
+
+                    <div>
+                        <strong>🤖</strong>
+                        <span>FARIS AI</span>
+                    </div>
+
+                    <div>
+                        <strong>⚡</strong>
+                        <span>FAST PLAY</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================
+                 FARIS PHOTO
+            ========================== -->
+
+            <div class="hero-visual">
+
+                <div class="visual-ring ring-one"></div>
+                <div class="visual-ring ring-two"></div>
+
+                <div class="visual-glow"></div>
+
+                <div class="photo-frame">
+
+                    <div class="frame-top">
+                        <span>CHESS_FK</span>
+                        <span>01</span>
+                    </div>
+
+                    <img
+                        src="images/faris.jpg"
+                        alt="Faris"
+                        class="faris-photo"
+                        onerror="this.style.display='none'; document.getElementById('photoFallback').style.display='flex';"
+                    >
+
+                    <div
+                        id="photoFallback"
+                        class="photo-fallback"
+                    >
+                        ♟
+                    </div>
+
+                    <div class="photo-overlay"></div>
+
+                    <div class="photo-label">
+                        <span>PLAYER</span>
+                        <strong>FARIS</strong>
+                    </div>
+
+                </div>
+
+
+                <div class="floating-card floating-top">
+
+                    <span class="floating-icon">♟</span>
+
+                    <div>
+                        <small>READY TO</small>
+                        <strong>PLAY</strong>
+                    </div>
+
+                </div>
+
+
+                <div class="floating-card floating-bottom">
+
+                    <span class="online-dot"></span>
+
+                    <div>
+                        <small>FARIS AI</small>
+                        <strong>ONLINE</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             GAME MODES
+        ========================== -->
+
+        <section class="modes">
+
+            <div class="section-heading">
+
+                <div>
+                    <p>CHOOSE YOUR MODE</p>
+
+                    <h2>
+                        HOW DO YOU
+                        <span>WANT TO PLAY?</span>
+                    </h2>
+                </div>
+
+                <div class="heading-line"></div>
+
+            </div>
+
+
+            <div class="mode-grid">
+
+                <!-- ONLINE -->
 
                 <a
                     href="pages/plat.html"
-                    class="btn-primary"
+                    class="mode-card online-card"
                 >
-                    ♟️ PLAY CHESS
+
+                    <div class="mode-number">
+                        01
+                    </div>
+
+                    <div class="mode-icon">
+                        ♟
+                    </div>
+
+                    <div class="mode-content">
+
+                        <p>PLAY MODE</p>
+
+                        <h3>
+                            JOUER
+                            <span>EN LIGNE</span>
+                        </h3>
+
+                        <article>
+                            Rejoins le monde CHESS_FK,
+                            joue sur ton échiquier et
+                            améliore ton niveau.
+                        </article>
+
+                        <div class="mode-link">
+                            START GAME
+                            <span>→</span>
+                        </div>
+
+                    </div>
+
                 </a>
+
+
+                <!-- FARIS AI -->
 
                 <a
                     href="pages/faris-ai.html"
-                    class="btn-secondary"
+                    class="mode-card ai-card"
                 >
-                    🤖 FARIS AI
+
+                    <div class="mode-number">
+                        02
+                    </div>
+
+                    <div class="ai-badge">
+                        AI
+                    </div>
+
+                    <div class="mode-icon">
+                        🤖
+                    </div>
+
+                    <div class="mode-content">
+
+                        <p>ARTIFICIAL INTELLIGENCE</p>
+
+                        <h3>
+                            PLAY AGAINST
+                            <span>FARIS AI</span>
+                        </h3>
+
+                        <article>
+                            Choisis ton niveau et
+                            affronte Faris AI pour
+                            devenir plus fort.
+                        </article>
+
+                        <div class="mode-link">
+                            CHALLENGE AI
+                            <span>→</span>
+                        </div>
+
+                    </div>
+
                 </a>
 
             </div>
 
-        </div>
-
-    </section>
+        </section>
 
 
-    <!-- =========================================
-         FEATURES
-    ========================================== -->
+        <!-- =========================
+             FEATURES
+        ========================== -->
 
-    <section class="features">
+        <section class="features">
 
-        <div class="feature-card">
+            <div class="section-heading">
 
-            <div class="feature-icon">
-                ♟️
+                <div>
+                    <p>YOUR CHESS JOURNEY</p>
+
+                    <h2>
+                        PLAY.
+                        <span>IMPROVE.</span>
+                        WIN.
+                    </h2>
+                </div>
+
             </div>
 
-            <h2>
-                PLAY CHESS
-            </h2>
 
-            <p>
-                Play chess directly on CHESS_FK.
-            </p>
+            <div class="feature-grid">
 
-        </div>
+                <article class="feature-card">
+
+                    <span class="feature-number">
+                        01
+                    </span>
+
+                    <div class="feature-icon">
+                        ♟
+                    </div>
+
+                    <h3>
+                        COMPLETE CHESS
+                    </h3>
+
+                    <p>
+                        Un véritable échiquier pour
+                        jouer tes parties directement
+                        sur CHESS_FK.
+                    </p>
+
+                </article>
 
 
-        <div class="feature-card">
+                <article class="feature-card featured">
 
-            <div class="feature-icon">
-                🤖
+                    <span class="feature-number">
+                        02
+                    </span>
+
+                    <div class="feature-icon">
+                        🤖
+                    </div>
+
+                    <h3>
+                        FARIS AI
+                    </h3>
+
+                    <p>
+                        Affronte une intelligence
+                        artificielle adaptée à ton
+                        niveau.
+                    </p>
+
+                </article>
+
+
+                <article class="feature-card">
+
+                    <span class="feature-number">
+                        03
+                    </span>
+
+                    <div class="feature-icon">
+                        ⚡
+                    </div>
+
+                    <h3>
+                        FAST & CLEAN
+                    </h3>
+
+                    <p>
+                        Une interface rapide, moderne
+                        et pensée pour rester concentré
+                        sur la partie.
+                    </p>
+
+                </article>
+
+
+                <article class="feature-card">
+
+                    <span class="feature-number">
+                        04
+                    </span>
+
+                    <div class="feature-icon">
+                        🏆
+                    </div>
+
+                    <h3>
+                        BECOME STRONGER
+                    </h3>
+
+                    <p>
+                        Joue encore et encore,
+                        améliore ton niveau et
+                        deviens meilleur.
+                    </p>
+
+                </article>
+
             </div>
 
-            <h2>
-                FARIS AI
-            </h2>
-
-            <p>
-                Challenge Faris AI at different
-                levels and improve your chess.
-            </p>
-
-        </div>
+        </section>
 
 
-        <div class="feature-card">
+        <!-- =========================
+             FARIS AI CTA
+        ========================== -->
 
-            <div class="feature-icon">
-                🏆
+        <section class="ai-section">
+
+            <div class="ai-section-glow"></div>
+
+            <div class="ai-content">
+
+                <p class="hero-kicker">
+                    YOUR NEXT OPPONENT
+                </p>
+
+                <h2>
+                    THINK YOU CAN
+                    <span>BEAT FARIS?</span>
+                </h2>
+
+                <p>
+                    Entre dans l'arène.
+                    Choisis ton niveau.
+                    Fais ton meilleur coup.
+                </p>
+
+                <a
+                    href="pages/faris-ai.html"
+                    class="btn-primary"
+                >
+                    🤖 CHALLENGE FARIS AI
+                </a>
+
             </div>
 
-            <h2>
-                COMPETE
-            </h2>
-
-            <p>
-                Improve your level and become
-                a stronger player.
-            </p>
-
-        </div>
-
-
-        <div class="feature-card">
-
-            <div class="feature-icon">
-                👤
+            <div class="ai-symbol">
+                ♛
             </div>
 
-            <h2>
-                YOUR PROFILE
-            </h2>
+        </section>
 
-            <p>
-                Create your CHESS_FK player
-                profile.
-            </p>
+    </main>
 
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <footer>
+
+        <div class="footer-logo">
+            <span>CHESS</span>_FK
         </div>
 
-    </section>
+        <p>
+            PLAY • IMPROVE • COMPETE
+        </p>
 
-</main>
+        <p>
+            © 2026 CHESS_FK
+        </p>
 
-
-<!-- =========================================
-     SUPABASE
-     
-     ORDRE IMPORTANT :
-     1. Supabase
-     2. supabase.js
-     3. auth.js
-========================================== -->
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script src="js/supabase.js"></script>
-
-<script src="js/auth.js"></script>
+    </footer>
 
 
-<!-- =========================================
-     THEME
-========================================== -->
+    <!-- =========================
+         SUPABASE
+    ========================== -->
 
-<script src="js/theme.js"></script>
-```
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script src="js/supabase.js"></script>
+
+    <script src="js/auth.js"></script>
+
+    <script src="js/theme.js"></script>
 
 </body>
 
 </html>
+```
