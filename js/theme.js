@@ -3,7 +3,7 @@ console.log("🔥 CHESS_FK THEME SYSTEM LOADED");
 
 /* =========================================
    ELEMENTS
-   ========================================= */
+========================================= */
 
 const themeToggle = document.getElementById("themeToggle");
 const themePanel = document.getElementById("themePanel");
@@ -14,139 +14,134 @@ const themeCards = document.querySelectorAll(".theme-card");
 
 
 /* =========================================
+   SETTINGS
+========================================= */
+
+const DEFAULT_THEME = "red";
+
+const ALLOWED_THEMES = [
+    "red",
+    "black",
+    "brown",
+    "beige",
+    "blue",
+    "green",
+    "purple",
+    "gold",
+    "cyan",
+    "orange"
+];
+
+
+/* =========================================
    CHECK
-   ========================================= */
+========================================= */
 
 console.log("Theme button:", themeToggle);
 console.log("Theme panel:", themePanel);
+console.log("Theme overlay:", themeOverlay);
+console.log("Theme close:", themeClose);
 console.log("Theme cards:", themeCards.length);
 
 
 /* =========================================
-   DEFAULT THEME
-   ========================================= */
-
-const DEFAULT_THEME = "red";
-
-
-/* =========================================
    OPEN PANEL
-   ========================================= */
+========================================= */
 
 function openThemePanel() {
 
-    console.log("🎨 Opening theme panel");
-
-    if (!themePanel || !themeOverlay) {
+    if (!themePanel) {
         console.error("❌ Theme panel not found");
         return;
     }
 
     themePanel.classList.add("active");
-    themeOverlay.classList.add("active");
+
+    if (themeOverlay) {
+        themeOverlay.classList.add("active");
+    }
 
     document.body.style.overflow = "hidden";
+
+    console.log("🎨 Theme panel opened");
 }
 
 
 /* =========================================
    CLOSE PANEL
-   ========================================= */
+========================================= */
 
 function closeThemePanel() {
 
-    console.log("❌ Closing theme panel");
-
-    if (!themePanel || !themeOverlay) {
-        return;
+    if (themePanel) {
+        themePanel.classList.remove("active");
     }
 
-    themePanel.classList.remove("active");
-    themeOverlay.classList.remove("active");
+    if (themeOverlay) {
+        themeOverlay.classList.remove("active");
+    }
 
     document.body.style.overflow = "";
+
+    console.log("❌ Theme panel closed");
 }
 
 
 /* =========================================
    APPLY THEME
-   ========================================= */
+========================================= */
 
 function applyTheme(theme) {
 
     console.log("🎨 Applying theme:", theme);
 
 
-    /* ================================
-       CHECK THEME
-       ================================ */
+    /* -------------------------------------
+       VERIFY THEME
+    ------------------------------------- */
 
-    const allowedThemes = [
-        "red",
-        "blue",
-        "green",
-        "purple"
-    ];
+    if (!ALLOWED_THEMES.includes(theme)) {
 
-
-    if (!allowedThemes.includes(theme)) {
-
-        theme = DEFAULT_THEME;
-
-    }
-
-
-    /* ================================
-       RED = DEFAULT
-       ================================ */
-
-    if (theme === "red") {
-
-        document.body.removeAttribute("data-theme");
-
-    }
-
-
-    /* ================================
-       OTHER THEMES
-       ================================ */
-
-    else {
-
-        document.body.setAttribute(
-            "data-theme",
-            theme
+        console.warn(
+            "⚠️ Unknown theme:",
+            theme,
+            "→ using red"
         );
 
+        theme = DEFAULT_THEME;
     }
 
 
-    /* ================================
-       UPDATE CARDS
-       ================================ */
+    /* -------------------------------------
+       APPLY DATA ATTRIBUTE
+    ------------------------------------- */
+
+    document.body.setAttribute(
+        "data-theme",
+        theme
+    );
+
+
+    /* -------------------------------------
+       UPDATE THEME CARDS
+    ------------------------------------- */
 
     themeCards.forEach(function(card) {
 
-        card.classList.remove("active");
+        const cardTheme =
+            card.getAttribute("data-theme");
+
+        card.classList.toggle(
+            "active",
+            cardTheme === theme
+        );
 
     });
 
 
-    const selectedCard = document.querySelector(
-        `.theme-card[data-theme="${theme}"]`
-    );
-
-
-    if (selectedCard) {
-
-        selectedCard.classList.add("active");
-
-    }
-
-
-    /* ================================
-       SAVE THEME
-       ================================ */
+    /* -------------------------------------
+       SAVE
+    ------------------------------------- */
 
     localStorage.setItem(
         "chess_fk_theme",
@@ -155,55 +150,44 @@ function applyTheme(theme) {
 
 
     console.log(
-        "✅ Theme saved:",
+        "✅ Theme applied and saved:",
         theme
     );
-
 }
 
 
 /* =========================================
    LOAD SAVED THEME
-   ========================================= */
+========================================= */
 
 function loadSavedTheme() {
 
-    const savedTheme =
+    let savedTheme =
         localStorage.getItem("chess_fk_theme");
 
 
-    console.log(
-        "💾 Saved theme:",
-        savedTheme
-    );
+    if (!ALLOWED_THEMES.includes(savedTheme)) {
 
-
-    if (savedTheme) {
-
-        applyTheme(savedTheme);
+        savedTheme = DEFAULT_THEME;
 
     }
 
-    else {
 
-        applyTheme(DEFAULT_THEME);
-
-    }
-
+    applyTheme(savedTheme);
 }
 
 
 /* =========================================
    THEME BUTTON
-   ========================================= */
+========================================= */
 
 if (themeToggle) {
 
     themeToggle.addEventListener(
         "click",
-        function() {
+        function(event) {
 
-            console.log("🎨 THEME BUTTON CLICKED");
+            event.preventDefault();
 
             openThemePanel();
 
@@ -215,7 +199,7 @@ if (themeToggle) {
 
 /* =========================================
    CLOSE BUTTON
-   ========================================= */
+========================================= */
 
 if (themeClose) {
 
@@ -233,7 +217,7 @@ if (themeClose) {
 
 /* =========================================
    OVERLAY
-   ========================================= */
+========================================= */
 
 if (themeOverlay) {
 
@@ -250,8 +234,8 @@ if (themeOverlay) {
 
 
 /* =========================================
-   ESC KEY
-   ========================================= */
+   ESC
+========================================= */
 
 document.addEventListener(
     "keydown",
@@ -269,7 +253,7 @@ document.addEventListener(
 
 /* =========================================
    THEME CARDS
-   ========================================= */
+========================================= */
 
 themeCards.forEach(function(card) {
 
@@ -281,8 +265,13 @@ themeCards.forEach(function(card) {
                 card.getAttribute("data-theme");
 
 
+            if (!theme) {
+                return;
+            }
+
+
             console.log(
-                "🖱️ Selected:",
+                "🖱️ Theme selected:",
                 theme
             );
 
@@ -290,18 +279,13 @@ themeCards.forEach(function(card) {
             applyTheme(theme);
 
 
-            /*
-                Petit délai pour rendre
-                le changement plus naturel.
-            */
-
             setTimeout(
                 function() {
 
                     closeThemePanel();
 
                 },
-                200
+                250
             );
 
         }
@@ -312,7 +296,7 @@ themeCards.forEach(function(card) {
 
 /* =========================================
    START
-   ========================================= */
+========================================= */
 
 loadSavedTheme();
 

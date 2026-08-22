@@ -5,74 +5,479 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <title>Chess FK - Play</title>
+    <title>Chess FK — Play</title>
 
-    <link rel="stylesheet" href="board.css">
+    <meta
+        name="description"
+        content="Play chess on CHESS_FK against Faris AI."
+    >
+
+    <link
+        rel="stylesheet"
+        href="board.css"
+    >
 
 </head>
 
+
 <body>
 
-<!-- ======================================
-     TITRE
-====================================== -->
 
-<h1>♟️ CHESS <span>FK</span> ♟️</h1>
+<!-- =====================================================
+     HEADER
+===================================================== -->
 
-<p class="turn">⚪ White to move</p>
+<header class="chess-header">
 
-
-<!-- ======================================
-     ZONE PRINCIPALE
-====================================== -->
-
-<main class="chess-page">
-
-
-    <!-- ==================================
-         COLONNE GAUCHE : NOTATION
-    ================================== -->
-
-    <aside class="move-list">
-
-        <h3>♟️ MOVES</h3>
-
-        <div id="moves"></div>
-
-    </aside>
+    <a
+        href="../index.html"
+        class="chess-logo"
+    >
+        ♟ <span>CHESS</span>_FK
+    </a>
 
 
-    <!-- ==================================
-         CENTRE : ÉCHIQUIER
-    ================================== -->
+    <div class="header-actions">
 
-    <section class="chess-center">
+        <button
+            id="themeToggle"
+            class="theme-toggle"
+            type="button"
+            aria-label="Choose theme"
+        >
+            🎨
+            <span>THEME</span>
+        </button>
 
 
-        <!-- ==================================
-             JOUEUR NOIR
-        ================================== -->
+        <a
+            href="../index.html"
+            class="back-home"
+        >
+            ← HOME
+        </a>
 
-        <div class="player black-player">
+    </div>
 
-            <h2>⚫ Black</h2>
+</header>
 
-            <div class="clock">10:00</div>
+
+
+<!-- =====================================================
+     THEME OVERLAY
+===================================================== -->
+
+<div
+    id="themeOverlay"
+    class="theme-overlay"
+></div>
+
+
+
+<!-- =====================================================
+     THEME PANEL
+===================================================== -->
+
+<aside
+    id="themePanel"
+    class="theme-panel"
+>
+
+
+    <div class="theme-panel-header">
+
+        <div>
+
+            <div class="theme-label">
+                CHESS_FK
+            </div>
+
+            <h2>
+                CHOOSE YOUR
+                <span>STYLE.</span>
+            </h2>
 
         </div>
 
 
-        <!-- ==================================
-             ÉCHIQUIER + COORDONNÉES
-        ================================== -->
+        <button
+            id="themeClose"
+            class="theme-close"
+            type="button"
+        >
+            ×
+        </button>
 
-        <div class="board-wrapper">
+    </div>
 
 
-            <!-- NUMÉROS 8 → 1 -->
+    <p class="theme-description">
+
+        Change the atmosphere of your chess game.
+        Your choice is automatically saved across CHESS_FK.
+
+    </p>
+
+
+
+    <!-- =================================================
+         THEME CARDS
+    ================================================= -->
+
+    <div class="theme-grid">
+
+
+        <!-- RED -->
+
+        <button
+            class="theme-card"
+            data-theme="red"
+            type="button"
+        >
+
+            <div class="theme-preview theme-preview-red">
+
+                <div class="mini-board">
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                </div>
+
+            </div>
+
+
+            <div class="theme-card-info">
+
+                <div>
+
+                    <strong>RED</strong>
+
+                    <small>
+                        CHESS_FK CLASSIC
+                    </small>
+
+                </div>
+
+                <div class="theme-check">
+                    ✓
+                </div>
+
+            </div>
+
+        </button>
+
+
+
+        <!-- BLUE -->
+
+        <button
+            class="theme-card"
+            data-theme="blue"
+            type="button"
+        >
+
+            <div class="theme-preview theme-preview-blue">
+
+                <div class="mini-board">
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                </div>
+
+            </div>
+
+
+            <div class="theme-card-info">
+
+                <div>
+
+                    <strong>BLUE</strong>
+
+                    <small>
+                        ICE MODE
+                    </small>
+
+                </div>
+
+                <div class="theme-check">
+                    ✓
+                </div>
+
+            </div>
+
+        </button>
+
+
+
+        <!-- GREEN -->
+
+        <button
+            class="theme-card"
+            data-theme="green"
+            type="button"
+        >
+
+            <div class="theme-preview theme-preview-green">
+
+                <div class="mini-board">
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                </div>
+
+            </div>
+
+
+            <div class="theme-card-info">
+
+                <div>
+
+                    <strong>GREEN</strong>
+
+                    <small>
+                        FOREST MODE
+                    </small>
+
+                </div>
+
+                <div class="theme-check">
+                    ✓
+                </div>
+
+            </div>
+
+        </button>
+
+
+
+        <!-- PURPLE -->
+
+        <button
+            class="theme-card"
+            data-theme="purple"
+            type="button"
+        >
+
+            <div class="theme-preview theme-preview-purple">
+
+                <div class="mini-board">
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                </div>
+
+            </div>
+
+
+            <div class="theme-card-info">
+
+                <div>
+
+                    <strong>PURPLE</strong>
+
+                    <small>
+                        NIGHT MODE
+                    </small>
+
+                </div>
+
+                <div class="theme-check">
+                    ✓
+                </div>
+
+            </div>
+
+        </button>
+
+
+    </div>
+
+
+    <div class="theme-panel-footer">
+
+        <span class="theme-footer-dot"></span>
+
+        YOUR CHOICE IS SAVED AUTOMATICALLY
+
+    </div>
+
+
+</aside>
+
+
+
+<!-- =====================================================
+     PAGE TITLE
+===================================================== -->
+
+<section class="page-title">
+
+    <div class="title-label">
+        CHESS_FK EXPERIENCE
+    </div>
+
+    <h1>
+        PLAY
+        <span>CHESS.</span>
+    </h1>
+
+    <p>
+        Think. Calculate. Attack. Improve.
+    </p>
+
+</section>
+
+
+
+<!-- =====================================================
+     TURN STATUS
+===================================================== -->
+
+<div class="turn-container">
+
+    <div class="turn-dot"></div>
+
+    <p class="turn">
+        ⚪ White to move
+    </p>
+
+</div>
+
+
+
+<!-- =====================================================
+     MAIN CHESS AREA
+===================================================== -->
+
+<main class="chess-page">
+
+
+
+    <!-- =================================================
+         MOVE LIST
+    ================================================= -->
+
+    <aside class="move-list">
+
+        <div class="panel-top">
+
+            <span class="panel-number">
+                01
+            </span>
+
+            <h3>
+                MOVE HISTORY
+            </h3>
+
+        </div>
+
+
+        <div
+            id="moves"
+            class="moves-container"
+        ></div>
+
+
+        <div class="move-footer">
+
+            <span></span>
+
+            CHESS NOTATION
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- =================================================
+         CHESS CENTER
+    ================================================= -->
+
+    <section class="chess-center">
+
+
+
+        <!-- =============================================
+             BLACK PLAYER
+        ============================================== -->
+
+        <div class="player black-player">
+
+            <div class="player-info">
+
+                <div class="player-avatar black-avatar">
+                    ♟
+                </div>
+
+                <div>
+
+                    <span class="player-label">
+                        OPPONENT
+                    </span>
+
+                    <h2>
+                        Faris AI
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="clock">
+                10:00
+            </div>
+
+        </div>
+
+
+
+        <!-- =============================================
+             BOARD
+        ============================================== -->
+
+        <div class="board-area">
+
+
+            <!-- NUMBERS -->
 
             <div class="numbers">
 
@@ -88,12 +493,9 @@
             </div>
 
 
+
             <div class="board-column">
 
-
-                <!-- ==================================
-                     PLATEAU
-                ================================== -->
 
                 <div class="board-container">
 
@@ -102,9 +504,8 @@
                 </div>
 
 
-                <!-- ==================================
-                     LETTRES a → h
-                ================================== -->
+
+                <!-- LETTERS -->
 
                 <div class="letters">
 
@@ -120,25 +521,30 @@
                 </div>
 
 
-                <!-- ==================================
-                     CONTRÔLES TAILLE
-                ================================== -->
+
+                <!-- BOARD SIZE -->
 
                 <div class="board-controls">
 
                     <button
                         id="decreaseBoard"
-                        title="Réduire l'échiquier">
+                        type="button"
+                        title="Reduce board"
+                    >
                         −
                     </button>
+
 
                     <span id="boardSizeLabel">
                         60
                     </span>
 
+
                     <button
                         id="increaseBoard"
-                        title="Agrandir l'échiquier">
+                        type="button"
+                        title="Increase board"
+                    >
                         +
                     </button>
 
@@ -150,69 +556,174 @@
         </div>
 
 
-        <!-- ==================================
-             JOUEUR BLANC
-        ================================== -->
+
+        <!-- =============================================
+             WHITE PLAYER
+        ============================================== -->
 
         <div class="player white-player">
 
-            <h2>⚪ White</h2>
+            <div class="player-info">
 
-            <div class="clock">10:00</div>
+                <div class="player-avatar white-avatar">
+                    ♙
+                </div>
+
+                <div>
+
+                    <span class="player-label">
+                        YOU
+                    </span>
+
+                    <h2>
+                        White
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="clock">
+                10:00
+            </div>
 
         </div>
 
 
-        <!-- ==================================
-             BOUTONS DE PARTIE
-        ================================== -->
+
+        <!-- =============================================
+             GAME CONTROLS
+        ============================================== -->
 
         <div class="game-buttons">
 
-            <button id="undoButton">
-                ↩️ Revenir
+
+            <button
+                id="undoButton"
+                type="button"
+            >
+                <span>↩</span>
+                UNDO
             </button>
 
-            <button id="drawButton">
-                🤝 Proposer nulle
+
+            <button
+                id="drawButton"
+                type="button"
+            >
+                <span>🤝</span>
+                DRAW
             </button>
 
-            <button id="resignButton">
-                🏳️ Abandonner
+
+            <button
+                id="resignButton"
+                type="button"
+                class="danger-button"
+            >
+                <span>⚑</span>
+                RESIGN
             </button>
 
-            <button id="homeButton">
-                🏠 Accueil
+
+            <button
+                id="homeButton"
+                type="button"
+            >
+                <span>⌂</span>
+                HOME
             </button>
+
 
         </div>
 
 
     </section>
 
+
 </main>
 
 
-<!-- ======================================
-     JAVASCRIPT
-====================================== -->
 
-<!-- STOCKFISH ENGINE -->
+<!-- =====================================================
+     GAME RESULT
+===================================================== -->
+
+<div
+    id="gameResult"
+    aria-hidden="true"
+>
+
+    <div class="result-box">
+
+        <div class="result-label">
+            CHESS_FK
+        </div>
+
+        <h2 class="result-title">
+            GAME OVER
+        </h2>
+
+        <p class="result-message">
+            The game has ended.
+        </p>
+
+        <div class="result-buttons">
+
+            <button
+                type="button"
+                onclick="location.reload()"
+            >
+                PLAY AGAIN
+            </button>
+
+            <button
+                type="button"
+                onclick="location.href='../index.html'"
+            >
+                HOME
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
+<!-- STOCKFISH -->
+
 <script src="../engine/stockfish-18-lite-single.js"></script>
 
+
 <!-- STOCKFISH LOADER -->
+
 <script src="../js/stockfish-loader.js"></script>
 
+
 <!-- FARIS AI -->
+
 <script src="../js/faris-ai.js"></script>
 
+
 <!-- THEME -->
+
 <script src="../js/theme.js"></script>
 
+
 <!-- PIECES -->
+
 <script src="pieces.js"></script>
 
+
 <!-- BOARD -->
+
 <script src="board.js"></script>
 
 

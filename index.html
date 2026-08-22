@@ -1,46 +1,71 @@
-```html
+html
 <!DOCTYPE html>
 <html lang="fr">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>CHESS_FK — Play Chess</title>
 
     <meta
         name="description"
-        content="CHESS_FK — Play chess online, challenge Faris AI and improve your game."
+        content="CHESS_FK — Play chess, challenge Faris AI, study openings and improve your game."
     >
 
-    <link rel="stylesheet" href="css/style.css">
+    <link
+        rel="stylesheet"
+        href="css/style.css"
+    >
+
 </head>
 
-<body>
 
-    <!-- =========================
+<body data-theme="red">
+
+
+    <!-- =========================================
          BACKGROUND EFFECTS
-    ========================== -->
+    ========================================== -->
 
     <div class="background-grid"></div>
-    <div class="background-glow glow-left"></div>
-    <div class="background-glow glow-right"></div>
+
+    <div class="background-glow background-glow-left"></div>
+
+    <div class="background-glow background-glow-right"></div>
 
 
-    <!-- =========================
+    <!-- =========================================
          HEADER
-    ========================== -->
+    ========================================== -->
 
     <header class="site-header">
 
-        <a href="index.html" class="logo">
+        <a
+            href="index.html"
+            class="logo"
+        >
+
             <span class="logo-piece">♟</span>
-            <span>CHESS</span><b>_FK</b>
+
+            <span>CHESS</span>
+
+            <strong>_FK</strong>
+
         </a>
+
 
         <nav class="main-nav">
 
-            <a href="index.html" class="active">
+            <a
+                href="index.html"
+                class="active"
+            >
                 HOME
             </a>
 
@@ -52,7 +77,16 @@
                 FARIS AI
             </a>
 
+            <a href="#opening">
+                OPENING
+            </a>
+
+            <a href="#analysis">
+                ANALYSIS
+            </a>
+
         </nav>
+
 
         <div class="header-actions">
 
@@ -64,13 +98,15 @@
                 SIGN IN
             </button>
 
+
             <button
                 id="themeToggle"
                 class="theme-toggle"
                 type="button"
-                aria-label="Choose theme"
+                aria-label="Open themes"
             >
-                🎨
+                <span class="theme-toggle-icon">◉</span>
+                THEME
             </button>
 
         </div>
@@ -78,441 +114,986 @@
     </header>
 
 
-    <!-- =========================
-         HERO
-    ========================== -->
+    <!-- =========================================
+         THEME OVERLAY
+    ========================================== -->
 
-    <main>
+    <div
+        id="themeOverlay"
+        class="theme-overlay"
+    ></div>
 
-        <section class="hero">
 
-            <div class="hero-content">
+    <!-- =========================================
+         THEME PANEL
+    ========================================== -->
 
-                <div class="status-line">
-                    <span class="status-dot"></span>
-                    CHESS_FK IS READY
-                </div>
+    <aside
+        id="themePanel"
+        class="theme-panel"
+    >
 
-                <p class="hero-kicker">
-                    WELCOME TO YOUR CHESS WORLD
-                </p>
+        <div class="theme-panel-header">
 
-                <h1>
-                    PLAY
-                    <span>CHESS.</span>
-                </h1>
+            <div>
 
-                <p class="hero-description">
-                    Play, improve and challenge yourself.
-                    Face <strong>Faris AI</strong>, play with
-                    your friends and build your chess journey.
-                </p>
-
-
-                <!-- =========================
-                     MAIN ACTIONS
-                ========================== -->
-
-                <div class="hero-buttons">
-
-                    <a
-                        href="pages/plat.html"
-                        class="btn-primary"
-                    >
-                        <span>♟</span>
-                        JOUER AUX ÉCHECS
-                    </a>
-
-                    <a
-                        href="pages/faris-ai.html"
-                        class="btn-ai"
-                    >
-                        <span>🤖</span>
-                        JOUER CONTRE FARIS AI
-                    </a>
-
-                </div>
-
-
-                <div class="hero-mini-info">
-
-                    <div>
-                        <strong>♟</strong>
-                        <span>CHESS BOARD</span>
-                    </div>
-
-                    <div>
-                        <strong>🤖</strong>
-                        <span>FARIS AI</span>
-                    </div>
-
-                    <div>
-                        <strong>⚡</strong>
-                        <span>FAST PLAY</span>
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- =========================
-                 FARIS PHOTO
-            ========================== -->
-
-            <div class="hero-visual">
-
-                <div class="visual-ring ring-one"></div>
-                <div class="visual-ring ring-two"></div>
-
-                <div class="visual-glow"></div>
-
-                <div class="photo-frame">
-
-                    <div class="frame-top">
-                        <span>CHESS_FK</span>
-                        <span>01</span>
-                    </div>
-
-                    <img
-                        src="images/faris.jpg"
-                        alt="Faris"
-                        class="faris-photo"
-                        onerror="this.style.display='none'; document.getElementById('photoFallback').style.display='flex';"
-                    >
-
-                    <div
-                        id="photoFallback"
-                        class="photo-fallback"
-                    >
-                        ♟
-                    </div>
-
-                    <div class="photo-overlay"></div>
-
-                    <div class="photo-label">
-                        <span>PLAYER</span>
-                        <strong>FARIS</strong>
-                    </div>
-
-                </div>
-
-
-                <div class="floating-card floating-top">
-
-                    <span class="floating-icon">♟</span>
-
-                    <div>
-                        <small>READY TO</small>
-                        <strong>PLAY</strong>
-                    </div>
-
-                </div>
-
-
-                <div class="floating-card floating-bottom">
-
-                    <span class="online-dot"></span>
-
-                    <div>
-                        <small>FARIS AI</small>
-                        <strong>ONLINE</strong>
-                    </div>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- =========================
-             GAME MODES
-        ========================== -->
-
-        <section class="modes">
-
-            <div class="section-heading">
-
-                <div>
-                    <p>CHOOSE YOUR MODE</p>
-
-                    <h2>
-                        HOW DO YOU
-                        <span>WANT TO PLAY?</span>
-                    </h2>
-                </div>
-
-                <div class="heading-line"></div>
-
-            </div>
-
-
-            <div class="mode-grid">
-
-                <!-- ONLINE -->
-
-                <a
-                    href="pages/plat.html"
-                    class="mode-card online-card"
-                >
-
-                    <div class="mode-number">
-                        01
-                    </div>
-
-                    <div class="mode-icon">
-                        ♟
-                    </div>
-
-                    <div class="mode-content">
-
-                        <p>PLAY MODE</p>
-
-                        <h3>
-                            JOUER
-                            <span>EN LIGNE</span>
-                        </h3>
-
-                        <article>
-                            Rejoins le monde CHESS_FK,
-                            joue sur ton échiquier et
-                            améliore ton niveau.
-                        </article>
-
-                        <div class="mode-link">
-                            START GAME
-                            <span>→</span>
-                        </div>
-
-                    </div>
-
-                </a>
-
-
-                <!-- FARIS AI -->
-
-                <a
-                    href="pages/faris-ai.html"
-                    class="mode-card ai-card"
-                >
-
-                    <div class="mode-number">
-                        02
-                    </div>
-
-                    <div class="ai-badge">
-                        AI
-                    </div>
-
-                    <div class="mode-icon">
-                        🤖
-                    </div>
-
-                    <div class="mode-content">
-
-                        <p>ARTIFICIAL INTELLIGENCE</p>
-
-                        <h3>
-                            PLAY AGAINST
-                            <span>FARIS AI</span>
-                        </h3>
-
-                        <article>
-                            Choisis ton niveau et
-                            affronte Faris AI pour
-                            devenir plus fort.
-                        </article>
-
-                        <div class="mode-link">
-                            CHALLENGE AI
-                            <span>→</span>
-                        </div>
-
-                    </div>
-
-                </a>
-
-            </div>
-
-        </section>
-
-
-        <!-- =========================
-             FEATURES
-        ========================== -->
-
-        <section class="features">
-
-            <div class="section-heading">
-
-                <div>
-                    <p>YOUR CHESS JOURNEY</p>
-
-                    <h2>
-                        PLAY.
-                        <span>IMPROVE.</span>
-                        WIN.
-                    </h2>
-                </div>
-
-            </div>
-
-
-            <div class="feature-grid">
-
-                <article class="feature-card">
-
-                    <span class="feature-number">
-                        01
-                    </span>
-
-                    <div class="feature-icon">
-                        ♟
-                    </div>
-
-                    <h3>
-                        COMPLETE CHESS
-                    </h3>
-
-                    <p>
-                        Un véritable échiquier pour
-                        jouer tes parties directement
-                        sur CHESS_FK.
-                    </p>
-
-                </article>
-
-
-                <article class="feature-card featured">
-
-                    <span class="feature-number">
-                        02
-                    </span>
-
-                    <div class="feature-icon">
-                        🤖
-                    </div>
-
-                    <h3>
-                        FARIS AI
-                    </h3>
-
-                    <p>
-                        Affronte une intelligence
-                        artificielle adaptée à ton
-                        niveau.
-                    </p>
-
-                </article>
-
-
-                <article class="feature-card">
-
-                    <span class="feature-number">
-                        03
-                    </span>
-
-                    <div class="feature-icon">
-                        ⚡
-                    </div>
-
-                    <h3>
-                        FAST & CLEAN
-                    </h3>
-
-                    <p>
-                        Une interface rapide, moderne
-                        et pensée pour rester concentré
-                        sur la partie.
-                    </p>
-
-                </article>
-
-
-                <article class="feature-card">
-
-                    <span class="feature-number">
-                        04
-                    </span>
-
-                    <div class="feature-icon">
-                        🏆
-                    </div>
-
-                    <h3>
-                        BECOME STRONGER
-                    </h3>
-
-                    <p>
-                        Joue encore et encore,
-                        améliore ton niveau et
-                        deviens meilleur.
-                    </p>
-
-                </article>
-
-            </div>
-
-        </section>
-
-
-        <!-- =========================
-             FARIS AI CTA
-        ========================== -->
-
-        <section class="ai-section">
-
-            <div class="ai-section-glow"></div>
-
-            <div class="ai-content">
-
-                <p class="hero-kicker">
-                    YOUR NEXT OPPONENT
+                <p class="theme-label">
+                    CHESS_FK EXPERIENCE
                 </p>
 
                 <h2>
-                    THINK YOU CAN
-                    <span>BEAT FARIS?</span>
+                    CHOOSE YOUR
+                    <span>STYLE</span>
                 </h2>
 
-                <p>
-                    Entre dans l'arène.
-                    Choisis ton niveau.
-                    Fais ton meilleur coup.
+            </div>
+
+
+            <button
+                id="themeClose"
+                class="theme-close"
+                type="button"
+                aria-label="Close themes"
+            >
+                ×
+            </button>
+
+        </div>
+
+
+        <p class="theme-description">
+
+            Change the atmosphere of your
+            CHESS_FK experience.
+
+        </p>
+
+
+        <div class="theme-grid">
+
+
+            <!-- RED -->
+
+            <button
+                class="theme-card active"
+                data-theme="red"
+                type="button"
+            >
+
+                <div class="theme-preview red-preview">
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                </div>
+
+                <div class="theme-card-info">
+
+                    <div>
+
+                        <strong>RED FURY</strong>
+
+                        <small>
+                            POWER • FIRE • CHESS
+                        </small>
+
+                    </div>
+
+                    <span class="theme-check">
+                        ✓
+                    </span>
+
+                </div>
+
+            </button>
+
+
+            <!-- BLACK -->
+
+            <button
+                class="theme-card"
+                data-theme="black"
+                type="button"
+            >
+
+                <div class="theme-preview black-preview">
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                </div>
+
+                <div class="theme-card-info">
+
+                    <div>
+
+                        <strong>BLACKOUT</strong>
+
+                        <small>
+                            DARK • CLEAN • ELITE
+                        </small>
+
+                    </div>
+
+                    <span class="theme-check">
+                        ✓
+                    </span>
+
+                </div>
+
+            </button>
+
+
+            <!-- BROWN -->
+
+            <button
+                class="theme-card"
+                data-theme="brown"
+                type="button"
+            >
+
+                <div class="theme-preview brown-preview">
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                </div>
+
+                <div class="theme-card-info">
+
+                    <div>
+
+                        <strong>WOOD</strong>
+
+                        <small>
+                            CLASSIC • WARM
+                        </small>
+
+                    </div>
+
+                    <span class="theme-check">
+                        ✓
+                    </span>
+
+                </div>
+
+            </button>
+
+
+            <!-- BEIGE -->
+
+            <button
+                class="theme-card"
+                data-theme="beige"
+                type="button"
+            >
+
+                <div class="theme-preview beige-preview">
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                </div>
+
+                <div class="theme-card-info">
+
+                    <div>
+
+                        <strong>IVORY</strong>
+
+                        <small>
+                            LIGHT • CLASSIC
+                        </small>
+
+                    </div>
+
+                    <span class="theme-check">
+                        ✓
+                    </span>
+
+                </div>
+
+            </button>
+
+
+            <!-- BLUE -->
+
+            <button
+                class="theme-card"
+                data-theme="blue"
+                type="button"
+            >
+
+                <div class="theme-preview blue-preview">
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                </div>
+
+                <div class="theme-card-info">
+
+                    <div>
+
+                        <strong>OCEAN</strong>
+
+                        <small>
+                            FOCUS • PRECISION
+                        </small>
+
+                    </div>
+
+                    <span class="theme-check">
+                        ✓
+                    </span>
+
+                </div>
+
+            </button>
+
+
+            <!-- GREEN -->
+
+            <button
+                class="theme-card"
+                data-theme="green"
+                type="button"
+            >
+
+                <div class="theme-preview green-preview">
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                </div>
+
+                <div class="theme-card-info">
+
+                    <div>
+
+                        <strong>FOREST</strong>
+
+                        <small>
+                            BALANCE • POWER
+                        </small>
+
+                    </div>
+
+                    <span class="theme-check">
+                        ✓
+                    </span>
+
+                </div>
+
+            </button>
+
+
+            <!-- PURPLE -->
+
+            <button
+                class="theme-card"
+                data-theme="purple"
+                type="button"
+            >
+
+                <div class="theme-preview purple-preview">
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                </div>
+
+                <div class="theme-card-info">
+
+                    <div>
+
+                        <strong>ROYAL</strong>
+
+                        <small>
+                            MAGIC • PREMIUM
+                        </small>
+
+                    </div>
+
+                    <span class="theme-check">
+                        ✓
+                    </span>
+
+                </div>
+
+            </button>
+
+
+            <!-- GOLD -->
+
+            <button
+                class="theme-card"
+                data-theme="gold"
+                type="button"
+            >
+
+                <div class="theme-preview gold-preview">
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                </div>
+
+                <div class="theme-card-info">
+
+                    <div>
+
+                        <strong>GOLD</strong>
+
+                        <small>
+                            CHAMPION • ELITE
+                        </small>
+
+                    </div>
+
+                    <span class="theme-check">
+                        ✓
+                    </span>
+
+                </div>
+
+            </button>
+
+
+            <!-- CYAN -->
+
+            <button
+                class="theme-card"
+                data-theme="cyan"
+                type="button"
+            >
+
+                <div class="theme-preview cyan-preview">
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                </div>
+
+                <div class="theme-card-info">
+
+                    <div>
+
+                        <strong>CYBER</strong>
+
+                        <small>
+                            NEON • FUTURE • AI
+                        </small>
+
+                    </div>
+
+                    <span class="theme-check">
+                        ✓
+                    </span>
+
+                </div>
+
+            </button>
+
+
+            <!-- ORANGE -->
+
+            <button
+                class="theme-card"
+                data-theme="orange"
+                type="button"
+            >
+
+                <div class="theme-preview orange-preview">
+
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                    <span></span>
+
+                </div>
+
+                <div class="theme-card-info">
+
+                    <div>
+
+                        <strong>EMBER</strong>
+
+                        <small>
+                            ENERGY • ATTACK
+                        </small>
+
+                    </div>
+
+                    <span class="theme-check">
+                        ✓
+                    </span>
+
+                </div>
+
+            </button>
+
+        </div>
+
+
+        <div class="theme-panel-footer">
+
+            <span class="theme-footer-dot"></span>
+
+            YOUR STYLE • YOUR GAME • YOUR CHESS
+
+        </div>
+
+    </aside>
+
+
+    <!-- =========================================
+         MAIN
+    ========================================== -->
+
+    <main>
+
+
+        <!-- =====================================
+             HERO
+        ====================================== -->
+
+        <section class="hero">
+
+
+            <!-- LEFT -->
+
+            <div class="hero-content">
+
+
+                <div class="hero-kicker">
+
+                    <span class="status-dot"></span>
+
+                    CHESS_FK ONLINE
+
+                </div>
+
+
+                <p class="hero-small">
+                    EVERY MOVE MATTERS.
                 </p>
 
+
+                <h1>
+
+                    PLAY
+
+                    <span>SMART.</span>
+
+                    <br>
+
+                    PLAY
+
+                    <span>CHESS.</span>
+
+                </h1>
+
+
+                <p class="hero-description">
+
+                    Enter the world of CHESS_FK.
+                    Play against the Faris AI,
+                    study openings and improve
+                    your game one move at a time.
+
+                </p>
+
+
+                <!-- PLAY BUTTONS -->
+
+                <div class="hero-buttons">
+
+
+                    <a
+                        href="pages/plat.html?mode=computer"
+                        class="btn-main"
+                    >
+
+                        <span class="button-icon">
+                            🤖
+                        </span>
+
+                        <span>
+
+                            <strong>
+                                PLAY VS COMPUTER
+                            </strong>
+
+                            <small>
+                                Challenge Faris AI
+                            </small>
+
+                        </span>
+
+                        <span class="button-arrow">
+                            →
+                        </span>
+
+                    </a>
+
+
+                    <a
+                        href="pages/plat.html?mode=online"
+                        class="btn-online"
+                    >
+
+                        <span class="button-icon">
+                            ♟
+                        </span>
+
+                        <span>
+
+                            <strong>
+                                PLAY ONLINE
+                            </strong>
+
+                            <small>
+                                Play with players
+                            </small>
+
+                        </span>
+
+                        <span class="button-arrow">
+                            →
+                        </span>
+
+                    </a>
+
+                </div>
+
+
+                <!-- QUICK INFO -->
+
+                <div class="hero-stats">
+
+                    <div>
+
+                        <strong>
+                            01
+                        </strong>
+
+                        <span>
+                            PLAY
+                        </span>
+
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            02
+                        </strong>
+
+                        <span>
+                            IMPROVE
+                        </span>
+
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+                            03
+                        </strong>
+
+                        <span>
+                            MASTER
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- RIGHT : PHOTO + CHESS -->
+
+            <div class="hero-visual">
+
+
+                <div class="visual-glow"></div>
+
+
+                <div class="floating-piece piece-one">
+                    ♟
+                </div>
+
+                <div class="floating-piece piece-two">
+                    ♞
+                </div>
+
+                <div class="floating-piece piece-three">
+                    ♜
+                </div>
+
+                <div class="floating-piece piece-four">
+                    ♛
+                </div>
+
+
+                <div class="photo-frame">
+
+
+                    <div class="photo-top-line">
+
+                        <span>
+                            FARIS
+                        </span>
+
+                        <span>
+                            CHESS_FK
+                        </span>
+
+                    </div>
+
+
+                    <img
+                        src="images/faris.jpg"
+                        alt="Faris - CHESS_FK"
+                        class="faris-photo"
+                    >
+
+
+                    <div class="photo-bottom-line">
+
+                        <span>
+                            PLAYER
+                        </span>
+
+                        <span>
+                            ♟
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="chess-decoration">
+
+                    <span>♜</span>
+                    <span>♞</span>
+                    <span>♝</span>
+                    <span>♛</span>
+                    <span>♚</span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             CHESS QUOTE
+        ====================================== -->
+
+        <section class="chess-quote">
+
+            <div class="quote-piece">
+                ♞
+            </div>
+
+            <div>
+
+                <p>
+                    CHESS IS NOT ABOUT THE NEXT MOVE.
+                </p>
+
+                <h2>
+                    IT'S ABOUT
+                    <span>SEEING</span>
+                    WHAT OTHERS DON'T.
+                </h2>
+
+            </div>
+
+        </section>
+
+
+        <!-- =====================================
+             TOOLS
+        ====================================== -->
+
+        <section class="tools-section">
+
+
+            <div class="section-heading">
+
+                <p>
+                    IMPROVE YOUR GAME
+                </p>
+
+                <h2>
+                    TRAIN.
+                    <span>THINK.</span>
+                    IMPROVE.
+                </h2>
+
+            </div>
+
+
+            <div class="tools-grid">
+
+
+                <!-- OPENING -->
+
                 <a
-                    href="pages/faris-ai.html"
-                    class="btn-primary"
+                    href="pages/plat.html"
+                    id="opening"
+                    class="tool-card"
                 >
-                    🤖 CHALLENGE FARIS AI
+
+                    <div class="tool-number">
+                        01
+                    </div>
+
+                    <div class="tool-icon">
+                        ♞
+                    </div>
+
+                    <h3>
+                        OPENING
+                    </h3>
+
+                    <p>
+
+                        Learn opening principles,
+                        discover ideas and understand
+                        why the first moves matter.
+
+                    </p>
+
+                    <span class="tool-link">
+                        STUDY OPENINGS →
+                    </span>
+
+                </a>
+
+
+                <!-- ANALYSIS -->
+
+                <a
+                    href="pages/plat.html"
+                    id="analysis"
+                    class="tool-card tool-card-featured"
+                >
+
+                    <div class="tool-number">
+                        02
+                    </div>
+
+                    <div class="tool-icon">
+                        ◈
+                    </div>
+
+                    <h3>
+                        ANALYSIS
+                    </h3>
+
+                    <p>
+
+                        Review your games,
+                        understand your mistakes
+                        and find stronger moves.
+
+                    </p>
+
+                    <span class="tool-link">
+                        ANALYZE GAME →
+                    </span>
+
+                </a>
+
+
+                <!-- PROBLEMS -->
+
+                <a
+                    href="pages/plat.html"
+                    class="tool-card"
+                >
+
+                    <div class="tool-number">
+                        03
+                    </div>
+
+                    <div class="tool-icon">
+                        ?
+                    </div>
+
+                    <h3>
+                        PROBLEMS
+                    </h3>
+
+                    <p>
+
+                        Tactical problems,
+                        mistakes and useful chess
+                        tips to help you improve.
+
+                    </p>
+
+                    <span class="tool-link">
+                        SOLVE PROBLEMS →
+                    </span>
+
                 </a>
 
             </div>
 
-            <div class="ai-symbol">
-                ♛
+        </section>
+
+
+        <!-- =====================================
+             FARIS AI
+        ====================================== -->
+
+        <section class="ai-section">
+
+
+            <div class="ai-content">
+
+                <div class="ai-label">
+
+                    <span></span>
+
+                    FARIS AI
+
+                </div>
+
+
+                <h2>
+
+                    YOUR NEXT
+                    <span>OPPONENT</span>
+                    IS WAITING.
+
+                </h2>
+
+
+                <p>
+
+                    From beginner to advanced,
+                    challenge Faris AI and find
+                    the level that pushes you
+                    to become better.
+
+                </p>
+
+
+                <a
+                    href="pages/faris-ai.html"
+                    class="outline-btn"
+                >
+                    MEET FARIS AI →
+                </a>
+
+            </div>
+
+
+            <div class="ai-board">
+
+                <div class="mini-board">
+
+                    <span>♜</span>
+                    <span></span>
+                    <span>♝</span>
+                    <span>♛</span>
+
+                    <span></span>
+                    <span>♟</span>
+                    <span></span>
+                    <span>♟</span>
+
+                    <span></span>
+                    <span></span>
+                    <span>♞</span>
+                    <span></span>
+
+                    <span></span>
+                    <span>♗</span>
+                    <span></span>
+                    <span></span>
+
+                </div>
+
             </div>
 
         </section>
+
+
+        <!-- =====================================
+             FINAL CTA
+        ====================================== -->
+
+        <section class="final-cta">
+
+            <p>
+                YOUR NEXT MOVE STARTS HERE.
+            </p>
+
+            <h2>
+                MAKE
+                <span>YOUR MOVE.</span>
+            </h2>
+
+            <a
+                href="pages/plat.html"
+                class="final-button"
+            >
+                PLAY CHESS →
+            </a>
+
+        </section>
+
 
     </main>
 
 
-    <!-- =========================
+    <!-- =========================================
          FOOTER
-    ========================== -->
+    ========================================== -->
 
     <footer>
 
         <div class="footer-logo">
-            <span>CHESS</span>_FK
+
+            ♟ CHESS<span>_FK</span>
+
         </div>
 
+
         <p>
-            PLAY • IMPROVE • COMPETE
+            EVERY MOVE MATTERS.
         </p>
+
 
         <p>
             © 2026 CHESS_FK
@@ -521,19 +1102,27 @@
     </footer>
 
 
-    <!-- =========================
+    <!-- =========================================
          SUPABASE
-    ========================== -->
+    ========================================== -->
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    ></script>
 
     <script src="js/supabase.js"></script>
 
     <script src="js/auth.js"></script>
 
+
+    <!-- =========================================
+         THEME
+    ========================================== -->
+
     <script src="js/theme.js"></script>
+
 
 </body>
 
 </html>
-```
+
