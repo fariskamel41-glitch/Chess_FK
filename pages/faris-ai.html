@@ -5,17 +5,14 @@
 
     <meta charset="UTF-8">
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-    <title>Play Against Faris | CHESS_FK</title>
+    <title>Chess FK — Faris AI</title>
 
     <link
         rel="stylesheet"
-        href="../css/faris-ai.css"
-    >
+        href="../css/faris-ai.css">
 
 </head>
 
@@ -23,1330 +20,1086 @@
 <body>
 
 
-<!-- ======================================
-     BACKGROUND
-====================================== -->
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
 
-<div class="background-glow glow-one"></div>
-
-<div class="background-glow glow-two"></div>
-
-
-
-<!-- ======================================
-     HEADER
-====================================== -->
-
-<header class="ai-header">
-
-
-    <!-- LOGO -->
-
-    <a
-        href="../index.html"
-        class="ai-logo"
-    >
-        CHESS<span>_FK</span>
-    </a>
-
-
-
-    <!-- HEADER ACTIONS -->
-
-    <div class="header-actions">
-
-
-        <!-- THEME -->
-
-        <button
-            class="theme-toggle"
-            id="themeToggle"
-            type="button"
-        >
-
-            <span class="theme-icon">
-                ◐
-            </span>
-
-            <span>
-                THEME
-            </span>
-
-        </button>
-
-
-
-        <!-- BACK -->
+    <header class="ai-header">
 
         <a
             href="../index.html"
-            class="back-button"
-        >
-            ← BACK
+            class="back-button">
+
+            ← ACCUEIL
+
         </a>
 
 
-    </div>
+        <a
+            href="faris-ai.html"
+            class="ai-logo">
+
+            FARIS <span>AI</span>
+
+        </a>
 
 
-</header>
+        <div class="header-actions">
 
+            <button
+                id="themeToggle"
+                class="theme-toggle">
 
+                <span class="theme-icon">🎨</span>
 
-<!-- ======================================
-     THEME OVERLAY
-====================================== -->
+                <span>THÈME</span>
 
-<div
-    class="theme-overlay"
-    id="themeOverlay"
-></div>
-
-
-
-<!-- ======================================
-     THEME PANEL
-====================================== -->
-
-<aside
-    class="theme-panel"
-    id="themePanel"
->
-
-
-    <div class="theme-panel-header">
-
-        <div>
-
-            <div class="theme-panel-label">
-                CHESS_FK
-            </div>
-
-            <h2>
-                CHOOSE YOUR
-                <span>STYLE.</span>
-            </h2>
+            </button>
 
         </div>
 
-
-        <button
-            class="theme-close"
-            id="themeClose"
-            type="button"
-        >
-            ×
-        </button>
-
-    </div>
+    </header>
 
 
 
-    <p class="theme-description">
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
 
-        Customize the look of CHESS_FK.
-        Your choice will stay saved across the site.
-
-    </p>
-
+    <main>
 
 
-    <!-- ==================================
-         THEME CARDS
-    ================================== -->
+        <!-- =================================================
+             INTRO
+        ================================================== -->
 
-    <div class="theme-grid">
+        <section class="intro-section">
+
+            <div class="intro-content">
 
 
-        <!-- RED -->
+                <div class="small-label">
 
-        <button
-            class="theme-card"
-            data-theme="red"
-            type="button"
-        >
-
-            <div class="theme-preview theme-preview-red">
-
-                <div class="mini-board">
-
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <span></span>
-
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <span></span>
+                    CHESS FK — ARTIFICIAL INTELLIGENCE
 
                 </div>
 
-            </div>
+
+                <h1>
+
+                    FARIS
+                    <span>AI</span>
+
+                </h1>
 
 
-            <div class="theme-card-info">
+                <p class="intro-text">
 
-                <strong>
-                    RED
-                </strong>
+                    Affronte Faris à différents âges,
+                    avec une intelligence artificielle
+                    adaptée à chaque niveau.
 
-                <small>
-                    CHESS_FK
-                </small>
-
-            </div>
-
-        </button>
+                </p>
 
 
 
-        <!-- BLUE -->
+                <!-- =========================================
+                     CURRENT FARIS
+                ========================================== -->
 
-        <button
-            class="theme-card"
-            data-theme="blue"
-            type="button"
-        >
+                <div class="current-faris">
 
-            <div class="theme-preview theme-preview-blue">
 
-                <div class="mini-board">
+                    <!-- =====================================
+                         PHOTO CLIQUABLE
+                    ====================================== -->
 
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <span></span>
+                    <div
+                        class="current-image-container"
+                        onclick="scrollToAges()"
+                        title="Voir les différents Faris">
 
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <span></span>
+
+                        <div class="image-glow"></div>
+
+
+                        <img
+                            src="../images/playfaris.jpg"
+                            alt="Play Faris"
+                            class="current-faris-image">
+
+
+                    </div>
+
+
+
+                    <!-- =====================================
+                         INFO
+                    ====================================== -->
+
+                    <div class="current-info">
+
+
+                        <div class="current-label">
+
+                            TON ADVERSAIRE
+
+                        </div>
+
+
+                        <h2>
+
+                            PLAY
+                            <span>FARIS</span>
+
+                        </h2>
+
+
+                        <p>
+
+                            Choisis l'âge de Faris et
+                            découvre une difficulté
+                            différente à chaque niveau.
+
+                        </p>
+
+
+                        <button
+                            class="start-button"
+                            onclick="scrollToAges()">
+
+                            CHOISIR MON ADVERSAIRE
+
+                            <span>↓</span>
+
+                        </button>
+
+
+                    </div>
+
 
                 </div>
 
-            </div>
-
-
-            <div class="theme-card-info">
-
-                <strong>
-                    BLUE
-                </strong>
-
-                <small>
-                    OCEAN
-                </small>
 
             </div>
 
-        </button>
+        </section>
 
 
 
-        <!-- GREEN -->
+        <!-- =================================================
+             AGES
+        ================================================== -->
 
-        <button
-            class="theme-card"
-            data-theme="green"
-            type="button"
-        >
+        <section
+            class="ages-section"
+            id="ages">
 
-            <div class="theme-preview theme-preview-green">
 
-                <div class="mini-board">
-
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <span></span>
-
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <span></span>
-
-                </div>
-
-            </div>
-
-
-            <div class="theme-card-info">
-
-                <strong>
-                    GREEN
-                </strong>
-
-                <small>
-                    CLASSIC
-                </small>
-
-            </div>
-
-        </button>
-
-
-
-        <!-- PURPLE -->
-
-        <button
-            class="theme-card"
-            data-theme="purple"
-            type="button"
-        >
-
-            <div class="theme-preview theme-preview-purple">
-
-                <div class="mini-board">
-
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <span></span>
-
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <span></span>
-
-                </div>
-
-            </div>
-
-
-            <div class="theme-card-info">
-
-                <strong>
-                    PURPLE
-                </strong>
-
-                <small>
-                    ROYAL
-                </small>
-
-            </div>
-
-        </button>
-
-
-    </div>
-
-
-</aside>
-
-
-
-<!-- ======================================
-     MAIN
-====================================== -->
-
-<main>
-
-
-
-<!-- ======================================
-     INTRO
-====================================== -->
-
-<section
-    class="intro-section"
-    id="introSection"
->
-
-    <div class="intro-content">
-
-
-        <div class="small-label">
-            CHESS_FK EXPERIENCE
-        </div>
-
-
-        <h1>
-
-            PLAY
-
-            <span>
-                AGAINST
-            </span>
-
-            FARIS
-
-        </h1>
-
-
-        <p class="intro-text">
-
-            How far can you go?
-
-            <br>
-
-            Meet Faris at different stages
-            of his chess journey.
-
-        </p>
-
-
-
-        <!-- ==================================
-             CURRENT FARIS
-        ================================== -->
-
-        <div class="current-faris">
-
-
-            <div class="current-image-container">
-
-                <img
-                    src="../images/faris.jpg"
-                    alt="Faris"
-                    class="current-faris-image"
-                >
-
-                <div class="image-glow"></div>
-
-            </div>
-
-
-
-            <div class="current-info">
-
-                <div class="current-label">
-                    THE JOURNEY
-                </div>
-
+            <div class="section-heading">
 
                 <h2>
 
-                    One player.
-
-                    <br>
-
-                    <span>
-                        Different ages.
-                    </span>
+                    CHOISIS
+                    <span>FARIS</span>
 
                 </h2>
 
 
                 <p>
 
-                    From the first discoveries
-                    to the strongest version of Faris.
+                    Chaque âge possède son propre niveau
+                    de difficulté.
 
                 </p>
 
             </div>
 
-        </div>
+
+
+            <div class="age-timeline">
+
+
+                <!-- ================= FARIS 7 ================= -->
+
+                <article class="age-card">
+
+                    <span class="age-number">07</span>
+
+                    <div class="age-image-container">
+
+                        <img
+                            src="../images/faris/faris-7.jpg"
+                            alt="Faris 7"
+                            class="age-image">
+
+                        <div class="age-overlay"></div>
+
+                        <span class="age-play-button">
+                            ▶ PLAY
+                        </span>
+
+                    </div>
+
+
+                    <div class="age-content">
+
+                        <div class="age-label">
+                            NIVEAU 01
+                        </div>
+
+                        <h3>
+                            Faris 7
+                        </h3>
+
+                        <p>
+                            Débutant — idéal pour commencer.
+                        </p>
+
+                        <button
+                            class="play-age-button"
+                            onclick="playFaris(7)">
+
+                            JOUER CONTRE FARIS 7 →
+                            
+                        </button>
+
+                    </div>
+
+                </article>
 
 
 
-        <!-- ==================================
-             START BUTTON
-        ================================== -->
+                <!-- ================= FARIS 8 ================= -->
+
+                <article class="age-card">
+
+                    <span class="age-number">08</span>
+
+                    <div class="age-image-container">
+
+                        <img
+                            src="../images/faris/faris-8.jpg"
+                            alt="Faris 8"
+                            class="age-image">
+
+                        <div class="age-overlay"></div>
+
+                        <span class="age-play-button">
+                            ▶ PLAY
+                        </span>
+
+                    </div>
+
+
+                    <div class="age-content">
+
+                        <div class="age-label">
+                            NIVEAU 02
+                        </div>
+
+                        <h3>
+                            Faris 8
+                        </h3>
+
+                        <p>
+                            Facile — parfait pour progresser.
+                        </p>
+
+                        <button
+                            class="play-age-button"
+                            onclick="playFaris(8)">
+
+                            JOUER CONTRE FARIS 8 →
+
+                        </button>
+
+                    </div>
+
+                </article>
+
+
+
+                <!-- ================= FARIS 9 ================= -->
+
+                <article class="age-card">
+
+                    <span class="age-number">09</span>
+
+                    <div class="age-image-container">
+
+                        <img
+                            src="../images/faris/faris-9.jpg"
+                            alt="Faris 9"
+                            class="age-image">
+
+                        <div class="age-overlay"></div>
+
+                        <span class="age-play-button">
+                            ▶ PLAY
+                        </span>
+
+                    </div>
+
+
+                    <div class="age-content">
+
+                        <div class="age-label">
+                            NIVEAU 03
+                        </div>
+
+                        <h3>
+                            Faris 9
+                        </h3>
+
+                        <p>
+                            Débutant + — commence à devenir sérieux.
+                        </p>
+
+                        <button
+                            class="play-age-button"
+                            onclick="playFaris(9)">
+
+                            JOUER CONTRE FARIS 9 →
+
+                        </button>
+
+                    </div>
+
+                </article>
+
+
+
+                <!-- ================= FARIS 10 ================= -->
+
+                <article class="age-card">
+
+                    <span class="age-number">10</span>
+
+                    <div class="age-image-container">
+
+                        <img
+                            src="../images/faris/faris-10.jpg"
+                            alt="Faris 10"
+                            class="age-image">
+
+                        <div class="age-overlay"></div>
+
+                        <span class="age-play-button">
+                            ▶ PLAY
+                        </span>
+
+                    </div>
+
+
+                    <div class="age-content">
+
+                        <div class="age-label">
+                            NIVEAU 04
+                        </div>
+
+                        <h3>
+                            Faris 10
+                        </h3>
+
+                        <p>
+                            Intermédiaire — un adversaire plus solide.
+                        </p>
+
+                        <button
+                            class="play-age-button"
+                            onclick="playFaris(10)">
+
+                            JOUER CONTRE FARIS 10 →
+
+                        </button>
+
+                    </div>
+
+                </article>
+
+
+
+                <!-- ================= FARIS 11 ================= -->
+
+                <article class="age-card">
+
+                    <span class="age-number">11</span>
+
+                    <div class="age-image-container">
+
+                        <img
+                            src="../images/faris/faris-11.jpg"
+                            alt="Faris 11"
+                            class="age-image">
+
+                        <div class="age-overlay"></div>
+
+                        <span class="age-play-button">
+                            ▶ PLAY
+                        </span>
+
+                    </div>
+
+
+                    <div class="age-content">
+
+                        <div class="age-label">
+                            NIVEAU 05
+                        </div>
+
+                        <h3>
+                            Faris 11
+                        </h3>
+
+                        <p>
+                            Intermédiaire — la difficulté augmente.
+                        </p>
+
+                        <button
+                            class="play-age-button"
+                            onclick="playFaris(11)">
+
+                            JOUER CONTRE FARIS 11 →
+
+                        </button>
+
+                    </div>
+
+                </article>
+
+
+
+                <!-- ================= FARIS 12 ================= -->
+
+                <article class="age-card">
+
+                    <span class="age-number">12</span>
+
+                    <div class="age-image-container">
+
+                        <img
+                            src="../images/faris/faris-12.jpg"
+                            alt="Faris 12"
+                            class="age-image">
+
+                        <div class="age-overlay"></div>
+
+                        <span class="age-play-button">
+                            ▶ PLAY
+                        </span>
+
+                    </div>
+
+
+                    <div class="age-content">
+
+                        <div class="age-label">
+                            NIVEAU 06
+                        </div>
+
+                        <h3>
+                            Faris 12
+                        </h3>
+
+                        <p>
+                            Avancé — prépare-toi à réfléchir.
+                        </p>
+
+                        <button
+                            class="play-age-button"
+                            onclick="playFaris(12)">
+
+                            JOUER CONTRE FARIS 12 →
+
+                        </button>
+
+                    </div>
+
+                </article>
+
+
+
+                <!-- ================= FARIS 13 ================= -->
+
+                <article class="age-card">
+
+                    <span class="age-number">13</span>
+
+                    <div class="age-image-container">
+
+                        <img
+                            src="../images/faris/faris-13.jpg"
+                            alt="Faris 13"
+                            class="age-image">
+
+                        <div class="age-overlay"></div>
+
+                        <span class="age-play-button">
+                            ▶ PLAY
+                        </span>
+
+                    </div>
+
+
+                    <div class="age-content">
+
+                        <div class="age-label">
+                            NIVEAU 07
+                        </div>
+
+                        <h3>
+                            Faris 13
+                        </h3>
+
+                        <p>
+                            Avancé + — un vrai challenge.
+                        </p>
+
+                        <button
+                            class="play-age-button"
+                            onclick="playFaris(13)">
+
+                            JOUER CONTRE FARIS 13 →
+
+                        </button>
+
+                    </div>
+
+                </article>
+
+
+
+                <!-- ================= FARIS 14 ================= -->
+
+                <article class="age-card">
+
+                    <span class="age-number">14</span>
+
+                    <div class="age-image-container">
+
+                        <img
+                            src="../images/faris/faris-14.jpg"
+                            alt="Faris 14"
+                            class="age-image">
+
+                        <div class="age-overlay"></div>
+
+                        <span class="age-play-button">
+                            ▶ PLAY
+                        </span>
+
+                    </div>
+
+
+                    <div class="age-content">
+
+                        <div class="age-label">
+                            NIVEAU 08
+                        </div>
+
+                        <h3>
+                            Faris 14
+                        </h3>
+
+                        <p>
+                            Expert — attention aux erreurs.
+                        </p>
+
+                        <button
+                            class="play-age-button"
+                            onclick="playFaris(14)">
+
+                            JOUER CONTRE FARIS 14 →
+
+                        </button>
+
+                    </div>
+
+                </article>
+
+
+
+                <!-- ================= FARIS 15 ================= -->
+
+                <article class="age-card">
+
+                    <span class="age-number">15</span>
+
+                    <div class="age-image-container">
+
+                        <img
+                            src="../images/faris/faris-15.jpg"
+                            alt="Faris 15"
+                            class="age-image">
+
+                        <div class="age-overlay"></div>
+
+                        <span class="age-play-button">
+                            ▶ PLAY
+                        </span>
+
+                    </div>
+
+
+                    <div class="age-content">
+
+                        <div class="age-label">
+                            NIVEAU 09
+                        </div>
+
+                        <h3>
+                            Faris 15
+                        </h3>
+
+                        <p>
+                            Expert + — difficile à battre.
+                        </p>
+
+                        <button
+                            class="play-age-button"
+                            onclick="playFaris(15)">
+
+                            JOUER CONTRE FARIS 15 →
+
+                        </button>
+
+                    </div>
+
+                </article>
+
+
+
+                <!-- ================= FARIS 16 ================= -->
+
+                <article class="age-card">
+
+                    <span class="age-number">16</span>
+
+                    <div class="age-image-container">
+
+                        <img
+                            src="../images/faris/faris-16.jpg"
+                            alt="Faris 16"
+                            class="age-image">
+
+                        <div class="age-overlay"></div>
+
+                        <span class="age-play-button">
+                            ▶ PLAY
+                        </span>
+
+                    </div>
+
+
+                    <div class="age-content">
+
+                        <div class="age-label">
+                            NIVEAU 10
+                        </div>
+
+                        <h3>
+                            Faris 16
+                        </h3>
+
+                        <p>
+                            Maître — niveau très élevé.
+                        </p>
+
+                        <button
+                            class="play-age-button"
+                            onclick="playFaris(16)">
+
+                            JOUER CONTRE FARIS 16 →
+
+                        </button>
+
+                    </div>
+
+                </article>
+
+
+
+                <!-- ================= FARIS 17 ================= -->
+
+                <article class="age-card">
+
+                    <span class="age-number">17</span>
+
+                    <div class="age-image-container">
+
+                        <img
+                            src="../images/faris/faris-17.jpg"
+                            alt="Faris 17"
+                            class="age-image">
+
+                        <div class="age-overlay"></div>
+
+                        <span class="age-play-button">
+                            ▶ PLAY
+                        </span>
+
+                    </div>
+
+
+                    <div class="age-content">
+
+                        <div class="age-label">
+                            NIVEAU 11
+                        </div>
+
+                        <h3>
+                            Faris 17
+                        </h3>
+
+                        <p>
+                            Très fort — prépare-toi au combat.
+                        </p>
+
+                        <button
+                            class="play-age-button"
+                            onclick="playFaris(17)">
+
+                            JOUER CONTRE FARIS 17 →
+
+                        </button>
+
+                    </div>
+
+                </article>
+
+
+
+                <!-- ================= FARIS 18 ================= -->
+
+                <article class="age-card final-age">
+
+                    <span class="final-badge">
+                        MAXIMUM
+                    </span>
+
+                    <span class="age-number">
+                        18
+                    </span>
+
+                    <div class="age-image-container">
+
+                        <img
+                            src="../images/faris/faris-18.jpg"
+                            alt="Faris 18"
+                            class="age-image">
+
+                        <div class="age-overlay"></div>
+
+                        <span class="age-play-button">
+                            ▶ PLAY
+                        </span>
+
+                    </div>
+
+
+                    <div class="age-content">
+
+                        <div class="age-label">
+                            NIVEAU 12
+                        </div>
+
+                        <h3>
+                            Faris 18
+                        </h3>
+
+                        <p>
+                            Maximum — ton adversaire ultime.
+                        </p>
+
+                        <button
+                            class="play-age-button"
+                            onclick="playFaris(18)">
+
+                            JOUER CONTRE FARIS 18 →
+
+                        </button>
+
+                    </div>
+
+                </article>
+
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+
+    <!-- =====================================================
+         THEME OVERLAY
+    ====================================================== -->
+
+    <div
+        id="themeOverlay"
+        class="theme-overlay">
+    </div>
+
+
+
+    <!-- =====================================================
+         THEME PANEL
+    ====================================================== -->
+
+    <aside
+        id="themePanel"
+        class="theme-panel">
+
 
         <button
-            id="startButton"
-            class="start-button"
-            type="button"
-        >
+            id="themeClose"
+            class="theme-close">
 
-            LET'S START
-
-            <span>
-                ↓
-            </span>
+            ×
 
         </button>
 
 
-    </div>
+        <div class="theme-panel-header">
 
-</section>
+            <div>
 
+                <div class="theme-panel-label">
+                    CHESS FK
+                </div>
 
+                <h2>
 
-<!-- ======================================
-     AGE SELECTION
-====================================== -->
+                    Choisis ton
+                    <span>thème</span>
 
-<section
-    class="ages-section"
-    id="agesSection"
->
+                </h2>
 
+            </div>
 
-    <div class="section-heading">
-
-
-        <div class="small-label">
-            CHOOSE YOUR OPPONENT
         </div>
 
 
-        <h2>
+        <p class="theme-description">
 
-            THE
-
-            <span>
-                FARIS
-            </span>
-
-            JOURNEY
-
-        </h2>
-
-
-        <p>
-
-            Choose an age and discover
-            a different version of Faris.
+            Ton thème sera utilisé partout sur
+            Chess FK.
 
         </p>
 
 
-    </div>
+        <div class="theme-grid">
+
+
+            <button
+                class="theme-card"
+                data-theme="red">
+
+                ROUGE
+
+            </button>
+
+
+            <button
+                class="theme-card"
+                data-theme="blue">
+
+                BLEU
+
+            </button>
+
+
+            <button
+                class="theme-card"
+                data-theme="green">
+
+                VERT
+
+            </button>
+
+
+            <button
+                class="theme-card"
+                data-theme="purple">
+
+                VIOLET
+
+            </button>
+
+
+            <button
+                class="theme-card"
+                data-theme="brown">
+
+                MARRON
+
+            </button>
+
+
+            <button
+                class="theme-card"
+                data-theme="beige">
+
+                BEIGE
+
+            </button>
+
+
+            <button
+                class="theme-card"
+                data-theme="gold">
+
+                OR
+
+            </button>
+
+
+            <button
+                class="theme-card"
+                data-theme="cyan">
+
+                CYAN
+
+            </button>
+
+
+            <button
+                class="theme-card"
+                data-theme="orange">
+
+                ORANGE
+
+            </button>
+
+
+        </div>
+
+    </aside>
 
 
 
-    <!-- ==================================
-         AGE TIMELINE
-    ================================== -->
+    <!-- =====================================================
+         LOADING
+    ====================================================== -->
 
-    <div class="age-timeline">
-
-
-
-        <!-- AGE 7 -->
-
-        <article
-            class="age-card"
-            data-age="7"
-        >
-
-            <div class="age-number">
-                07
-            </div>
+    <div
+        id="loadingScreen"
+        class="loading-screen">
 
 
-            <a
-                href="plat.html?faris=7"
-                class="age-play-link"
-            >
+        <div class="loading-box">
 
-                <div class="age-image-container">
+            <div class="loading-logo">
 
-                    <img
-                        src="../images/faris/faris-7.jpg"
-                        alt="Faris at 7 years old"
-                        class="age-image"
-                    >
-
-                    <div class="age-overlay"></div>
-
-                    <div class="age-play-button">
-                        ▶ PLAY
-                    </div>
-
-                </div>
-
-            </a>
-
-
-            <div class="age-content">
-
-                <div class="age-label">
-                    AGE
-                </div>
-
-                <h3>
-                    7
-                </h3>
-
-                <p>
-                    It all started with curiosity.
-                </p>
-
-                <a
-                    href="plat.html?faris=7"
-                    class="play-age-button"
-                >
-                    PLAY
-                    <span>→</span>
-                </a>
-
-            </div>
-
-        </article>
-
-
-
-        <!-- AGE 8 -->
-
-        <article
-            class="age-card"
-            data-age="8"
-        >
-
-            <div class="age-number">
-                08
-            </div>
-
-
-            <a
-                href="plat.html?faris=8"
-                class="age-play-link"
-            >
-
-                <div class="age-image-container">
-
-                    <img
-                        src="../images/faris/faris-8.jpg"
-                        alt="Faris at 8 years old"
-                        class="age-image"
-                    >
-
-                    <div class="age-overlay"></div>
-
-                    <div class="age-play-button">
-                        ▶ PLAY
-                    </div>
-
-                </div>
-
-            </a>
-
-
-            <div class="age-content">
-
-                <div class="age-label">
-                    AGE
-                </div>
-
-                <h3>
-                    8
-                </h3>
-
-                <p>
-                    The pieces started to make sense.
-                </p>
-
-                <a
-                    href="plat.html?faris=8"
-                    class="play-age-button"
-                >
-                    PLAY
-                    <span>→</span>
-                </a>
+                FARIS <span>AI</span>
 
             </div>
 
-        </article>
 
+            <div
+                id="loadingAge"
+                class="loading-age">
 
-
-        <!-- AGE 9 -->
-
-        <article
-            class="age-card"
-            data-age="9"
-        >
-
-            <div class="age-number">
-                09
-            </div>
-
-
-            <a
-                href="plat.html?faris=9"
-                class="age-play-link"
-            >
-
-                <div class="age-image-container">
-
-                    <img
-                        src="../images/faris/faris-9.jpg"
-                        alt="Faris at 9 years old"
-                        class="age-image"
-                    >
-
-                    <div class="age-overlay"></div>
-
-                    <div class="age-play-button">
-                        ▶ PLAY
-                    </div>
-
-                </div>
-
-            </a>
-
-
-            <div class="age-content">
-
-                <div class="age-label">
-                    AGE
-                </div>
-
-                <h3>
-                    9
-                </h3>
-
-                <p>
-                    Learning how to fight for every move.
-                </p>
-
-                <a
-                    href="plat.html?faris=9"
-                    class="play-age-button"
-                >
-                    PLAY
-                    <span>→</span>
-                </a>
-
-            </div>
-
-        </article>
-
-
-
-        <!-- AGE 10 -->
-
-        <article
-            class="age-card"
-            data-age="10"
-        >
-
-            <div class="age-number">
-                10
-            </div>
-
-
-            <a
-                href="plat.html?faris=10"
-                class="age-play-link"
-            >
-
-                <div class="age-image-container">
-
-                    <img
-                        src="../images/faris/faris-10.jpg"
-                        alt="Faris at 10 years old"
-                        class="age-image"
-                    >
-
-                    <div class="age-overlay"></div>
-
-                    <div class="age-play-button">
-                        ▶ PLAY
-                    </div>
-
-                </div>
-
-            </a>
-
-
-            <div class="age-content">
-
-                <div class="age-label">
-                    AGE
-                </div>
-
-                <h3>
-                    10
-                </h3>
-
-                <p>
-                    The game became a real challenge.
-                </p>
-
-                <a
-                    href="plat.html?faris=10"
-                    class="play-age-button"
-                >
-                    PLAY
-                    <span>→</span>
-                </a>
-
-            </div>
-
-        </article>
-
-
-
-        <!-- AGE 11 -->
-
-        <article
-            class="age-card"
-            data-age="11"
-        >
-
-            <div class="age-number">
-                11
-            </div>
-
-
-            <a
-                href="plat.html?faris=11"
-                class="age-play-link"
-            >
-
-                <div class="age-image-container">
-
-                    <img
-                        src="../images/faris/faris-11.jpg"
-                        alt="Faris at 11 years old"
-                        class="age-image"
-                    >
-
-                    <div class="age-overlay"></div>
-
-                    <div class="age-play-button">
-                        ▶ PLAY
-                    </div>
-
-                </div>
-
-            </a>
-
-
-            <div class="age-content">
-
-                <div class="age-label">
-                    AGE
-                </div>
-
-                <h3>
-                    11
-                </h3>
-
-                <p>
-                    Tactics started becoming dangerous.
-                </p>
-
-                <a
-                    href="plat.html?faris=11"
-                    class="play-age-button"
-                >
-                    PLAY
-                    <span>→</span>
-                </a>
-
-            </div>
-
-        </article>
-
-
-
-        <!-- AGE 12 -->
-
-        <article
-            class="age-card"
-            data-age="12"
-        >
-
-            <div class="age-number">
-                12
-            </div>
-
-
-            <a
-                href="plat.html?faris=12"
-                class="age-play-link"
-            >
-
-                <div class="age-image-container">
-
-                    <img
-                        src="../images/faris/faris-12.jpg"
-                        alt="Faris at 12 years old"
-                        class="age-image"
-                    >
-
-                    <div class="age-overlay"></div>
-
-                    <div class="age-play-button">
-                        ▶ PLAY
-                    </div>
-
-                </div>
-
-            </a>
-
-
-            <div class="age-content">
-
-                <div class="age-label">
-                    AGE
-                </div>
-
-                <h3>
-                    12
-                </h3>
-
-                <p>
-                    I started taking chess seriously.
-                </p>
-
-                <a
-                    href="plat.html?faris=12"
-                    class="play-age-button"
-                >
-                    PLAY
-                    <span>→</span>
-                </a>
-
-            </div>
-
-        </article>
-
-
-
-        <!-- AGE 13 -->
-
-        <article
-            class="age-card"
-            data-age="13"
-        >
-
-            <div class="age-number">
-                13
-            </div>
-
-
-            <a
-                href="plat.html?faris=13"
-                class="age-play-link"
-            >
-
-                <div class="age-image-container">
-
-                    <img
-                        src="../images/faris/faris-13.jpg"
-                        alt="Faris at 13 years old"
-                        class="age-image"
-                    >
-
-                    <div class="age-overlay"></div>
-
-                    <div class="age-play-button">
-                        ▶ PLAY
-                    </div>
-
-                </div>
-
-            </a>
-
-
-            <div class="age-content">
-
-                <div class="age-label">
-                    AGE
-                </div>
-
-                <h3>
-                    13
-                </h3>
-
-                <p>
-                    Every move had a purpose.
-                </p>
-
-                <a
-                    href="plat.html?faris=13"
-                    class="play-age-button"
-                >
-                    PLAY
-                    <span>→</span>
-                </a>
-
-            </div>
-
-        </article>
-
-
-
-        <!-- AGE 14 -->
-
-        <article
-            class="age-card"
-            data-age="14"
-        >
-
-            <div class="age-number">
-                14
-            </div>
-
-
-            <a
-                href="plat.html?faris=14"
-                class="age-play-link"
-            >
-
-                <div class="age-image-container">
-
-                    <img
-                        src="../images/faris/faris-14.jpg"
-                        alt="Faris at 14 years old"
-                        class="age-image"
-                    >
-
-                    <div class="age-overlay"></div>
-
-                    <div class="age-play-button">
-                        ▶ PLAY
-                    </div>
-
-                </div>
-
-            </a>
-
-
-            <div class="age-content">
-
-                <div class="age-label">
-                    AGE
-                </div>
-
-                <h3>
-                    14
-                </h3>
-
-                <p>
-                    Calculation became the weapon.
-                </p>
-
-                <a
-                    href="plat.html?faris=14"
-                    class="play-age-button"
-                >
-                    PLAY
-                    <span>→</span>
-                </a>
-
-            </div>
-
-        </article>
-
-
-
-        <!-- AGE 15 -->
-
-        <article
-            class="age-card"
-            data-age="15"
-        >
-
-            <div class="age-number">
-                15
-            </div>
-
-
-            <a
-                href="plat.html?faris=15"
-                class="age-play-link"
-            >
-
-                <div class="age-image-container">
-
-                    <img
-                        src="../images/faris/faris-15.jpg"
-                        alt="Faris at 15 years old"
-                        class="age-image"
-                    >
-
-                    <div class="age-overlay"></div>
-
-                    <div class="age-play-button">
-                        ▶ PLAY
-                    </div>
-
-                </div>
-
-            </a>
-
-
-            <div class="age-content">
-
-                <div class="age-label">
-                    AGE
-                </div>
-
-                <h3>
-                    15
-                </h3>
-
-                <p>
-                    Mistakes became much harder to punish.
-                </p>
-
-                <a
-                    href="plat.html?faris=15"
-                    class="play-age-button"
-                >
-                    PLAY
-                    <span>→</span>
-                </a>
-
-            </div>
-
-        </article>
-
-
-
-        <!-- AGE 16 -->
-
-        <article
-            class="age-card"
-            data-age="16"
-        >
-
-            <div class="age-number">
-                16
-            </div>
-
-
-            <a
-                href="plat.html?faris=16"
-                class="age-play-link"
-            >
-
-                <div class="age-image-container">
-
-                    <img
-                        src="../images/faris/faris-16.jpg"
-                        alt="Faris at 16 years old"
-                        class="age-image"
-                    >
-
-                    <div class="age-overlay"></div>
-
-                    <div class="age-play-button">
-                        ▶ PLAY
-                    </div>
-
-                </div>
-
-            </a>
-
-
-            <div class="age-content">
-
-                <div class="age-label">
-                    AGE
-                </div>
-
-                <h3>
-                    16
-                </h3>
-
-                <p>
-                    The pressure started to feel different.
-                </p>
-
-                <a
-                    href="plat.html?faris=16"
-                    class="play-age-button"
-                >
-                    PLAY
-                    <span>→</span>
-                </a>
-
-            </div>
-
-        </article>
-
-
-
-        <!-- AGE 17 -->
-
-        <article
-            class="age-card"
-            data-age="17"
-        >
-
-            <div class="age-number">
-                17
-            </div>
-
-
-            <a
-                href="plat.html?faris=17"
-                class="age-play-link"
-            >
-
-                <div class="age-image-container">
-
-                    <img
-                        src="../images/faris/faris-17.jpg"
-                        alt="Faris at 17 years old"
-                        class="age-image"
-                    >
-
-                    <div class="age-overlay"></div>
-
-                    <div class="age-play-button">
-                        ▶ PLAY
-                    </div>
-
-                </div>
-
-            </a>
-
-
-            <div class="age-content">
-
-                <div class="age-label">
-                    AGE
-                </div>
-
-                <h3>
-                    17
-                </h3>
-
-                <p>
-                    Almost there. No easy games anymore.
-                </p>
-
-                <a
-                    href="plat.html?faris=17"
-                    class="play-age-button"
-                >
-                    PLAY
-                    <span>→</span>
-                </a>
-
-            </div>
-
-        </article>
-
-
-
-        <!-- AGE 18 -->
-
-        <article
-            class="age-card final-age"
-            data-age="18"
-        >
-
-            <div class="final-badge">
-                PRIME
-            </div>
-
-
-            <div class="age-number">
                 18
-            </div>
-
-
-            <a
-                href="plat.html?faris=18"
-                class="age-play-link"
-            >
-
-                <div class="age-image-container">
-
-                    <img
-                        src="../images/faris/faris-18.jpg"
-                        alt="Faris at 18 years old"
-                        class="age-image"
-                    >
-
-                    <div class="age-overlay"></div>
-
-                    <div class="age-play-button">
-                        ▶ PLAY
-                    </div>
-
-                </div>
-
-            </a>
-
-
-            <div class="age-content">
-
-                <div class="age-label">
-                    AGE
-                </div>
-
-                <h3>
-                    18
-                </h3>
-
-                <p>
-                    This is where the real challenge begins.
-                </p>
-
-                <a
-                    href="plat.html?faris=18"
-                    class="play-age-button"
-                >
-                    PLAY
-                    <span>→</span>
-                </a>
 
             </div>
 
-        </article>
 
+            <div class="loading-line">
+
+                <div class="loading-progress"></div>
+
+            </div>
+
+
+            <p>
+
+                PRÉPARATION DE TON ADVERSAIRE...
+
+            </p>
+
+        </div>
 
     </div>
 
-</section>
+
+
+    <!-- =====================================================
+         THEME JS
+    ====================================================== -->
+
+    <script src="../js/theme.js"></script>
 
 
 
-<!-- ======================================
-     LOADING SCREEN
-====================================== -->
+    <!-- =====================================================
+         FARIS AI NAVIGATION
+    ====================================================== -->
 
-<div
-    class="loading-screen"
-    id="loadingScreen"
->
+    <script>
 
-    <div class="loading-box">
+        function playFaris(age) {
 
-        <div class="loading-logo">
-            CHESS<span>_FK</span>
-        </div>
+            const loadingScreen =
+                document.getElementById("loadingScreen");
 
-
-        <div
-            class="loading-age"
-            id="loadingAge"
-        >
-            FARIS
-        </div>
+            const loadingAge =
+                document.getElementById("loadingAge");
 
 
-        <div class="loading-line">
+            if (loadingAge) {
 
-            <div class="loading-progress"></div>
+                loadingAge.textContent = age;
 
-        </div>
-
-
-        <p>
-            Preparing your opponent...
-        </p>
-
-    </div>
-
-</div>
+            }
 
 
+            if (loadingScreen) {
 
-</main>
+                loadingScreen.classList.add("show");
+
+            }
+
+
+            setTimeout(function () {
+
+                window.location.href =
+                    "plat.html?faris=" + age;
+
+            }, 1000);
+
+        }
 
 
 
-<!-- ======================================
-     JAVASCRIPT
-====================================== -->
+        /*
+         * Quand on clique sur la grande photo
+         * de Faris, on descend vers les 12 niveaux.
+         */
 
-<script src="../js/theme.js"></script>
+        function scrollToAges() {
 
-<script src="../js/faris-ai.js"></script>
+            const ages =
+                document.getElementById("ages");
+
+
+            if (ages) {
+
+                ages.scrollIntoView({
+
+                    behavior: "smooth",
+
+                    block: "start"
+
+                });
+
+            }
+
+        }
+
+    </script>
 
 
 </body>

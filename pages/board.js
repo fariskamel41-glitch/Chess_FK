@@ -1,7 +1,7 @@
 // ======================================
 // CHESS_FK CHESS ENGINE
 // board.js
-// VERSION CLEAN
+// VERSION PRO — FARIS BLANC / NOIR
 // ======================================
 
 
@@ -65,6 +65,66 @@ let currentPlayer = "white";
 
 
 // ======================================
+// COULEUR FARIS / JOUEUR
+// ======================================
+//
+// faris-ai.js définit :
+//
+// window.farisColor = "white" / "black"
+// window.humanColor = "white" / "black"
+//
+// Sécurité : par défaut Faris = noir.
+//
+
+function getFarisColor(){
+
+    return (
+        typeof window.farisColor !== "undefined"
+        &&
+        (
+            window.farisColor === "white" ||
+            window.farisColor === "black"
+        )
+    )
+        ? window.farisColor
+        : "black";
+
+}
+
+
+function getHumanColor(){
+
+    const faris =
+        getFarisColor();
+
+    return faris === "white"
+        ? "black"
+        : "white";
+
+}
+
+
+function isFarisTurn(){
+
+    return (
+        currentPlayer ===
+        getFarisColor()
+    );
+
+}
+
+
+function isHumanTurn(){
+
+    return (
+        currentPlayer ===
+        getHumanColor()
+    );
+
+}
+
+
+// ======================================
 // PARTIE TERMINÉE
 // ======================================
 
@@ -96,10 +156,117 @@ let blackRookRightMoved = false;
 // PENDULE
 // ======================================
 
-let whiteTime = 10 * 60;
-let blackTime = 10 * 60;
+function getGameTimeFromURL(){
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+
+    const urlTime =
+        parseInt(
+            params.get("time"),
+            10
+        );
+
+
+    if(
+        !Number.isFinite(urlTime) ||
+        urlTime <= 0
+    ){
+
+        return 10 * 60;
+
+    }
+
+
+    if(urlTime > 24 * 60 * 60){
+
+        return 10 * 60;
+
+    }
+
+
+    return urlTime;
+
+}
+
+
+// ======================================
+// INCRÉMENT
+// ======================================
+
+function getIncrementFromURL(){
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+
+    const urlIncrement =
+        parseInt(
+            params.get("increment"),
+            10
+        );
+
+
+    if(
+        !Number.isFinite(urlIncrement) ||
+        urlIncrement < 0
+    ){
+
+        return 0;
+
+    }
+
+
+    if(urlIncrement > 60 * 60){
+
+        return 0;
+
+    }
+
+
+    return urlIncrement;
+
+}
+
+
+// ======================================
+// TEMPS CHOISI
+// ======================================
+
+const selectedGameTime =
+    getGameTimeFromURL();
+
+
+// ======================================
+// INCRÉMENT CHOISI
+// ======================================
+
+const selectedIncrement =
+    getIncrementFromURL();
+
+
+// ======================================
+// TEMPS ACTUEL
+// ======================================
+
+let whiteTime =
+    selectedGameTime;
+
+let blackTime =
+    selectedGameTime;
+
+
+// ======================================
+// CHRONOMÈTRE
+// ======================================
 
 let clockInterval = null;
+
 let clockStarted = false;
 
 
@@ -108,6 +275,7 @@ let clockStarted = false;
 // ======================================
 
 let moveNumber = 1;
+
 let whiteMoveNotation = null;
 
 
@@ -123,6 +291,7 @@ let moveHistory = [];
 // ======================================
 
 let arrows = [];
+
 let drawingArrow = null;
 
 
@@ -131,10 +300,15 @@ let drawingArrow = null;
 // ======================================
 
 const whiteClock =
-    document.querySelector(".white-player .clock");
+    document.querySelector(
+        ".white-player .clock"
+    );
+
 
 const blackClock =
-    document.querySelector(".black-player .clock");
+    document.querySelector(
+        ".black-player .clock"
+    );
 
 
 // ======================================
@@ -143,20 +317,37 @@ const blackClock =
 
 function formatTime(seconds){
 
+    seconds =
+        Math.max(
+            0,
+            Math.floor(seconds)
+        );
+
+
     const minutes =
-        Math.floor(seconds / 60);
+        Math.floor(
+            seconds / 60
+        );
+
 
     const remainingSeconds =
         seconds % 60;
 
+
     return (
         String(minutes).padStart(2,"0")
-        + ":"
-        + String(remainingSeconds).padStart(2,"0")
+        +
+        ":"
+        +
+        String(remainingSeconds).padStart(2,"0")
     );
 
 }
 
+
+// ======================================
+// METTRE À JOUR LES HORLOGES
+// ======================================
 
 function updateClocks(){
 
@@ -166,6 +357,7 @@ function updateClocks(){
             formatTime(whiteTime);
 
     }
+
 
     if(blackClock){
 
@@ -189,6 +381,7 @@ function startClock(){
 
     }
 
+
     clockInterval =
         setInterval(function(){
 
@@ -199,6 +392,7 @@ function startClock(){
                 return;
 
             }
+
 
             if(currentPlayer === "white"){
 
@@ -240,6 +434,7 @@ function startClock(){
 
             }
 
+
             updateClocks();
 
         },1000);
@@ -255,11 +450,46 @@ function stopClock(){
 
     if(clockInterval !== null){
 
-        clearInterval(clockInterval);
+        clearInterval(
+            clockInterval
+        );
 
         clockInterval = null;
 
     }
+
+}
+
+
+// ======================================
+// AJOUTER L'INCRÉMENT
+// ======================================
+
+function addIncrement(player){
+
+    if(selectedIncrement <= 0){
+
+        return;
+
+    }
+
+
+    if(player === "white"){
+
+        whiteTime +=
+            selectedIncrement;
+
+    }
+
+    else{
+
+        blackTime +=
+            selectedIncrement;
+
+    }
+
+
+    updateClocks();
 
 }
 
@@ -273,7 +503,9 @@ function saveGameState(){
     return {
 
         pieces:
-            pieces.map(row => [...row]),
+            pieces.map(
+                row => [...row]
+            ),
 
         currentPlayer:
             currentPlayer,
@@ -336,54 +568,74 @@ function saveGameState(){
 function restoreGameState(state){
 
     pieces =
-        state.pieces.map(row => [...row]);
+        state.pieces.map(
+            row => [...row]
+        );
+
 
     currentPlayer =
         state.currentPlayer;
 
+
     gameOver =
         state.gameOver;
+
 
     lastMove =
         state.lastMove
         ? {...state.lastMove}
         : null;
 
+
     whiteKingMoved =
         state.whiteKingMoved;
+
 
     blackKingMoved =
         state.blackKingMoved;
 
+
     whiteRookLeftMoved =
         state.whiteRookLeftMoved;
+
 
     whiteRookRightMoved =
         state.whiteRookRightMoved;
 
+
     blackRookLeftMoved =
         state.blackRookLeftMoved;
+
 
     blackRookRightMoved =
         state.blackRookRightMoved;
 
+
     whiteTime =
         state.whiteTime;
+
 
     blackTime =
         state.blackTime;
 
+
     clockStarted =
         state.clockStarted;
+
 
     moveNumber =
         state.moveNumber;
 
+
     whiteMoveNotation =
         state.whiteMoveNotation;
 
+
     const moves =
-        document.getElementById("moves");
+        document.getElementById(
+            "moves"
+        );
+
 
     if(moves){
 
@@ -392,17 +644,25 @@ function restoreGameState(state){
 
     }
 
+
     selectedRow = null;
+
     selectedCol = null;
 
     possibleMoves = [];
 
     arrows = [];
+
     drawingArrow = null;
+
 
     drawBoard();
 
-    if(clockStarted && !gameOver){
+
+    if(
+        clockStarted &&
+        !gameOver
+    ){
 
         startClock();
 
@@ -413,6 +673,7 @@ function restoreGameState(state){
         stopClock();
 
     }
+
 
     updateClocks();
 
@@ -433,46 +694,56 @@ function drawBoard(){
 
     }
 
+
     board.innerHTML = "";
 
-    for(let row = 0; row < 8; row++){
 
-        for(let col = 0; col < 8; col++){
+    for(
+        let row = 0;
+        row < 8;
+        row++
+    ){
+
+        for(
+            let col = 0;
+            col < 8;
+            col++
+        ){
 
             const square =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
 
-            square.classList.add("square");
 
+            square.classList.add(
+                "square"
+            );
 
-            // ==================================
-            // COORDONNÉES
-            // ==================================
 
             square.dataset.row = row;
+
             square.dataset.col = col;
 
 
-            // ==================================
-            // COULEUR
-            // ==================================
+            if(
+                (row + col) % 2 === 0
+            ){
 
-            if((row + col) % 2 === 0){
-
-                square.classList.add("white");
+                square.classList.add(
+                    "white"
+                );
 
             }
 
             else{
 
-                square.classList.add("black");
+                square.classList.add(
+                    "black"
+                );
 
             }
 
-
-            // ==================================
-            // ROI EN ÉCHEC
-            // ==================================
 
             if(
                 pieces[row][col] === "♔" &&
@@ -498,10 +769,6 @@ function drawBoard(){
             }
 
 
-            // ==================================
-            // SÉLECTION
-            // ==================================
-
             if(
                 row === selectedRow &&
                 col === selectedCol
@@ -512,10 +779,6 @@ function drawBoard(){
 
             }
 
-
-            // ==================================
-            // CASE MARQUÉE
-            // ==================================
 
             if(
                 markedSquare !== null &&
@@ -530,11 +793,9 @@ function drawBoard(){
             }
 
 
-            // ==================================
-            // MOUVEMENTS POSSIBLES
-            // ==================================
-
-            for(let move of possibleMoves){
+            for(
+                let move of possibleMoves
+            ){
 
                 if(
                     move[0] === row &&
@@ -550,16 +811,20 @@ function drawBoard(){
             }
 
 
-            // ==================================
-            // PIÈCE
-            // ==================================
-
-            if(pieces[row][col] !== ""){
+            if(
+                pieces[row][col] !== ""
+            ){
 
                 const piece =
-                    document.createElement("span");
+                    document.createElement(
+                        "span"
+                    );
 
-                piece.classList.add("piece");
+
+                piece.classList.add(
+                    "piece"
+                );
+
 
                 piece.textContent =
                     pieces[row][col];
@@ -589,14 +854,13 @@ function drawBoard(){
 
                 }
 
-                square.appendChild(piece);
+
+                square.appendChild(
+                    piece
+                );
 
             }
 
-
-            // ==================================
-            // CLIC GAUCHE
-            // ==================================
 
             square.addEventListener(
                 "click",
@@ -604,29 +868,25 @@ function drawBoard(){
 
                     clearArrows();
 
-                    clickSquare(row,col);
+                    clickSquare(
+                        row,
+                        col
+                    );
 
                 }
             );
 
 
-            board.appendChild(square);
+            board.appendChild(
+                square
+            );
 
         }
 
     }
 
 
-    // ==================================
-    // TAILLE
-    // ==================================
-
     applyBoardSize();
-
-
-    // ==================================
-    // FLÈCHES
-    // ==================================
 
     drawArrows();
 
@@ -643,14 +903,19 @@ board.addEventListener(
 
         event.preventDefault();
 
+
         const square =
-            getSquareFromMouse(event);
+            getSquareFromMouse(
+                event
+            );
+
 
         if(!square){
 
             return;
 
         }
+
 
         if(
             markedSquare !== null &&
@@ -667,11 +932,13 @@ board.addEventListener(
             markedSquare = {
 
                 row: square.row,
+
                 col: square.col
 
             };
 
         }
+
 
         drawBoard();
 
@@ -693,17 +960,22 @@ function isMoveLegal(
     const movingPiece =
         pieces[fromRow][fromCol];
 
+
     const capturedPiece =
         pieces[toRow][toCol];
 
+
     const color =
-        isWhitePiece(movingPiece)
+        isWhitePiece(
+            movingPiece
+        )
         ? "white"
         : "black";
 
 
     pieces[toRow][toCol] =
         movingPiece;
+
 
     pieces[fromRow][fromCol] =
         "";
@@ -715,6 +987,7 @@ function isMoveLegal(
 
     pieces[fromRow][fromCol] =
         movingPiece;
+
 
     pieces[toRow][toCol] =
         capturedPiece;
@@ -739,10 +1012,22 @@ function getMoveNotation(
 ){
 
     const files =
-        ["a","b","c","d","e","f","g","h"];
+        [
+            "a",
+            "b",
+            "c",
+            "d",
+            "e",
+            "f",
+            "g",
+            "h"
+        ];
+
 
     const destination =
-        files[toCol] + (8 - toRow);
+        files[toCol]
+        +
+        (8 - toRow);
 
 
     if(
@@ -754,11 +1039,14 @@ function getMoveNotation(
 
             return (
                 files[fromCol]
-                + "x"
-                + destination
+                +
+                "x"
+                +
+                destination
             );
 
         }
+
 
         return destination;
 
@@ -818,14 +1106,20 @@ function getMoveNotation(
 
         return (
             letter
-            + "x"
-            + destination
+            +
+            "x"
+            +
+            destination
         );
 
     }
 
 
-    return letter + destination;
+    return (
+        letter
+        +
+        destination
+    );
 
 }
 
@@ -840,7 +1134,10 @@ function addMoveToList(
 ){
 
     const moves =
-        document.getElementById("moves");
+        document.getElementById(
+            "moves"
+        );
+
 
     if(!moves){
 
@@ -859,24 +1156,35 @@ function addMoveToList(
     else{
 
         const moveElement =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
+
 
         moveElement.classList.add(
             "move-row"
         );
 
+
         moveElement.textContent =
             moveNumber
-            + ". "
-            + whiteMoveNotation
-            + " - "
-            + notation;
+            +
+            ". "
+            +
+            whiteMoveNotation
+            +
+            " - "
+            +
+            notation;
+
 
         moves.appendChild(
             moveElement
         );
 
+
         moveNumber++;
+
 
         whiteMoveNotation =
             null;
@@ -895,11 +1203,24 @@ function clickSquare(row,col){
     markedSquare = null;
 
 
+    if(gameOver){
+
+        return;
+
+    }
+
+
     // ==================================
-    // PARTIE TERMINÉE
+    // BLOQUER LE JOUEUR PENDANT FARIS
     // ==================================
 
-    if(gameOver){
+    if(
+        isFarisTurn()
+    ){
+
+        console.log(
+            "🤖 C'est le tour de Faris."
+        );
 
         return;
 
@@ -911,14 +1232,9 @@ function clickSquare(row,col){
     // ==================================
 
     if(
-        currentPlayer === "black" &&
         typeof farisThinking !== "undefined" &&
         farisThinking
     ){
-
-        console.log(
-            "🤖 Faris réfléchit..."
-        );
 
         return;
 
@@ -931,13 +1247,21 @@ function clickSquare(row,col){
 
     if(selectedRow === null){
 
-
-        // ==================================
-        // BLANC
-        // ==================================
+        // ==============================
+        // LE JOUEUR DOIT JOUER SA COULEUR
+        // ==============================
 
         if(
-            currentPlayer === "white" &&
+            !isHumanTurn()
+        ){
+
+            return;
+
+        }
+
+
+        if(
+            getHumanColor() === "white" &&
             !isWhitePiece(
                 pieces[row][col]
             )
@@ -948,12 +1272,8 @@ function clickSquare(row,col){
         }
 
 
-        // ==================================
-        // NOIR
-        // ==================================
-
         if(
-            currentPlayer === "black" &&
+            getHumanColor() === "black" &&
             !isBlackPiece(
                 pieces[row][col]
             )
@@ -964,10 +1284,6 @@ function clickSquare(row,col){
         }
 
 
-        // ==================================
-        // CASE VIDE
-        // ==================================
-
         if(
             pieces[row][col] === ""
         ){
@@ -977,11 +1293,8 @@ function clickSquare(row,col){
         }
 
 
-        // ==================================
-        // SÉLECTION
-        // ==================================
-
         selectedRow = row;
+
         selectedCol = col;
 
 
@@ -1043,6 +1356,7 @@ function clickSquare(row,col){
     ){
 
         selectedRow = null;
+
         selectedCol = null;
 
         possibleMoves = [];
@@ -1061,6 +1375,7 @@ function clickSquare(row,col){
     if(!moveAllowed){
 
         selectedRow = null;
+
         selectedCol = null;
 
         possibleMoves = [];
@@ -1089,6 +1404,27 @@ function clickSquare(row,col){
 
 
     // ==================================
+    // SÉCURITÉ COULEUR
+    // ==================================
+
+    if(
+        movePlayer !== getHumanColor()
+    ){
+
+        selectedRow = null;
+
+        selectedCol = null;
+
+        possibleMoves = [];
+
+        drawBoard();
+
+        return;
+
+    }
+
+
+    // ==================================
     // VÉRIFICATION
     // ==================================
 
@@ -1102,6 +1438,7 @@ function clickSquare(row,col){
     ){
 
         selectedRow = null;
+
         selectedCol = null;
 
         possibleMoves = [];
@@ -1285,6 +1622,7 @@ function clickSquare(row,col){
     pieces[row][col] =
         pieces[selectedRow][selectedCol];
 
+
     pieces[selectedRow][selectedCol] =
         "";
 
@@ -1430,6 +1768,15 @@ function clickSquare(row,col){
 
 
     // ==================================
+    // INCRÉMENT
+    // ==================================
+
+    addIncrement(
+        movePlayer
+    );
+
+
+    // ==================================
     // CHRONOMÈTRE
     // ==================================
 
@@ -1446,17 +1793,10 @@ function clickSquare(row,col){
     // CHANGER DE JOUEUR
     // ==================================
 
-    if(currentPlayer === "white"){
-
-        currentPlayer = "black";
-
-    }
-
-    else{
-
-        currentPlayer = "white";
-
-    }
+    currentPlayer =
+        currentPlayer === "white"
+            ? "black"
+            : "white";
 
 
     // ==================================
@@ -1464,13 +1804,14 @@ function clickSquare(row,col){
     // ==================================
 
     selectedRow = null;
+
     selectedCol = null;
 
     possibleMoves = [];
 
 
     // ==================================
-    // FLÈCHES MANUELLES
+    // FLÈCHES
     // ==================================
 
     clearArrows();
@@ -1488,10 +1829,20 @@ function clickSquare(row,col){
     // ==================================
     // FARIS AI
     // ==================================
+    //
+    // IMPORTANT :
+    // On ne regarde PLUS si le coup vient
+    // des blancs.
+    //
+    // On regarde simplement :
+    //
+    // currentPlayer === farisColor
+    //
+    // Cela permet à Faris d'être blanc OU noir.
+    //
 
     if(
-        movePlayer === "white" &&
-        currentPlayer === "black" &&
+        currentPlayer === getFarisColor() &&
         !gameOver &&
         typeof farisPlay === "function"
     ){
@@ -1500,7 +1851,23 @@ function clickSquare(row,col){
             "🤖 Lancement automatique de Faris..."
         );
 
-        farisPlay();
+
+        setTimeout(
+            function(){
+
+                if(
+                    !gameOver &&
+                    currentPlayer === getFarisColor() &&
+                    typeof farisPlay === "function"
+                ){
+
+                    farisPlay();
+
+                }
+
+            },
+            100
+        );
 
     }
 
@@ -1594,9 +1961,17 @@ function isCheckmate(color){
     }
 
 
-    for(let row = 0; row < 8; row++){
+    for(
+        let row = 0;
+        row < 8;
+        row++
+    ){
 
-        for(let col = 0; col < 8; col++){
+        for(
+            let col = 0;
+            col < 8;
+            col++
+        ){
 
             const piece =
                 pieces[row][col];
@@ -1636,7 +2011,9 @@ function isCheckmate(color){
                 );
 
 
-            for(let move of moves){
+            for(
+                let move of moves
+            ){
 
                 if(
                     isMoveLegal(
@@ -1670,7 +2047,9 @@ function isCheckmate(color){
 function updateGameStatus(){
 
     const turn =
-        document.querySelector(".turn");
+        document.querySelector(
+            ".turn"
+        );
 
 
     if(!turn){
@@ -1750,8 +2129,28 @@ function finishGame(message){
     stopClock();
 
 
+    if(
+        typeof farisMoveToken !== "undefined"
+    ){
+
+        farisMoveToken++;
+
+    }
+
+
+    if(
+        typeof farisThinking !== "undefined"
+    ){
+
+        farisThinking = false;
+
+    }
+
+
     const turn =
-        document.querySelector(".turn");
+        document.querySelector(
+            ".turn"
+        );
 
 
     if(turn){
@@ -1774,13 +2173,17 @@ function finishGame(message){
 function showGameResult(message){
 
     let result =
-        document.getElementById("gameResult");
+        document.getElementById(
+            "gameResult"
+        );
 
 
     if(!result){
 
         result =
-            document.createElement("div");
+            document.createElement(
+                "div"
+            );
 
 
         result.id =
@@ -1819,11 +2222,15 @@ function showGameResult(message){
         `;
 
 
-        document.body.appendChild(result);
+        document.body.appendChild(
+            result
+        );
 
 
         document
-            .getElementById("resultRestartButton")
+            .getElementById(
+                "resultRestartButton"
+            )
             .addEventListener(
                 "click",
                 restartGame
@@ -1831,7 +2238,9 @@ function showGameResult(message){
 
 
         document
-            .getElementById("resultCloseButton")
+            .getElementById(
+                "resultCloseButton"
+            )
             .addEventListener(
                 "click",
                 closeGameResult
@@ -1854,7 +2263,9 @@ function showGameResult(message){
     }
 
 
-    result.classList.add("show");
+    result.classList.add(
+        "show"
+    );
 
 }
 
@@ -1873,7 +2284,9 @@ function closeGameResult(){
 
     if(result){
 
-        result.classList.remove("show");
+        result.classList.remove(
+            "show"
+        );
 
     }
 
@@ -1925,7 +2338,11 @@ function resignGame(){
 
 
     finishGame(
-        "🏳️ RESIGNATION — " + winner + " !"
+        "🏳️ RESIGNATION — "
+        +
+        winner
+        +
+        " !"
     );
 
 }
@@ -1980,7 +2397,9 @@ function offerDraw(){
 
 function undoMove(){
 
-    if(moveHistory.length === 0){
+    if(
+        moveHistory.length === 0
+    ){
 
         alert(
             "↩️ Aucun coup à annuler."
@@ -2000,6 +2419,15 @@ function undoMove(){
     }
 
 
+    if(
+        typeof resetFarisAI === "function"
+    ){
+
+        resetFarisAI();
+
+    }
+
+
     const previousState =
         moveHistory.pop();
 
@@ -2007,6 +2435,24 @@ function undoMove(){
     restoreGameState(
         previousState
     );
+
+
+    // ==================================
+    // SI FARIS EST À NOUVEAU AU TRAIT
+    // ==================================
+
+    if(
+        !gameOver &&
+        currentPlayer === getFarisColor() &&
+        typeof farisPlay === "function"
+    ){
+
+        setTimeout(
+            farisPlay,
+            150
+        );
+
+    }
 
 }
 
@@ -2033,56 +2479,118 @@ function restartGame(){
     stopClock();
 
 
+    if(
+        typeof resetFarisAI === "function"
+    ){
+
+        resetFarisAI();
+
+    }
+
+
+    // ==================================
+    // RESET PIÈCES
+    // ==================================
+
     pieces =
         initialPieces.map(
             row => [...row]
         );
 
 
+    // ==================================
+    // RESET SÉLECTION
+    // ==================================
+
     selectedRow = null;
+
     selectedCol = null;
 
     possibleMoves = [];
 
     markedSquare = null;
 
+
+    // ==================================
+    // RESET JOUEUR
+    // ==================================
+
     currentPlayer = "white";
+
+
+    // ==================================
+    // RESET PARTIE
+    // ==================================
 
     gameOver = false;
 
     lastMove = null;
 
 
+    // ==================================
+    // RESET ROQUE
+    // ==================================
+
     whiteKingMoved = false;
+
     blackKingMoved = false;
 
     whiteRookLeftMoved = false;
+
     whiteRookRightMoved = false;
 
     blackRookLeftMoved = false;
+
     blackRookRightMoved = false;
 
 
-    whiteTime = 10 * 60;
-    blackTime = 10 * 60;
+    // ==================================
+    // RESET TEMPS
+    // ==================================
+
+    whiteTime =
+        selectedGameTime;
+
+    blackTime =
+        selectedGameTime;
+
 
     clockStarted = false;
 
+
+    // ==================================
+    // RESET NOTATION
+    // ==================================
 
     moveNumber = 1;
 
     whiteMoveNotation = null;
 
+
+    // ==================================
+    // RESET HISTORIQUE
+    // ==================================
+
     moveHistory = [];
 
+
+    // ==================================
+    // RESET FLÈCHES
+    // ==================================
 
     arrows = [];
 
     drawingArrow = null;
 
 
+    // ==================================
+    // RESET COUPS
+    // ==================================
+
     const moves =
-        document.getElementById("moves");
+        document.getElementById(
+            "moves"
+        );
 
 
     if(moves){
@@ -2092,13 +2600,50 @@ function restartGame(){
     }
 
 
+    // ==================================
+    // FERMER RÉSULTAT
+    // ==================================
+
     closeGameResult();
+
+
+    // ==================================
+    // AFFICHAGE
+    // ==================================
 
     updateClocks();
 
     drawBoard();
 
     updateGameStatus();
+
+
+    // ==================================
+    // SI FARIS EST BLANC
+    // ==================================
+
+    if(
+        getFarisColor() === "white" &&
+        typeof farisPlay === "function"
+    ){
+
+        setTimeout(
+            function(){
+
+                if(
+                    !gameOver &&
+                    currentPlayer === "white"
+                ){
+
+                    farisPlay();
+
+                }
+
+            },
+            400
+        );
+
+    }
 
 }
 
@@ -2174,41 +2719,53 @@ function applyBoardSize(){
 
 
     const squares =
-        board.querySelectorAll(".square");
+        board.querySelectorAll(
+            ".square"
+        );
 
 
-    squares.forEach(function(square){
+    squares.forEach(
+        function(square){
 
-        square.style.width =
-            boardSize + "px";
+            square.style.width =
+                boardSize + "px";
 
-        square.style.height =
-            boardSize + "px";
+            square.style.height =
+                boardSize + "px";
 
-    });
+        }
+    );
 
 
     const piecesHTML =
-        board.querySelectorAll(".piece");
+        board.querySelectorAll(
+            ".piece"
+        );
 
 
     const pieceSize =
         Math.max(
             25,
-            Math.round(boardSize * 0.75)
+            Math.round(
+                boardSize * 0.75
+            )
         );
 
 
-    piecesHTML.forEach(function(piece){
+    piecesHTML.forEach(
+        function(piece){
 
-        piece.style.fontSize =
-            pieceSize + "px";
+            piece.style.fontSize =
+                pieceSize + "px";
 
-    });
+        }
+    );
 
 
     const numbers =
-        document.querySelector(".numbers");
+        document.querySelector(
+            ".numbers"
+        );
 
 
     if(numbers){
@@ -2221,7 +2778,9 @@ function applyBoardSize(){
 
 
         const numberSpans =
-            numbers.querySelectorAll("span");
+            numbers.querySelectorAll(
+                "span"
+            );
 
 
         numberSpans.forEach(
@@ -2237,7 +2796,9 @@ function applyBoardSize(){
 
 
     const letters =
-        document.querySelector(".letters");
+        document.querySelector(
+            ".letters"
+        );
 
 
     if(letters){
@@ -2251,7 +2812,9 @@ function applyBoardSize(){
 
 
         const letterSpans =
-            letters.querySelectorAll("span");
+            letters.querySelectorAll(
+                "span"
+            );
 
 
         letterSpans.forEach(
@@ -2267,15 +2830,19 @@ function applyBoardSize(){
 
 
     const players =
-        document.querySelectorAll(".player");
+        document.querySelectorAll(
+            ".player"
+        );
 
 
-    players.forEach(function(player){
+    players.forEach(
+        function(player){
 
-        player.style.width =
-            boardPixels + "px";
+            player.style.width =
+                boardPixels + "px";
 
-    });
+        }
+    );
 
 
     if(boardSizeLabel){
@@ -2351,11 +2918,13 @@ function getSquareFromMouse(event){
 
 
     const x =
-        event.clientX - rect.left;
+        event.clientX -
+        rect.left;
 
 
     const y =
-        event.clientY - rect.top;
+        event.clientY -
+        rect.top;
 
 
     if(
@@ -2405,6 +2974,7 @@ function getSquareFromMouse(event){
     return {
 
         row: row,
+
         col: col
 
     };
@@ -2433,10 +3003,15 @@ function getChessAccentColor(){
     const variables = [
 
         "--accent-color",
+
         "--theme-color",
+
         "--primary-color",
+
         "--accent",
+
         "--red",
+
         "--main-color"
 
     ];
@@ -2448,7 +3023,9 @@ function getChessAccentColor(){
 
         const rootValue =
             root
-                .getPropertyValue(variable)
+                .getPropertyValue(
+                    variable
+                )
                 .trim();
 
 
@@ -2461,7 +3038,9 @@ function getChessAccentColor(){
 
         const bodyValue =
             body
-                .getPropertyValue(variable)
+                .getPropertyValue(
+                    variable
+                )
                 .trim();
 
 
@@ -2511,7 +3090,8 @@ function getChessAccentColor(){
 
     return (
         colors[
-            String(theme).toLowerCase()
+            String(theme)
+                .toLowerCase()
         ]
         ||
         "#ff3030"
@@ -2805,8 +3385,10 @@ function drawSingleArrow(
 
 
     line.style.filter =
-        "drop-shadow(0 0 5px " +
-        color +
+        "drop-shadow(0 0 5px "
+        +
+        color
+        +
         ")";
 
 
@@ -2841,10 +3423,6 @@ function drawArrows(){
     const color =
         getChessAccentColor();
 
-
-    // ==================================
-    // DEFINITION
-    // ==================================
 
     const defs =
         document.createElementNS(
@@ -2920,8 +3498,10 @@ function drawArrows(){
 
 
     polygon.style.filter =
-        "drop-shadow(0 0 4px " +
-        color +
+        "drop-shadow(0 0 4px "
+        +
+        color
+        +
         ")";
 
 
@@ -2940,10 +3520,6 @@ function drawArrows(){
     );
 
 
-    // ==================================
-    // DERNIER COUP
-    // ==================================
-
     if(lastMove){
 
         drawSingleArrow(
@@ -2954,11 +3530,9 @@ function drawArrows(){
     }
 
 
-    // ==================================
-    // FLÈCHES MANUELLES
-    // ==================================
-
-    if(Array.isArray(arrows)){
+    if(
+        Array.isArray(arrows)
+    ){
 
         for(
             const arrow of arrows
@@ -2973,10 +3547,6 @@ function drawArrows(){
 
     }
 
-
-    // ==================================
-    // FLÈCHE EN COURS
-    // ==================================
 
     if(drawingArrow){
 
@@ -3013,10 +3583,6 @@ board.addEventListener(
     "mousedown",
     function(event){
 
-        // ==================================
-        // CLIC GAUCHE
-        // ==================================
-
         if(event.button === 0){
 
             if(
@@ -3035,10 +3601,6 @@ board.addEventListener(
         }
 
 
-        // ==================================
-        // CLIC DROIT
-        // ==================================
-
         if(event.button !== 2){
 
             return;
@@ -3050,7 +3612,9 @@ board.addEventListener(
 
 
         const square =
-            getSquareFromMouse(event);
+            getSquareFromMouse(
+                event
+            );
 
 
         if(!square){
@@ -3099,7 +3663,9 @@ board.addEventListener(
 
 
         const square =
-            getSquareFromMouse(event);
+            getSquareFromMouse(
+                event
+            );
 
 
         if(!square){
@@ -3149,7 +3715,9 @@ document.addEventListener(
 
 
         const square =
-            getSquareFromMouse(event);
+            getSquareFromMouse(
+                event
+            );
 
 
         if(square){
@@ -3234,9 +3802,13 @@ chessThemeObserver.observe(
         attributes: true,
 
         attributeFilter: [
+
             "class",
+
             "data-theme",
+
             "style"
+
         ]
 
     }
@@ -3250,9 +3822,13 @@ chessThemeObserver.observe(
         attributes: true,
 
         attributeFilter: [
+
             "class",
+
             "data-theme",
+
             "style"
+
         ]
 
     }
@@ -3386,6 +3962,105 @@ updateClocks();
 applyBoardSize();
 
 drawArrows();
+
+
+// ======================================
+// FARIS BLANC AU DÉMARRAGE
+// ======================================
+//
+// Si l'URL contient :
+//
+// ?faris=18&color=white
+//
+// Faris joue automatiquement 1.e4.
+//
+// Si :
+//
+// ?faris=18&color=black
+//
+// le joueur joue les blancs normalement.
+//
+
+setTimeout(
+    function(){
+
+        if(
+            !gameOver &&
+            getFarisColor() === "white" &&
+            currentPlayer === "white" &&
+            typeof farisPlay === "function"
+        ){
+
+            console.log(
+                "🤖 FARIS EST BLANC → IL COMMENCE"
+            );
+
+
+            farisPlay();
+
+        }
+
+    },
+    500
+);
+
+
+// ======================================
+// DEBUG TIME CONTROL
+// ======================================
+
+console.log(
+    "⏱️ CHESS_FK TIME CONTROL"
+);
+
+console.log(
+    "🎯 Selected time:",
+    selectedGameTime,
+    "seconds"
+);
+
+console.log(
+    "⏱️ Display:",
+    formatTime(selectedGameTime)
+);
+
+console.log(
+    "➕ Increment:",
+    selectedIncrement,
+    "seconds"
+);
+
+
+// ======================================
+// DEBUG FARIS
+// ======================================
+
+console.log(
+    "=========================================="
+);
+
+console.log(
+    "🤖 CHESS_FK FARIS COLOR SYSTEM"
+);
+
+console.log(
+    "🤖 Faris:",
+    getFarisColor()
+);
+
+console.log(
+    "👤 Human:",
+    getHumanColor()
+);
+
+console.log(
+    "🎯 Current player:",
+    currentPlayer
+);
+
+console.log(
+    "=========================================="
+);
 
 
 // ======================================

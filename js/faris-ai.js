@@ -1,17 +1,20 @@
-// ======================================
-// CHESS FK - FARIS AI
-// STOCKFISH 18 EDITION
-// ======================================
+// ==========================================
+// CHESS_FK - FARIS AI
+// VERSION PRO - BLANC / NOIR
+// STOCKFISH 18
+// OUVERTURES À PARTIR DE 11 ANS
+// ==========================================
 
-console.log("♟️ FARIS AI + STOCKFISH 18 LOADED");
+console.log("♟️ FARIS AI STARTING...");
 
 
-// ======================================
-// ÂGE / NIVEAUX FARIS
-// ======================================
+// ==========================================
+// PARAMÈTRES URL
+// ==========================================
 
 const farisParams =
     new URLSearchParams(window.location.search);
+
 
 const farisAgeNumber =
     parseInt(
@@ -19,171 +22,132 @@ const farisAgeNumber =
         10
     );
 
+
 const farisAge =
     Number.isFinite(farisAgeNumber)
-        ? Math.max(7, Math.min(18, farisAgeNumber))
+        ? Math.max(
+            7,
+            Math.min(
+                18,
+                farisAgeNumber
+            )
+        )
         : 18;
 
 
-// ======================================
-// NIVEAUX FARIS
-// ======================================
+// ==========================================
+// COULEUR
+// ==========================================
 //
-// 7  -> très facile
-// 8  -> facile
-// 9  -> facile +
-// 10 -> moyen
-// 11 -> moyen / sérieux
-// 12 -> fort
-// 13 -> très fort
-// 14 -> fort
-// 15 -> très fort
-// 16 -> très très fort
-// 17 -> extrêmement fort
-// 18 -> STOCKFISH NATIF
+// ?color=white
+// Faris = blanc
 //
-// IMPORTANT :
-// Le niveau 18 reste exactement dans
-// la configuration forte que nous avons
-// validée.
-// ======================================
+// ?color=black
+// Faris = noir
+//
+// Par défaut Faris = noir
+//
+
+const colorParameter =
+    farisParams.get("color");
+
+
+const farisColor =
+    colorParameter === "white"
+        ? "white"
+        : "black";
+
+
+const humanColor =
+    farisColor === "white"
+        ? "black"
+        : "white";
+
+
+window.farisColor =
+    farisColor;
+
+
+window.humanColor =
+    humanColor;
+
+
+console.log(
+    "🤖 Faris couleur:",
+    farisColor
+);
+
+
+console.log(
+    "👤 Joueur couleur:",
+    humanColor
+);
+
+
+// ==========================================
+// NIVEAUX
+// ==========================================
 
 const farisLevels = {
 
-    // ==============================
-    // 7 ANS
-    // ==============================
-
     7: {
-        elo: 700,
-        time: 250,
-        useLimitStrength: true
+        elo: 1100,
+        searchTime: 250
     },
-
-
-    // ==============================
-    // 8 ANS
-    // ==============================
 
     8: {
-        elo: 850,
-        time: 300,
-        useLimitStrength: true
+        elo: 1200,
+        searchTime: 300
     },
-
-
-    // ==============================
-    // 9 ANS
-    // ==============================
 
     9: {
-        elo: 1000,
-        time: 350,
-        useLimitStrength: true
+        elo: 1300,
+        searchTime: 350
     },
-
-
-    // ==============================
-    // 10 ANS
-    // ==============================
 
     10: {
-        elo: 1150,
-        time: 450,
-        useLimitStrength: true
+        elo: 1400,
+        searchTime: 400
     },
-
-
-    // ==============================
-    // 11 ANS
-    // ==============================
 
     11: {
-        elo: 1300,
-        time: 600,
-        useLimitStrength: true
+        elo: 1700,
+        searchTime: 500
     },
-
-
-    // ==============================
-    // 12 ANS
-    // ==============================
 
     12: {
-        elo: 1450,
-        time: 800,
-        useLimitStrength: true
+        elo: 1800,
+        searchTime: 550
     },
-
-
-    // ==============================
-    // 13 ANS
-    // ==============================
 
     13: {
-        elo: 1600,
-        time: 1000,
-        useLimitStrength: true
+        elo: 1900,
+        searchTime: 600
     },
-
-
-    // ==============================
-    // 14 ANS
-    // ==============================
 
     14: {
-        elo: 1800,
-        time: 1400,
-        useLimitStrength: true
+        elo: 2000,
+        searchTime: 700
     },
-
-
-    // ==============================
-    // 15 ANS
-    // ==============================
 
     15: {
-        elo: 2000,
-        time: 1800,
-        useLimitStrength: true
+        elo: 2100,
+        searchTime: 800
     },
-
-
-    // ==============================
-    // 16 ANS
-    // ==============================
 
     16: {
         elo: 2200,
-        time: 2200,
-        useLimitStrength: true
+        searchTime: 900
     },
-
-
-    // ==============================
-    // 17 ANS
-    // ==============================
 
     17: {
-        elo: 2400,
-        time: 2800,
-        useLimitStrength: true
+        elo: 2300,
+        searchTime: 1050
     },
 
-
-    // ==============================
-    // 18 ANS
-    // ==============================
-    //
-    // NE PAS CHANGER
-    //
-    // Stockfish joue à sa force native.
-    // ==================================
-
     18: {
-        elo: 3200,
-        time: 4000,
-        useLimitStrength: false
+        elo: 2400,
+        searchTime: 1200
     }
 
 };
@@ -194,48 +158,262 @@ const farisLevel =
     farisLevels[18];
 
 
-let farisThinking = false;
-
-let farisStockfish = null;
-
-let farisStockfishReady = false;
-
-let farisSearchToken = 0;
-
-
 console.log(
-    `♟️ FARIS: ${farisAge} ans | ${farisLevel.elo} ELO | ${farisLevel.time} ms`
+    "♟️ FARIS:",
+    farisAge,
+    "ans |",
+    farisLevel.elo,
+    "ELO |",
+    farisLevel.searchTime,
+    "ms"
 );
 
 
-// ======================================
-// PIÈCES -> FEN
-// ======================================
+// ==========================================
+// ÉTAT
+// ==========================================
 
-const farisPieceToFen = {
+let farisThinking =
+    false;
 
-    "♜": "r",
-    "♞": "n",
-    "♝": "b",
-    "♛": "q",
-    "♚": "k",
-    "♟": "p",
 
-    "♖": "R",
-    "♘": "N",
-    "♗": "B",
-    "♕": "Q",
-    "♔": "K",
-    "♙": "P"
+let farisMoveToken = 0;
+
+
+// ==========================================
+// VALEURS PIÈCES
+// ==========================================
+
+const farisPieceValues = {
+
+    "♙": 100,
+    "♟": 100,
+
+    "♘": 320,
+    "♞": 320,
+
+    "♗": 330,
+    "♝": 330,
+
+    "♖": 500,
+    "♜": 500,
+
+    "♕": 900,
+    "♛": 900,
+
+    "♔": 20000,
+    "♚": 20000
 
 };
 
 
-// ======================================
-// CRÉER FEN DU PLATEAU
-// ======================================
+// ==========================================
+// UTILITAIRES
+// ==========================================
 
-function getBoardFEN(){
+function isFarisWhitePiece(piece){
+
+    return (
+        piece === "♙" ||
+        piece === "♘" ||
+        piece === "♗" ||
+        piece === "♖" ||
+        piece === "♕" ||
+        piece === "♔"
+    );
+
+}
+
+
+function isFarisBlackPiece(piece){
+
+    return (
+        piece === "♟" ||
+        piece === "♞" ||
+        piece === "♝" ||
+        piece === "♜" ||
+        piece === "♛" ||
+        piece === "♚"
+    );
+
+}
+
+
+function isFarisPieceOfColor(
+    piece,
+    color
+){
+
+    if(color === "white"){
+
+        return isFarisWhitePiece(piece);
+
+    }
+
+    return isFarisBlackPiece(piece);
+
+}
+
+
+// ==========================================
+// COORDONNÉES
+// ==========================================
+
+function farisSquareToCoords(square){
+
+    if(
+        typeof square !== "string" ||
+        square.length !== 2
+    ){
+
+        return null;
+
+    }
+
+
+    const file =
+        square.charCodeAt(0) - 97;
+
+
+    const rank =
+        parseInt(
+            square.charAt(1),
+            10
+        );
+
+
+    if(
+        file < 0 ||
+        file > 7 ||
+        rank < 1 ||
+        rank > 8
+    ){
+
+        return null;
+
+    }
+
+
+    return {
+
+        row:
+            8 - rank,
+
+        col:
+            file
+
+    };
+
+}
+
+
+// ==========================================
+// UCI → BOARD
+// ==========================================
+
+function uciToBoardMove(uci){
+
+    if(
+        typeof uci !== "string" ||
+        uci.length < 4
+    ){
+
+        return null;
+
+    }
+
+
+    const from =
+        farisSquareToCoords(
+            uci.substring(
+                0,
+                2
+            )
+        );
+
+
+    const to =
+        farisSquareToCoords(
+            uci.substring(
+                2,
+                4
+            )
+        );
+
+
+    if(
+        !from ||
+        !to
+    ){
+
+        return null;
+
+    }
+
+
+    return {
+
+        fromRow:
+            from.row,
+
+        fromCol:
+            from.col,
+
+        toRow:
+            to.row,
+
+        toCol:
+            to.col,
+
+        promotion:
+            uci.length >= 5
+                ? uci.charAt(4)
+                : null
+
+    };
+
+}
+
+
+window.uciToBoardMove =
+    uciToBoardMove;
+
+
+// ==========================================
+// BOARD → COORDONNÉES
+// ==========================================
+
+function boardToSquare(
+    row,
+    col
+){
+
+    const files =
+        "abcdefgh";
+
+
+    return (
+        files[col] +
+        (8 - row)
+    );
+
+}
+
+
+// ==========================================
+// POSITION FEN
+// ==========================================
+
+function getFarisFEN(){
+
+    if(
+        typeof pieces === "undefined"
+    ){
+
+        return null;
+
+    }
+
 
     let fen = "";
 
@@ -260,54 +438,52 @@ function getBoardFEN(){
 
 
             if(
-                piece === "" ||
-                piece == null
+                piece === ""
             ){
 
                 empty++;
 
-                continue;
-
             }
 
-
-            if(empty){
-
-                fen += empty;
-
-                empty = 0;
-
-            }
-
-
-            const fenPiece =
-                farisPieceToFen[piece];
-
-
-            if(!fenPiece){
-
-                console.error(
-                    "❌ Pièce inconnue dans le plateau:",
-                    piece,
-                    "row:",
-                    row,
-                    "col:",
-                    col
-                );
-
-                fen += "?";
-
-            }
             else{
 
-                fen += fenPiece;
+                if(empty > 0){
+
+                    fen += empty;
+
+                    empty = 0;
+
+                }
+
+
+                const map = {
+
+                    "♙":"P",
+                    "♘":"N",
+                    "♗":"B",
+                    "♖":"R",
+                    "♕":"Q",
+                    "♔":"K",
+
+                    "♟":"p",
+                    "♞":"n",
+                    "♝":"b",
+                    "♜":"r",
+                    "♛":"q",
+                    "♚":"k"
+
+                };
+
+
+                fen +=
+                    map[piece] || "1";
 
             }
 
         }
 
 
-        if(empty){
+        if(empty > 0){
 
             fen += empty;
 
@@ -323,735 +499,831 @@ function getBoardFEN(){
     }
 
 
+    // ======================================
+    // TOUR DE JEU
+    // ======================================
+
+    fen +=
+        " " +
+        (
+            currentPlayer === "white"
+                ? "w"
+                : "b"
+        );
+
+
+    // ======================================
+    // ROQUE
+    // ======================================
+
+    let castling = "";
+
+
+    if(
+        typeof whiteKingMoved !== "undefined" &&
+        typeof whiteRookRightMoved !== "undefined" &&
+        !whiteKingMoved &&
+        !whiteRookRightMoved
+    ){
+
+        castling += "K";
+
+    }
+
+
+    if(
+        typeof whiteKingMoved !== "undefined" &&
+        typeof whiteRookLeftMoved !== "undefined" &&
+        !whiteKingMoved &&
+        !whiteRookLeftMoved
+    ){
+
+        castling += "Q";
+
+    }
+
+
+    if(
+        typeof blackKingMoved !== "undefined" &&
+        typeof blackRookRightMoved !== "undefined" &&
+        !blackKingMoved &&
+        !blackRookRightMoved
+    ){
+
+        castling += "k";
+
+    }
+
+
+    if(
+        typeof blackKingMoved !== "undefined" &&
+        typeof blackRookLeftMoved !== "undefined" &&
+        !blackKingMoved &&
+        !blackRookLeftMoved
+    ){
+
+        castling += "q";
+
+    }
+
+
+    if(castling === ""){
+
+        castling = "-";
+
+    }
+
+
+    fen +=
+        " " +
+        castling;
+
+
+    // ======================================
+    // EN PASSANT
+    // ======================================
+
+    let enPassant = "-";
+
+
+    if(
+        typeof lastMove !== "undefined" &&
+        lastMove
+    ){
+
+        if(
+            lastMove.piece === "♙" &&
+            Math.abs(
+                lastMove.fromRow -
+                lastMove.toRow
+            ) === 2
+        ){
+
+            enPassant =
+                boardToSquare(
+                    (
+                        lastMove.fromRow +
+                        lastMove.toRow
+                    ) / 2,
+                    lastMove.fromCol
+                );
+
+        }
+
+
+        if(
+            lastMove.piece === "♟" &&
+            Math.abs(
+                lastMove.fromRow -
+                lastMove.toRow
+            ) === 2
+        ){
+
+            enPassant =
+                boardToSquare(
+                    (
+                        lastMove.fromRow +
+                        lastMove.toRow
+                    ) / 2,
+                    lastMove.fromCol
+                );
+
+        }
+
+    }
+
+
+    fen +=
+        " " +
+        enPassant;
+
+
+    // ======================================
+    // HALF MOVE
+    // ======================================
+
+    fen +=
+        " 0";
+
+
+    // ======================================
+    // FULL MOVE
+    // ======================================
+
+    const fullMove =
+        typeof moveNumber !== "undefined"
+            ? Math.max(
+                1,
+                moveNumber
+            )
+            : 1;
+
+
+    fen +=
+        " " +
+        fullMove;
+
+
     return fen;
 
 }
 
 
-// ======================================
-// DROITS AU ROQUE
-// ======================================
-
-function getFarisCastlingRights(){
-
-    let rights = "";
+window.getFarisFullFEN =
+    getFarisFEN;
 
 
-    // ==================================
-    // ROI BLANC
-    // ==================================
+// ==========================================
+// POSITION SIMPLE
+// ==========================================
+
+function getPositionSignature(){
 
     if(
-        typeof whiteKingMoved !== "undefined" &&
-        !whiteKingMoved
+        typeof pieces === "undefined"
     ){
 
-        if(
-            typeof whiteRookRightMoved !== "undefined" &&
-            !whiteRookRightMoved
-        ){
-
-            rights += "K";
-
-        }
-
-
-        if(
-            typeof whiteRookLeftMoved !== "undefined" &&
-            !whiteRookLeftMoved
-        ){
-
-            rights += "Q";
-
-        }
+        return "";
 
     }
 
 
-    // ==================================
-    // ROI NOIR
-    // ==================================
-
-    if(
-        typeof blackKingMoved !== "undefined" &&
-        !blackKingMoved
-    ){
-
-        if(
-            typeof blackRookRightMoved !== "undefined" &&
-            !blackRookRightMoved
-        ){
-
-            rights += "k";
-
-        }
-
-
-        if(
-            typeof blackRookLeftMoved !== "undefined" &&
-            !blackRookLeftMoved
-        ){
-
-            rights += "q";
-
-        }
-
-    }
-
-
-    return rights || "-";
+    return pieces
+        .map(
+            row => row.join("")
+        )
+        .join("/");
 
 }
 
 
-// ======================================
-// CASE EN PASSANT
-// ======================================
+// ==========================================
+// COMPTER LES COUPS
+// ==========================================
 
-function getFarisEnPassantSquare(){
-
-    if(
-        typeof lastMove === "undefined" ||
-        !lastMove
-    ){
-
-        return "-";
-
-    }
-
-
-    if(
-        lastMove.piece !== "♙" &&
-        lastMove.piece !== "♟"
-    ){
-
-        return "-";
-
-    }
-
-
-    if(
-        Math.abs(
-            lastMove.toRow -
-            lastMove.fromRow
-        ) !== 2
-    ){
-
-        return "-";
-
-    }
-
-
-    const file =
-        String.fromCharCode(
-            97 + lastMove.toCol
-        );
-
-
-    const rank =
-        8 -
-        (
-            (
-                lastMove.fromRow +
-                lastMove.toRow
-            ) / 2
-        );
-
-
-    return file + rank;
-
-}
-
-
-// ======================================
-// FEN COMPLET
-// ======================================
-
-function getFarisFullFEN(){
-
-    const boardFen =
-        getBoardFEN();
-
-
-    const side =
-        currentPlayer === "black"
-            ? "b"
-            : "w";
-
-
-    const castling =
-        getFarisCastlingRights();
-
-
-    const enPassant =
-        getFarisEnPassantSquare();
-
-
-    return (
-        boardFen +
-        " " +
-        side +
-        " " +
-        castling +
-        " " +
-        enPassant +
-        " 0 1"
-    );
-
-}
-
-
-// ======================================
-// CASE -> UCI
-// ======================================
-
-function squareToUCI(
-    row,
-    col
+function getLegalMovesForColor(
+    color
 ){
 
-    return (
-        String.fromCharCode(
-            97 + col
-        ) +
-        (
-            8 - row
-        )
-    );
+    const result = [];
 
-}
-
-
-// ======================================
-// UCI -> COUP
-// ======================================
-
-function uciToMove(uci){
 
     if(
-        !uci ||
-        typeof uci !== "string"
+        typeof pieces === "undefined" ||
+        typeof getPossibleMoves !== "function" ||
+        typeof isMoveLegal !== "function"
     ){
 
-        return null;
+        return result;
 
     }
 
 
-    uci =
-        uci
-            .trim()
-            .toLowerCase();
-
-
-    if(
-        uci.length < 4
+    for(
+        let row = 0;
+        row < 8;
+        row++
     ){
 
-        return null;
-
-    }
-
-
-    const fromCol =
-        uci.charCodeAt(0) -
-        97;
-
-
-    const fromRow =
-        8 -
-        parseInt(
-            uci[1],
-            10
-        );
-
-
-    const toCol =
-        uci.charCodeAt(2) -
-        97;
-
-
-    const toRow =
-        8 -
-        parseInt(
-            uci[3],
-            10
-        );
-
-
-    if(
-        !Number.isInteger(fromRow) ||
-        !Number.isInteger(toRow) ||
-
-        fromRow < 0 ||
-        fromRow > 7 ||
-
-        toRow < 0 ||
-        toRow > 7 ||
-
-        fromCol < 0 ||
-        fromCol > 7 ||
-
-        toCol < 0 ||
-        toCol > 7
-    ){
-
-        return null;
-
-    }
-
-
-    return {
-
-        fromRow:
-            fromRow,
-
-        fromCol:
-            fromCol,
-
-        toRow:
-            toRow,
-
-        toCol:
-            toCol,
-
-        promotion:
-            uci.length >= 5
-                ? uci[4]
-                : null,
-
-        uci:
-            uci
-
-    };
-
-}
-
-
-// ======================================
-// INITIALISER STOCKFISH
-// ======================================
-
-async function initFarisStockfish(){
-
-    if(
-        farisStockfish &&
-        farisStockfishReady
-    ){
-
-        return farisStockfish;
-
-    }
-
-
-    if(
-        typeof window.createStockfish !==
-        "function"
-    ){
-
-        throw new Error(
-            "createStockfish() introuvable. Vérifie stockfish-loader.js"
-        );
-
-    }
-
-
-    console.log(
-        "♟️ FARIS → démarrage de Stockfish..."
-    );
-
-
-    farisStockfish =
-        await window.createStockfish();
-
-
-    farisStockfishReady =
-        true;
-
-
-    console.log(
-        "✅ FARIS → STOCKFISH CONNECTÉ"
-    );
-
-
-    // ==================================
-    // ÉCOUTE DES MESSAGES
-    // ==================================
-
-    farisStockfish.addEventListener(
-        "message",
-        farisStockfishMessage
-    );
-
-
-    // ==================================
-    // CONFIGURATION MOTEUR
-    // ==================================
-
-    farisStockfish.postMessage(
-        "setoption name Threads value 1"
-    );
-
-
-    farisStockfish.postMessage(
-        "setoption name Hash value 64"
-    );
-
-
-    // ==================================
-    // 7 → 17 ANS
-    // ==================================
-
-    if(
-        farisLevel.useLimitStrength
-    ){
-
-        farisStockfish.postMessage(
-            "setoption name UCI_LimitStrength value true"
-        );
-
-
-        farisStockfish.postMessage(
-            "setoption name UCI_Elo value " +
-            farisLevel.elo
-        );
-
-
-        console.log(
-            `🎯 FARIS → moteur limité à environ ${farisLevel.elo} ELO`
-        );
-
-    }
-
-
-    // ==================================
-    // 18 ANS
-    // ==================================
-
-    else{
-
-        farisStockfish.postMessage(
-            "setoption name UCI_LimitStrength value false"
-        );
-
-
-        console.log(
-            "🔥 FARIS 18 → STOCKFISH FORCE NATIVE"
-        );
-
-
-        console.log(
-            "🔥 FARIS 18 → aucune limitation UCI_Elo"
-        );
-
-    }
-
-
-    // ==================================
-    // SYNCHRONISATION
-    // ==================================
-
-    farisStockfish.postMessage(
-        "isready"
-    );
-
-
-    return farisStockfish;
-
-}
-
-
-// ======================================
-// VARIABLES D'ATTENTE
-// ======================================
-
-let farisWaitingResolve =
-    null;
-
-let farisWaitingReject =
-    null;
-
-let farisWaitingTimer =
-    null;
-
-
-// ======================================
-// MESSAGE STOCKFISH
-// ======================================
-
-function farisStockfishMessage(event){
-
-    const message =
-        event.data;
-
-
-    if(
-        typeof message !== "string"
-    ){
-
-        return;
-
-    }
-
-
-    // ==================================
-    // READY
-    // ==================================
-
-    if(
-        message === "readyok"
-    ){
-
-        console.log(
-            "✅ STOCKFISH READYOK"
-        );
-
-        return;
-
-    }
-
-
-    // ==================================
-    // BESTMOVE
-    // ==================================
-
-    if(
-        message.startsWith(
-            "bestmove "
-        )
-    ){
-
-        const parts =
-            message
-                .trim()
-                .split(/\s+/);
-
-
-        const bestMove =
-            parts[1];
-
-
-        console.log(
-            "♟️ STOCKFISH BESTMOVE:",
-            bestMove
-        );
-
-
-        if(
-            farisWaitingResolve
+        for(
+            let col = 0;
+            col < 8;
+            col++
         ){
 
-            const resolve =
-                farisWaitingResolve;
+            const piece =
+                pieces[row][col];
 
-
-            clearTimeout(
-                farisWaitingTimer
-            );
-
-
-            farisWaitingResolve =
-                null;
-
-            farisWaitingReject =
-                null;
-
-
-            resolve(
-                bestMove
-            );
-
-        }
-
-    }
-
-}
-
-
-// ======================================
-// DEMANDER UN COUP
-// ======================================
-
-function askStockfishForMove(
-    fen
-){
-
-    return new Promise(
-        (
-            resolve,
-            reject
-        ) => {
 
             if(
-                !farisStockfish ||
-                !farisStockfishReady
+                !isFarisPieceOfColor(
+                    piece,
+                    color
+                )
             ){
 
-                reject(
-                    new Error(
-                        "Stockfish n'est pas prêt"
-                    )
-                );
-
-                return;
+                continue;
 
             }
 
 
-            if(
-                farisWaitingResolve
-            ){
-
-                reject(
-                    new Error(
-                        "Stockfish réfléchit déjà"
-                    )
+            const moves =
+                getPossibleMoves(
+                    row,
+                    col
                 );
 
-                return;
+
+            for(
+                const move of moves
+            ){
+
+                if(
+                    isMoveLegal(
+                        row,
+                        col,
+                        move[0],
+                        move[1]
+                    )
+                ){
+
+                    result.push({
+
+                        fromRow:
+                            row,
+
+                        fromCol:
+                            col,
+
+                        toRow:
+                            move[0],
+
+                        toCol:
+                            move[1]
+
+                    });
+
+                }
 
             }
 
-
-            farisWaitingResolve =
-                resolve;
-
-
-            farisWaitingReject =
-                reject;
-
-
-            const timeout =
-                Math.max(
-                    10000,
-                    farisLevel.time + 7000
-                );
-
-
-            farisWaitingTimer =
-                setTimeout(
-                    () => {
-
-                        if(
-                            farisWaitingReject
-                        ){
-
-                            const rejectNow =
-                                farisWaitingReject;
-
-
-                            farisWaitingResolve =
-                                null;
-
-
-                            farisWaitingReject =
-                                null;
-
-
-                            rejectNow(
-                                new Error(
-                                    "Stockfish timeout"
-                                )
-                            );
-
-                        }
-
-                    },
-                    timeout
-                );
-
-
-            console.log(
-                "♟️ STOCKFISH POSITION:",
-                fen
-            );
-
-
-            console.log(
-                "🧠 FARIS → STOCKFISH |",
-                `${farisAge} ans`,
-                "|",
-                farisLevel.elo,
-                "ELO affiché",
-                "|",
-                farisLevel.time,
-                "ms"
-            );
-
-
-            // ==================================
-            // ARRÊTER ANCIENNE RECHERCHE
-            // ==================================
-
-            farisStockfish.postMessage(
-                "stop"
-            );
-
-
-            // ==================================
-            // NOUVELLE PARTIE
-            // ==================================
-
-            farisStockfish.postMessage(
-                "ucinewgame"
-            );
-
-
-            // ==================================
-            // POSITION
-            // ==================================
-
-            farisStockfish.postMessage(
-                "position fen " +
-                fen
-            );
-
-
-            // ==================================
-            // RECHERCHE
-            // ==================================
-
-            farisStockfish.postMessage(
-                "go movetime " +
-                farisLevel.time
-            );
-
         }
-    );
+
+    }
+
+
+    return result;
 
 }
 
 
-// ======================================
-// JEUNES
-// ======================================
+// ==========================================
+// OUVERTURES
+// ==========================================
 //
-// On ne modifie jamais le bestmove.
-// Les premiers niveaux sont affaiblis
-// par UCI_Elo.
-// ======================================
+// À partir de 11 ans.
+//
+// BLANC :
+// 1.e4
+// puis Nf3
+//
+// NOIR contre e4 :
+// Sicilienne : ...c5
+//
+// NOIR contre d4 c4 :
+// Gambit Dame Accepté : ...dxc4
+//
 
-function maybeMakeYoungMistake(
-    move
-){
+function getOpeningMove(){
 
-    return move;
+    if(
+        farisAge < 11
+    ){
+
+        return null;
+
+    }
+
+
+    if(
+        typeof pieces === "undefined"
+    ){
+
+        return null;
+
+    }
+
+
+    const legalMoves =
+        getLegalMovesForColor(
+            farisColor
+        );
+
+
+    if(
+        legalMoves.length === 0
+    ){
+
+        return null;
+
+    }
+
+
+    // ======================================
+    // FARIS BLANC
+    // ======================================
+
+    if(
+        farisColor === "white"
+    ){
+
+        // -------------------------------
+        // PREMIER COUP : e4
+        // -------------------------------
+
+        const whiteFirstMove =
+            findMove(
+                legalMoves,
+                6,
+                4,
+                4,
+                4
+            );
+
+
+        if(
+            whiteFirstMove &&
+            isInitialPosition()
+        ){
+
+            console.log(
+                "📖 FARIS OPENING → 1.e4"
+            );
+
+            return whiteFirstMove;
+
+        }
+
+
+        // -------------------------------
+        // DEUXIÈME COUP : Nf3
+        // -------------------------------
+
+        const moveCount =
+            typeof moveHistory !== "undefined"
+                ? moveHistory.length
+                : 0;
+
+
+        if(moveCount >= 1){
+
+            const knightMove =
+                findMove(
+                    legalMoves,
+                    7,
+                    6,
+                    5,
+                    5
+                );
+
+
+            if(
+                knightMove &&
+                pieces[4][4] === "♙"
+            ){
+
+                console.log(
+                    "📖 FARIS OPENING → Nf3"
+                );
+
+                return knightMove;
+
+            }
+
+        }
+
+    }
+
+
+    // ======================================
+    // FARIS NOIR
+    // ======================================
+
+    if(
+        farisColor === "black"
+    ){
+
+        // ----------------------------------
+        // SICILIENNE
+        // Après 1.e4
+        // ----------------------------------
+
+        if(
+            pieces[4][4] === "♙" &&
+            pieces[6][4] === "" &&
+            pieces[6][3] === "♙"
+        ){
+
+            const sicilian =
+                findMove(
+                    legalMoves,
+                    6,
+                    2,
+                    4,
+                    2
+                );
+
+
+            if(sicilian){
+
+                console.log(
+                    "📖 FARIS OPENING → SICILIENNE ...c5"
+                );
+
+                return sicilian;
+
+            }
+
+        }
+
+
+        // ----------------------------------
+        // SICILIENNE SIMPLE
+        // Après 1.e4
+        // ----------------------------------
+
+        if(
+            pieces[4][4] === "♙" &&
+            pieces[6][4] === "♙" &&
+            pieces[6][3] === ""
+        ){
+
+            const sicilian =
+                findMove(
+                    legalMoves,
+                    1,
+                    2,
+                    3,
+                    2
+                );
+
+
+            if(sicilian){
+
+                console.log(
+                    "📖 FARIS OPENING → SICILIENNE ...c5"
+                );
+
+                return sicilian;
+
+            }
+
+        }
+
+
+        // ----------------------------------
+        // GAMBIT DAME ACCEPTÉ
+        //
+        // 1.d4 d5
+        // 2.c4
+        // ...dxc4
+        // ----------------------------------
+
+        if(
+            pieces[3][3] === "♙" &&
+            pieces[3][2] === "♙" &&
+            pieces[4][3] === "♟"
+        ){
+
+            const d4c4 =
+                findMove(
+                    legalMoves,
+                    3,
+                    3,
+                    4,
+                    2
+                );
+
+
+            if(d4c4){
+
+                console.log(
+                    "📖 FARIS OPENING → GAMBIT DAME ACCEPTÉ ...dxc4"
+                );
+
+                return d4c4;
+
+            }
+
+        }
+
+    }
+
+
+    return null;
 
 }
 
 
-// ======================================
-// EXÉCUTER COUP IA
-// ======================================
+// ==========================================
+// TROUVER COUP
+// ==========================================
 
-function executeAIMove(
-    move
+function findMove(
+    moves,
+    fromRow,
+    fromCol,
+    toRow,
+    toCol
 ){
 
-    if(!move){
+    return moves.find(
+        function(move){
 
-        farisThinking =
-            false;
+            return (
+                move.fromRow === fromRow &&
+                move.fromCol === fromCol &&
+                move.toRow === toRow &&
+                move.toCol === toCol
+            );
+
+        }
+    ) || null;
+
+}
+
+
+// ==========================================
+// POSITION INITIALE
+// ==========================================
+
+function isInitialPosition(){
+
+    if(
+        typeof pieces === "undefined"
+    ){
+
+        return false;
+
+    }
+
+
+    const initial = [
+
+        ["♜","♞","♝","♛","♚","♝","♞","♜"],
+
+        ["♟","♟","♟","♟","♟","♟","♟","♟"],
+
+        ["","","","","","","",""],
+
+        ["","","","","","","",""],
+
+        ["","","","","","","",""],
+
+        ["","","","","","","",""],
+
+        ["♙","♙","♙","♙","♙","♙","♙","♙"],
+
+        ["♖","♘","♗","♕","♔","♗","♘","♖"]
+
+    ];
+
+
+    for(
+        let row = 0;
+        row < 8;
+        row++
+    ){
+
+        for(
+            let col = 0;
+            col < 8;
+            col++
+        ){
+
+            if(
+                pieces[row][col] !==
+                initial[row][col]
+            ){
+
+                return false;
+
+            }
+
+        }
+
+    }
+
+
+    return true;
+
+}
+
+
+// ==========================================
+// ÉVALUATION
+// ==========================================
+
+function evaluateBoard(){
+
+    if(
+        typeof pieces === "undefined"
+    ){
+
+        return 0;
+
+    }
+
+
+    let score = 0;
+
+
+    for(
+        let row = 0;
+        row < 8;
+        row++
+    ){
+
+        for(
+            let col = 0;
+            col < 8;
+            col++
+        ){
+
+            const piece =
+                pieces[row][col];
+
+
+            if(!piece){
+
+                continue;
+
+            }
+
+
+            const value =
+                farisPieceValues[piece] ||
+                0;
+
+
+            if(
+                isFarisWhitePiece(piece)
+            ){
+
+                score += value;
+
+            }
+
+            else{
+
+                score -= value;
+
+            }
+
+        }
+
+    }
+
+
+    return (
+        farisColor === "white"
+            ? score
+            : -score
+    );
+
+}
+
+
+// ==========================================
+// CHOISIR COUP DE SECOURS
+// ==========================================
+
+function chooseFallbackMove(){
+
+    const moves =
+        getLegalMovesForColor(
+            farisColor
+        );
+
+
+    if(
+        moves.length === 0
+    ){
+
+        return null;
+
+    }
+
+
+    // ======================================
+    // CAPTURE LA PLUS FORTE
+    // ======================================
+
+    const captures =
+        moves.filter(
+            function(move){
+
+                return (
+                    pieces[
+                        move.toRow
+                    ][
+                        move.toCol
+                    ] !== ""
+                );
+
+            }
+        );
+
+
+    if(
+        captures.length > 0
+    ){
+
+        captures.sort(
+            function(a,b){
+
+                const valueA =
+                    farisPieceValues[
+                        pieces[a.toRow][a.toCol]
+                    ] || 0;
+
+
+                const valueB =
+                    farisPieceValues[
+                        pieces[b.toRow][b.toCol]
+                    ] || 0;
+
+
+                return valueB - valueA;
+
+            }
+        );
+
+
+        return captures[0];
+
+    }
+
+
+    return moves[0];
+
+}
+
+
+// ==========================================
+// EXÉCUTER COUP IA
+// ==========================================
+
+function executeAIMove(move){
+
+    if(
+        !move ||
+        typeof pieces === "undefined"
+    ){
+
+        farisThinking = false;
+
+        return;
+
+    }
+
+
+    if(
+        gameOver
+    ){
+
+        farisThinking = false;
+
+        return;
+
+    }
+
+
+    if(
+        currentPlayer !== farisColor
+    ){
+
+        farisThinking = false;
 
         return;
 
@@ -1066,45 +1338,91 @@ function executeAIMove(
         ];
 
 
-    if(!movingPiece){
+    if(
+        !isFarisPieceOfColor(
+            movingPiece,
+            farisColor
+        )
+    ){
 
         console.error(
-            "❌ FARIS: pièce introuvable",
-            move
+            "❌ FARIS : mauvaise couleur"
         );
 
-
-        farisThinking =
-            false;
-
+        farisThinking = false;
 
         return;
 
     }
 
 
-    const targetPiece =
-        pieces[
-            move.toRow
-        ][
-            move.toCol
-        ];
-
-
-    const captured =
-        targetPiece !== "";
-
-
-    // ==================================
-    // HISTORIQUE
-    // ==================================
+    // ======================================
+    // VÉRIFICATION
+    // ======================================
 
     if(
-        typeof saveGameState ===
-        "function" &&
+        typeof getPossibleMoves !== "function" ||
+        typeof isMoveLegal !== "function"
+    ){
 
-        typeof moveHistory !==
-        "undefined"
+        console.error(
+            "❌ Fonctions board.js absentes."
+        );
+
+        farisThinking = false;
+
+        return;
+
+    }
+
+
+    const possible =
+        getPossibleMoves(
+            move.fromRow,
+            move.fromCol
+        );
+
+
+    const legal =
+        possible.some(
+            function(candidate){
+
+                return (
+                    candidate[0] === move.toRow &&
+                    candidate[1] === move.toCol &&
+                    isMoveLegal(
+                        move.fromRow,
+                        move.fromCol,
+                        move.toRow,
+                        move.toCol
+                    )
+                );
+
+            }
+        );
+
+
+    if(!legal){
+
+        console.error(
+            "❌ FARIS COUP ILLÉGAL:",
+            move
+        );
+
+        farisThinking = false;
+
+        return;
+
+    }
+
+
+    // ======================================
+    // HISTORIQUE
+    // ======================================
+
+    if(
+        typeof moveHistory !== "undefined" &&
+        typeof saveGameState === "function"
     ){
 
         moveHistory.push(
@@ -1114,127 +1432,163 @@ function executeAIMove(
     }
 
 
-    // ==================================
-    // NOTATION
-    // ==================================
+    const captured =
+        pieces[
+            move.toRow
+        ][
+            move.toCol
+        ] !== "";
 
-    let notation = "";
 
-
-    if(
-        typeof getMoveNotation ===
-        "function"
-    ){
-
-        notation =
-            getMoveNotation(
-
+    let notation =
+        typeof getMoveNotation === "function"
+            ? getMoveNotation(
                 movingPiece,
-
                 move.fromRow,
                 move.fromCol,
-
                 move.toRow,
                 move.toCol,
-
                 captured
-
+            )
+            : boardToSquare(
+                move.toRow,
+                move.toCol
             );
 
-    }
 
-
-    // ==================================
-    // EN PASSANT NOIR
-    // ==================================
+    // ======================================
+    // ROQUE
+    // ======================================
 
     if(
-        movingPiece === "♟" &&
-
-        move.fromCol !==
-        move.toCol &&
-
-        targetPiece === ""
+        movingPiece === "♔" &&
+        move.fromRow === 7 &&
+        move.fromCol === 4 &&
+        move.toRow === 7 &&
+        move.toCol === 6
     ){
 
-        const capturedRow =
-            move.toRow - 1;
+        pieces[7][5] =
+            pieces[7][7];
 
+        pieces[7][7] =
+            "";
 
-        if(
-            capturedRow >= 0 &&
-
-            pieces[
-                capturedRow
-            ][
-                move.toCol
-            ] === "♙"
-        ){
-
-            pieces[
-                capturedRow
-            ][
-                move.toCol
-            ] = "";
-
-        }
+        notation =
+            "O-O";
 
     }
 
 
-    // ==================================
-    // ROQUE NOIR
-    // ==================================
+    if(
+        movingPiece === "♔" &&
+        move.fromRow === 7 &&
+        move.fromCol === 4 &&
+        move.toRow === 7 &&
+        move.toCol === 2
+    ){
+
+        pieces[7][3] =
+            pieces[7][0];
+
+        pieces[7][0] =
+            "";
+
+        notation =
+            "O-O-O";
+
+    }
+
 
     if(
         movingPiece === "♚" &&
-
         move.fromRow === 0 &&
-
-        move.fromCol === 4
+        move.fromCol === 4 &&
+        move.toRow === 0 &&
+        move.toCol === 6
     ){
 
-        if(
-            move.toCol === 6
-        ){
+        pieces[0][5] =
+            pieces[0][7];
 
-            pieces[0][5] =
-                pieces[0][7];
+        pieces[0][7] =
+            "";
 
-
-            pieces[0][7] =
-                "";
-
-
-            notation =
-                "O-O";
-
-        }
-
-
-        else if(
-            move.toCol === 2
-        ){
-
-            pieces[0][3] =
-                pieces[0][0];
-
-
-            pieces[0][0] =
-                "";
-
-
-            notation =
-                "O-O-O";
-
-        }
+        notation =
+            "O-O";
 
     }
 
 
-    // ==================================
+    if(
+        movingPiece === "♚" &&
+        move.fromRow === 0 &&
+        move.fromCol === 4 &&
+        move.toRow === 0 &&
+        move.toCol === 2
+    ){
+
+        pieces[0][3] =
+            pieces[0][0];
+
+        pieces[0][0] =
+            "";
+
+        notation =
+            "O-O-O";
+
+    }
+
+
+    // ======================================
+    // EN PASSANT
+    // ======================================
+
+    if(
+        movingPiece === "♙" &&
+        move.fromRow === 3 &&
+        move.toRow === 2 &&
+        Math.abs(
+            move.toCol -
+            move.fromCol
+        ) === 1 &&
+        pieces[
+            move.toRow
+        ][
+            move.toCol
+        ] === ""
+    ){
+
+        pieces[3][move.toCol] =
+            "";
+
+    }
+
+
+    if(
+        movingPiece === "♟" &&
+        move.fromRow === 4 &&
+        move.toRow === 5 &&
+        Math.abs(
+            move.toCol -
+            move.fromCol
+        ) === 1 &&
+        pieces[
+            move.toRow
+        ][
+            move.toCol
+        ] === ""
+    ){
+
+        pieces[4][move.toCol] =
+            "";
+
+    }
+
+
+    // ======================================
     // DÉPLACEMENT
-    // ==================================
+    // ======================================
 
     pieces[
         move.toRow
@@ -1252,211 +1606,215 @@ function executeAIMove(
         "";
 
 
-    // ==================================
+    // ======================================
     // PROMOTION
-    // ==================================
+    // ======================================
+
+    if(
+        movingPiece === "♙" &&
+        move.toRow === 0
+    ){
+
+        pieces[0][move.toCol] =
+            "♕";
+
+    }
+
 
     if(
         movingPiece === "♟" &&
-
         move.toRow === 7
     ){
 
-        let promoted =
+        pieces[7][move.toCol] =
             "♛";
 
-
-        if(
-            move.promotion === "n"
-        ){
-
-            promoted =
-                "♞";
-
-        }
-
-
-        if(
-            move.promotion === "b"
-        ){
-
-            promoted =
-                "♝";
-
-        }
-
-
-        if(
-            move.promotion === "r"
-        ){
-
-            promoted =
-                "♜";
-
-        }
-
-
-        pieces[
-            move.toRow
-        ][
-            move.toCol
-        ] =
-            promoted;
-
-
-        if(notation){
-
-            notation +=
-                "=" +
-                promoted;
-
-        }
-
     }
 
 
-    // ==================================
+    // ======================================
     // DERNIER COUP
-    // ==================================
+    // ======================================
+
+    lastMove = {
+
+        piece:
+            movingPiece,
+
+        fromRow:
+            move.fromRow,
+
+        fromCol:
+            move.fromCol,
+
+        toRow:
+            move.toRow,
+
+        toCol:
+            move.toCol
+
+    };
+
+
+    // ======================================
+    // ROIS
+    // ======================================
 
     if(
-        typeof lastMove !==
-        "undefined"
+        movingPiece === "♔"
     ){
 
-        lastMove = {
-
-            piece:
-                movingPiece,
-
-            fromRow:
-                move.fromRow,
-
-            fromCol:
-                move.fromCol,
-
-            toRow:
-                move.toRow,
-
-            toCol:
-                move.toCol
-
-        };
+        whiteKingMoved = true;
 
     }
 
-
-    // ==================================
-    // ROI NOIR
-    // ==================================
 
     if(
         movingPiece === "♚"
     ){
 
+        blackKingMoved = true;
+
+    }
+
+
+    // ======================================
+    // TOURS
+    // ======================================
+
+    if(
+        movingPiece === "♖" &&
+        move.fromRow === 7 &&
+        move.fromCol === 0
+    ){
+
+        whiteRookLeftMoved = true;
+
+    }
+
+
+    if(
+        movingPiece === "♖" &&
+        move.fromRow === 7 &&
+        move.fromCol === 7
+    ){
+
+        whiteRookRightMoved = true;
+
+    }
+
+
+    if(
+        movingPiece === "♜" &&
+        move.fromRow === 0 &&
+        move.fromCol === 0
+    ){
+
+        blackRookLeftMoved = true;
+
+    }
+
+
+    if(
+        movingPiece === "♜" &&
+        move.fromRow === 0 &&
+        move.fromCol === 7
+    ){
+
+        blackRookRightMoved = true;
+
+    }
+
+
+    // ======================================
+    // NOTATION
+    // ======================================
+
+    if(
+        typeof addMoveToList === "function"
+    ){
+
+        addMoveToList(
+            notation,
+            farisColor
+        );
+
+    }
+
+
+    // ======================================
+    // INCRÉMENT
+    // ======================================
+
+    if(
+        typeof addIncrement === "function"
+    ){
+
+        addIncrement(
+            farisColor
+        );
+
+    }
+
+
+    // ======================================
+    // HORLOGE
+    // ======================================
+
+    if(
+        typeof clockStarted !== "undefined" &&
+        !clockStarted
+    ){
+
+        clockStarted = true;
+
         if(
-            typeof blackKingMoved !==
-            "undefined"
+            typeof startClock === "function"
         ){
 
-            blackKingMoved =
-                true;
+            startClock();
 
         }
 
     }
 
 
-    // ==================================
-    // TOUR NOIRE GAUCHE
-    // ==================================
-
-    if(
-        movingPiece === "♜" &&
-
-        move.fromRow === 0 &&
-
-        move.fromCol === 0 &&
-
-        typeof blackRookLeftMoved !==
-        "undefined"
-    ){
-
-        blackRookLeftMoved =
-            true;
-
-    }
-
-
-    // ==================================
-    // TOUR NOIRE DROITE
-    // ==================================
-
-    if(
-        movingPiece === "♜" &&
-
-        move.fromRow === 0 &&
-
-        move.fromCol === 7 &&
-
-        typeof blackRookRightMoved !==
-        "undefined"
-    ){
-
-        blackRookRightMoved =
-            true;
-
-    }
-
-
-    // ==================================
-    // HISTORIQUE DES COUPS
-    // ==================================
-
-    if(
-        typeof addMoveToList ===
-        "function"
-    ){
-
-        addMoveToList(
-            notation || move.uci,
-            "black"
-        );
-
-    }
-
-
-    // ==================================
-    // TOUR BLANC
-    // ==================================
+    // ======================================
+    // CHANGER JOUEUR
+    // ======================================
 
     currentPlayer =
-        "white";
+        farisColor === "white"
+            ? "black"
+            : "white";
 
 
-    // ==================================
-    // RESET
-    // ==================================
+    // ======================================
+    // RESET SÉLECTION
+    // ======================================
 
-    selectedRow =
-        null;
+    selectedRow = null;
 
+    selectedCol = null;
 
-    selectedCol =
-        null;
+    possibleMoves = [];
 
-
-    possibleMoves =
-        [];
-
-
-    // ==================================
-    // AFFICHAGE
-    // ==================================
 
     if(
-        typeof drawBoard ===
-        "function"
+        typeof clearArrows === "function"
+    ){
+
+        clearArrows();
+
+    }
+
+
+    // ======================================
+    // AFFICHAGE
+    // ======================================
+
+    if(
+        typeof drawBoard === "function"
     ){
 
         drawBoard();
@@ -1465,8 +1823,7 @@ function executeAIMove(
 
 
     if(
-        typeof updateGameStatus ===
-        "function"
+        typeof updateGameStatus === "function"
     ){
 
         updateGameStatus();
@@ -1474,62 +1831,262 @@ function executeAIMove(
     }
 
 
-    farisThinking =
-        false;
+    farisThinking = false;
 
 
     console.log(
-        "✅ FARIS A JOUÉ :",
-        move.uci || notation
+        "🤖 FARIS A JOUÉ:",
+        boardToSquare(
+            move.fromRow,
+            move.fromCol
+        ),
+        "→",
+        boardToSquare(
+            move.toRow,
+            move.toCol
+        )
     );
 
 }
 
 
-// ======================================
+// ==========================================
+// STOCKFISH
+// ==========================================
+
+async function getStockfish(){
+
+    if(
+        typeof createStockfish !== "function"
+    ){
+
+        throw new Error(
+            "createStockfish() est absent. Vérifie stockfish-loader.js."
+        );
+
+    }
+
+
+    return await createStockfish();
+
+}
+
+
+// ==========================================
+// DEMANDER BESTMOVE À STOCKFISH
+// ==========================================
+
+function askStockfish(
+    engine,
+    fen,
+    moveTime
+){
+
+    return new Promise(
+        function(resolve,reject){
+
+            let finished = false;
+
+
+            const timeout =
+                setTimeout(
+                    function(){
+
+                        if(finished){
+
+                            return;
+
+                        }
+
+
+                        finished = true;
+
+
+                        cleanup();
+
+
+                        reject(
+                            new Error(
+                                "Stockfish timeout"
+                            )
+                        );
+
+                    },
+                    Math.max(
+                        moveTime + 5000,
+                        7000
+                    )
+                );
+
+
+            function cleanup(){
+
+                clearTimeout(
+                    timeout
+                );
+
+
+                engine.removeEventListener(
+                    "message",
+                    onMessage
+                );
+
+
+                engine.removeEventListener(
+                    "error",
+                    onError
+                );
+
+            }
+
+
+            function onMessage(event){
+
+                const message =
+                    String(
+                        event.data || ""
+                    ).trim();
+
+
+                if(
+                    !message.startsWith(
+                        "bestmove"
+                    )
+                ){
+
+                    return;
+
+                }
+
+
+                if(finished){
+
+                    return;
+
+                }
+
+
+                const parts =
+                    message.split(
+                        /\s+/
+                    );
+
+
+                const bestmove =
+                    parts[1];
+
+
+                if(
+                    !bestmove ||
+                    bestmove === "(none)"
+                ){
+
+                    finished = true;
+
+                    cleanup();
+
+
+                    reject(
+                        new Error(
+                            "Stockfish n'a trouvé aucun coup."
+                        )
+                    );
+
+                    return;
+
+                }
+
+
+                finished = true;
+
+                cleanup();
+
+
+                resolve(
+                    bestmove
+                );
+
+            }
+
+
+            function onError(error){
+
+                if(finished){
+
+                    return;
+
+                }
+
+
+                finished = true;
+
+                cleanup();
+
+
+                reject(error);
+
+            }
+
+
+            engine.addEventListener(
+                "message",
+                onMessage
+            );
+
+
+            engine.addEventListener(
+                "error",
+                onError
+            );
+
+
+            engine.postMessage(
+                "position fen " +
+                fen
+            );
+
+
+            engine.postMessage(
+                "go movetime " +
+                moveTime
+            );
+
+        }
+    );
+
+}
+
+
+// ==========================================
 // FARIS PLAY
-// ======================================
+// ==========================================
 
 async function farisPlay(){
 
-    console.log(
-        "🤖 farisPlay() — STOCKFISH"
-    );
-
-
-    // ==================================
-    // GAME OVER
-    // ==================================
+    // ======================================
+    // PAS SON TOUR
+    // ======================================
 
     if(
-        typeof gameOver !==
-        "undefined" &&
-        gameOver
+        typeof currentPlayer === "undefined" ||
+        currentPlayer !== farisColor
     ){
+
+        console.log(
+            "🤖 FARIS : ce n'est pas mon tour."
+        );
 
         return;
 
     }
 
 
-    // ==================================
-    // TOUR DE FARIS
-    // ==================================
-
-    if(
-        typeof currentPlayer ===
-        "undefined" ||
-        currentPlayer !== "black"
-    ){
+    if(gameOver){
 
         return;
 
     }
 
-
-    // ==================================
-    // DÉJÀ EN TRAIN DE RÉFLÉCHIR
-    // ==================================
 
     if(farisThinking){
 
@@ -1538,51 +2095,65 @@ async function farisPlay(){
     }
 
 
-    farisThinking =
-        true;
+    farisThinking = true;
 
 
     const token =
-        ++farisSearchToken;
+        ++farisMoveToken;
 
 
     console.log(
-        "🧠 FARIS RÉFLÉCHIT"
-    );
-
-
-    console.log(
-        "Age:",
+        "🤖 FARIS RÉFLÉCHIT...",
         farisAge,
-
-        "| ELO:",
-        farisLevel.elo,
-
-        "| Time:",
-        farisLevel.time,
-        "ms",
-
-        "| Limit:",
-        farisLevel.useLimitStrength
+        "ans",
+        "|",
+        farisColor
     );
 
 
     try{
 
         // ==================================
-        // DÉMARRAGE STOCKFISH
+        // OUVERTURE
         // ==================================
 
-        await initFarisStockfish();
+        const openingMove =
+            getOpeningMove();
 
 
         if(
-            token !==
-            farisSearchToken
+            openingMove
         ){
 
-            farisThinking =
-                false;
+            await new Promise(
+                resolve =>
+                    setTimeout(
+                        resolve,
+                        Math.min(
+                            350,
+                            farisLevel.searchTime
+                        )
+                    )
+            );
+
+
+            if(
+                token !== farisMoveToken ||
+                gameOver ||
+                currentPlayer !== farisColor
+            ){
+
+                farisThinking = false;
+
+                return;
+
+            }
+
+
+            executeAIMove(
+                openingMove
+            );
+
 
             return;
 
@@ -1590,219 +2161,204 @@ async function farisPlay(){
 
 
         // ==================================
-        // GAME OVER
+        // STOCKFISH
         // ==================================
 
+        const engine =
+            await getStockfish();
+
+
         if(
-            typeof gameOver !==
-            "undefined" &&
-            gameOver
+            token !== farisMoveToken ||
+            gameOver ||
+            currentPlayer !== farisColor
         ){
 
-            farisThinking =
-                false;
+            farisThinking = false;
 
             return;
 
         }
 
-
-        // ==================================
-        // TOUR
-        // ==================================
-
-        if(
-            currentPlayer !==
-            "black"
-        ){
-
-            farisThinking =
-                false;
-
-            return;
-
-        }
-
-
-        // ==================================
-        // FEN
-        // ==================================
 
         const fen =
-            getFarisFullFEN();
+            getFarisFEN();
+
+
+        if(!fen){
+
+            throw new Error(
+                "Impossible de construire le FEN."
+            );
+
+        }
 
 
         console.log(
-            "♟️ FEN:",
+            "🧠 FARIS → STOCKFISH",
             fen
         );
 
 
         // ==================================
-        // CHERCHER COUP
+        // NIVEAU ELO
         // ==================================
 
-        const bestUCI =
-            await askStockfishForMove(
-                fen
+        engine.postMessage(
+            "ucinewgame"
+        );
+
+
+        engine.postMessage(
+            "setoption name UCI_LimitStrength value true"
+        );
+
+
+        engine.postMessage(
+            "setoption name UCI_Elo value " +
+            farisLevel.elo
+        );
+
+
+        // ==================================
+        // STOCKFISH
+        // ==================================
+
+        const bestmove =
+            await askStockfish(
+                engine,
+                fen,
+                farisLevel.searchTime
             );
 
 
         if(
-            token !==
-            farisSearchToken
+            token !== farisMoveToken ||
+            gameOver ||
+            currentPlayer !== farisColor
         ){
 
-            farisThinking =
-                false;
+            farisThinking = false;
 
             return;
 
         }
 
 
-        // ==================================
-        // PAS DE COUP
-        // ==================================
-
-        if(
-            !bestUCI ||
-            bestUCI === "(none)"
-        ){
-
-            console.log(
-                "🏁 STOCKFISH ne trouve aucun coup."
-            );
+        console.log(
+            "♟️ STOCKFISH BESTMOVE:",
+            bestmove
+        );
 
 
-            farisThinking =
-                false;
-
-
-            if(
-                typeof updateGameStatus ===
-                "function"
-            ){
-
-                updateGameStatus();
-
-            }
-
-
-            return;
-
-        }
-
-
-        // ==================================
-        // CONVERSION UCI
-        // ==================================
-
-        let move =
-            uciToMove(
-                bestUCI
+        const move =
+            uciToBoardMove(
+                bestmove
             );
 
 
         if(!move){
 
             throw new Error(
-                "Coup UCI invalide: " +
-                bestUCI
+                "Coup UCI invalide."
             );
 
         }
 
 
         // ==================================
-        // JEUNES
+        // VÉRIFIER LA PIÈCE
         // ==================================
 
-        move =
-            maybeMakeYoungMistake(
-                move
+        const piece =
+            pieces[
+                move.fromRow
+            ][
+                move.fromCol
+            ];
+
+
+        if(
+            !isFarisPieceOfColor(
+                piece,
+                farisColor
+            )
+        ){
+
+            throw new Error(
+                "Stockfish a donné une pièce qui n'appartient pas à Faris."
             );
 
+        }
+
 
         // ==================================
-        // PETIT DÉLAI
+        // EXÉCUTER
         // ==================================
 
-        const delay =
-            150 +
-            Math.random() *
-            250;
-
-
-        setTimeout(
-            () => {
-
-                if(
-                    token !==
-                    farisSearchToken
-                ){
-
-                    return;
-
-                }
-
-
-                if(
-                    typeof gameOver !==
-                    "undefined" &&
-                    gameOver
-                ){
-
-                    farisThinking =
-                        false;
-
-                    return;
-
-                }
-
-
-                if(
-                    currentPlayer !==
-                    "black"
-                ){
-
-                    farisThinking =
-                        false;
-
-                    return;
-
-                }
-
-
-                executeAIMove(
-                    move
-                );
-
-            },
-            delay
+        executeAIMove(
+            move
         );
 
     }
-
     catch(error){
 
         console.error(
-            "🔥 ERREUR FARIS / STOCKFISH:",
+            "🔥 ERREUR FARIS:",
             error
         );
 
 
-        farisThinking =
-            false;
+        // ==================================
+        // COUP DE SECOURS
+        // ==================================
+
+        if(
+            !gameOver &&
+            currentPlayer === farisColor
+        ){
+
+            console.log(
+                "🛟 FARIS utilise un coup de secours..."
+            );
+
+
+            const fallback =
+                chooseFallbackMove();
+
+
+            if(fallback){
+
+                executeAIMove(
+                    fallback
+                );
+
+            }
+            else{
+
+                farisThinking = false;
+
+            }
+
+        }
+        else{
+
+            farisThinking = false;
+
+        }
 
     }
 
 }
 
 
-// ======================================
-// RESET FARIS
-// ======================================
+window.farisPlay =
+    farisPlay;
+
+
+// ==========================================
+// RESET
+// ==========================================
 
 function resetFarisAI(){
 
@@ -1810,199 +2366,138 @@ function resetFarisAI(){
         false;
 
 
-    farisSearchToken++;
-
-
-    if(
-        farisWaitingReject
-    ){
-
-        const rejectNow =
-            farisWaitingReject;
-
-
-        farisWaitingResolve =
-            null;
-
-
-        farisWaitingReject =
-            null;
-
-
-        clearTimeout(
-            farisWaitingTimer
-        );
-
-
-        rejectNow(
-            new Error(
-                "Faris reset"
-            )
-        );
-
-    }
-
-
-    if(
-        farisStockfish &&
-        farisStockfishReady
-    ){
-
-        try{
-
-            farisStockfish.postMessage(
-                "stop"
-            );
-
-        }
-
-        catch(error){
-
-            console.error(
-                "❌ Erreur arrêt Stockfish:",
-                error
-            );
-
-        }
-
-    }
+    farisMoveToken++;
 
 }
-
-
-// ======================================
-// MODE ANALYSE
-// ======================================
-
-async function farisAnalyzePosition(){
-
-    try{
-
-        await initFarisStockfish();
-
-
-        const fen =
-            getFarisFullFEN();
-
-
-        farisStockfish.postMessage(
-            "stop"
-        );
-
-
-        farisStockfish.postMessage(
-            "position fen " +
-            fen
-        );
-
-
-        farisStockfish.postMessage(
-            "go depth 18"
-        );
-
-
-        console.log(
-            "🔎 FARIS ANALYSE:",
-            fen
-        );
-
-    }
-
-    catch(error){
-
-        console.error(
-            "❌ Analyse impossible:",
-            error
-        );
-
-    }
-
-}
-
-
-// ======================================
-// EXPORTS
-// ======================================
-
-window.farisPlay =
-    farisPlay;
-
-
-window.executeAIMove =
-    executeAIMove;
 
 
 window.resetFarisAI =
     resetFarisAI;
 
 
-window.getBoardFEN =
-    getBoardFEN;
-
-
-window.getFarisFullFEN =
-    getFarisFullFEN;
-
-
-window.farisAnalyzePosition =
-    farisAnalyzePosition;
-
-
-window.uciToMove =
-    uciToMove;
-
-
-window.squareToUCI =
-    squareToUCI;
-
-
-// ======================================
-// READY
-// ======================================
+// ==========================================
+// DÉMARRAGE
+// ==========================================
 
 console.log(
-    "======================================"
+    "=========================================="
 );
-
 
 console.log(
     "♟️ FARIS AI READY"
 );
-
 
 console.log(
     "Age:",
     farisAge
 );
 
+console.log(
+    "Faris:",
+    farisColor
+);
 
 console.log(
-    "Target ELO:",
+    "Human:",
+    humanColor
+);
+
+console.log(
+    "ELO:",
     farisLevel.elo
 );
 
-
 console.log(
-    "Stockfish:",
-    "18"
-);
-
-
-console.log(
-    "Search time:",
-    farisLevel.time,
+    "Search:",
+    farisLevel.searchTime,
     "ms"
 );
 
-
 console.log(
-    "Strength limit:",
-    farisLevel.useLimitStrength
-        ? "LIMITED"
-        : "NATIVE STOCKFISH"
+    "=========================================="
 );
 
 
-console.log(
-    "======================================"
-);
+// ==========================================
+// SI FARIS EST BLANC
+// ==========================================
+//
+// C'EST LA PARTIE IMPORTANTE.
+//
+// Avant, board.js lançait Faris uniquement
+// après un coup blanc.
+//
+// Maintenant, si Faris est blanc,
+// il commence automatiquement.
+//
+
+function startFarisIfNeeded(){
+
+    if(
+        farisColor !== "white"
+    ){
+
+        return;
+
+    }
+
+
+    if(
+        typeof currentPlayer === "undefined"
+    ){
+
+        return;
+
+    }
+
+
+    if(
+        currentPlayer !== "white"
+    ){
+
+        return;
+
+    }
+
+
+    if(gameOver){
+
+        return;
+
+    }
+
+
+    setTimeout(
+        function(){
+
+            if(
+                currentPlayer === "white" &&
+                !gameOver
+            ){
+
+                farisPlay();
+
+            }
+
+        },
+        400
+    );
+
+}
+
+
+if(
+    document.readyState === "loading"
+){
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        startFarisIfNeeded
+    );
+
+}
+else{
+
+    startFarisIfNeeded();
+
+}
