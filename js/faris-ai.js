@@ -2,10 +2,12 @@
 // CHESS_FK - FARIS AI
 // VERSION PRO - BLANC / NOIR
 // STOCKFISH 18
-// OUVERTURES À PARTIR DE 11 ANS
 // ==========================================
 
-console.log("♟️ FARIS AI STARTING...");
+console.log("==========================================");
+console.log("♟️ CHESS_FK - FARIS AI");
+console.log("🤖 STOCKFISH 18");
+console.log("==========================================");
 
 
 // ==========================================
@@ -15,6 +17,10 @@ console.log("♟️ FARIS AI STARTING...");
 const farisParams =
     new URLSearchParams(window.location.search);
 
+
+// ==========================================
+// ÂGE FARIS
+// ==========================================
 
 const farisAgeNumber =
     parseInt(
@@ -36,17 +42,17 @@ const farisAge =
 
 
 // ==========================================
-// COULEUR
+// COULEUR FARIS
 // ==========================================
 //
-// ?color=white
+// ?faris=18&color=white
 // Faris = blanc
 //
-// ?color=black
+// ?faris=18&color=black
 // Faris = noir
 //
-// Par défaut Faris = noir
-//
+// Par défaut : noir
+// ==========================================
 
 const colorParameter =
     farisParams.get("color");
@@ -73,19 +79,19 @@ window.humanColor =
 
 
 console.log(
-    "🤖 Faris couleur:",
+    "🤖 FARIS COULEUR:",
     farisColor
 );
 
 
 console.log(
-    "👤 Joueur couleur:",
+    "👤 JOUEUR COULEUR:",
     humanColor
 );
 
 
 // ==========================================
-// NIVEAUX
+// NIVEAUX FARIS
 // ==========================================
 
 const farisLevels = {
@@ -170,18 +176,38 @@ console.log(
 
 
 // ==========================================
-// ÉTAT
+// ÉTAT FARIS
 // ==========================================
 
 let farisThinking =
     false;
 
 
-let farisMoveToken = 0;
+let farisMoveToken =
+    0;
+
+
+let farisEngine =
+    null;
+
+
+let farisEngineReady =
+    false;
 
 
 // ==========================================
-// VALEURS PIÈCES
+// VARIABLES GLOBALES
+// ==========================================
+
+window.farisThinking =
+    false;
+
+window.farisMoveToken =
+    0;
+
+
+// ==========================================
+// PIÈCES
 // ==========================================
 
 const farisPieceValues = {
@@ -208,18 +234,20 @@ const farisPieceValues = {
 
 
 // ==========================================
-// UTILITAIRES
+// COULEURS PIÈCES
 // ==========================================
 
 function isFarisWhitePiece(piece){
 
     return (
+
         piece === "♙" ||
         piece === "♘" ||
         piece === "♗" ||
         piece === "♖" ||
         piece === "♕" ||
         piece === "♔"
+
     );
 
 }
@@ -228,12 +256,14 @@ function isFarisWhitePiece(piece){
 function isFarisBlackPiece(piece){
 
     return (
+
         piece === "♟" ||
         piece === "♞" ||
         piece === "♝" ||
         piece === "♜" ||
         piece === "♛" ||
         piece === "♚"
+
     );
 
 }
@@ -251,6 +281,252 @@ function isFarisPieceOfColor(
     }
 
     return isFarisBlackPiece(piece);
+
+}
+
+
+// ==========================================
+// OBTENIR LE MOTEUR STOCKFISH
+// ==========================================
+//
+// Compatible avec plusieurs versions
+// de stockfish-loader.js
+// ==========================================
+
+async function getFarisEngine(){
+
+    // --------------------------------------
+    // 1. MOTEUR DÉJÀ EXISTANT
+    // --------------------------------------
+
+    if(
+        window.stockfish
+    ){
+
+        console.log(
+            "♟️ Stockfish trouvé : window.stockfish"
+        );
+
+        return window.stockfish;
+
+    }
+
+
+    // --------------------------------------
+    // 2. stockfishEngine
+    // --------------------------------------
+
+    if(
+        window.stockfishEngine
+    ){
+
+        console.log(
+            "♟️ Stockfish trouvé : window.stockfishEngine"
+        );
+
+        return window.stockfishEngine;
+
+    }
+
+
+    // --------------------------------------
+    // 3. engine
+    // --------------------------------------
+
+    if(
+        window.engine
+    ){
+
+        console.log(
+            "♟️ Stockfish trouvé : window.engine"
+        );
+
+        return window.engine;
+
+    }
+
+
+    // --------------------------------------
+    // 4. createStockfish()
+    // --------------------------------------
+
+    if(
+        typeof window.createStockfish === "function"
+    ){
+
+        console.log(
+            "♟️ Création de Stockfish..."
+        );
+
+
+        const engine =
+            await window.createStockfish();
+
+
+        if(engine){
+
+            console.log(
+                "✅ Stockfish créé avec createStockfish()"
+            );
+
+            return engine;
+
+        }
+
+    }
+
+
+    return null;
+
+}
+
+
+// ==========================================
+// INITIALISATION STOCKFISH
+// ==========================================
+
+async function initializeFarisEngine(){
+
+    if(farisEngine){
+
+        return farisEngine;
+
+    }
+
+
+    try{
+
+        farisEngine =
+            await getFarisEngine();
+
+
+        if(!farisEngine){
+
+            console.warn(
+                "⚠️ Stockfish pas encore disponible."
+            );
+
+            farisEngineReady =
+                false;
+
+            return null;
+
+        }
+
+
+        console.log(
+            "✅ MOTEUR STOCKFISH CONNECTÉ"
+        );
+
+
+        // ----------------------------------
+        // CONFIGURATION UCI
+        // ----------------------------------
+
+        try{
+
+            farisEngine.postMessage(
+                "uci"
+            );
+
+            farisEngine.postMessage(
+                "setoption name UCI_LimitStrength value true"
+            );
+
+            farisEngine.postMessage(
+                "setoption name UCI_Elo value " +
+                farisLevel.elo
+            );
+
+            farisEngine.postMessage(
+                "isready"
+            );
+
+        }
+        catch(error){
+
+            console.warn(
+                "⚠️ Configuration UCI :",
+                error
+            );
+
+        }
+
+
+        farisEngineReady =
+            true;
+
+
+        console.log(
+            "✅ FARIS AI STOCKFISH READY"
+        );
+
+
+        return farisEngine;
+
+    }
+    catch(error){
+
+        console.error(
+            "❌ Impossible de charger Stockfish:",
+            error
+        );
+
+
+        farisEngineReady =
+            false;
+
+
+        return null;
+
+    }
+
+}
+
+
+// ==========================================
+// ATTENDRE STOCKFISH
+// ==========================================
+
+async function waitForFarisEngine(){
+
+    for(
+        let i = 0;
+        i < 40;
+        i++
+    ){
+
+        const engine =
+            await initializeFarisEngine();
+
+
+        if(engine){
+
+            return engine;
+
+        }
+
+
+        await new Promise(
+            function(resolve){
+
+                setTimeout(
+                    resolve,
+                    250
+                );
+
+            }
+        );
+
+    }
+
+
+    console.error(
+        "❌ STOCKFISH N'EST PAS DISPONIBLE."
+    );
+
+
+    return null;
 
 }
 
@@ -380,7 +656,7 @@ window.uciToBoardMove =
 
 
 // ==========================================
-// BOARD → COORDONNÉES
+// BOARD → CASE
 // ==========================================
 
 function boardToSquare(
@@ -401,7 +677,7 @@ function boardToSquare(
 
 
 // ==========================================
-// POSITION FEN
+// FEN
 // ==========================================
 
 function getFarisFEN(){
@@ -415,8 +691,13 @@ function getFarisFEN(){
     }
 
 
-    let fen = "";
+    let fen =
+        "";
 
+
+    // --------------------------------------
+    // POSITION
+    // --------------------------------------
 
     for(
         let row = 0;
@@ -424,7 +705,8 @@ function getFarisFEN(){
         row++
     ){
 
-        let empty = 0;
+        let empty =
+            0;
 
 
         for(
@@ -443,49 +725,50 @@ function getFarisFEN(){
 
                 empty++;
 
+                continue;
+
             }
 
-            else{
 
-                if(empty > 0){
-
-                    fen += empty;
-
-                    empty = 0;
-
-                }
-
-
-                const map = {
-
-                    "♙":"P",
-                    "♘":"N",
-                    "♗":"B",
-                    "♖":"R",
-                    "♕":"Q",
-                    "♔":"K",
-
-                    "♟":"p",
-                    "♞":"n",
-                    "♝":"b",
-                    "♜":"r",
-                    "♛":"q",
-                    "♚":"k"
-
-                };
-
+            if(empty > 0){
 
                 fen +=
-                    map[piece] || "1";
+                    empty;
+
+                empty = 0;
 
             }
+
+
+            const map = {
+
+                "♙": "P",
+                "♘": "N",
+                "♗": "B",
+                "♖": "R",
+                "♕": "Q",
+                "♔": "K",
+
+                "♟": "p",
+                "♞": "n",
+                "♝": "b",
+                "♜": "r",
+                "♛": "q",
+                "♚": "k"
+
+            };
+
+
+            fen +=
+                map[piece] || "1";
 
         }
 
 
         if(empty > 0){
 
-            fen += empty;
+            fen +=
+                empty;
 
         }
 
@@ -499,9 +782,9 @@ function getFarisFEN(){
     }
 
 
-    // ======================================
-    // TOUR DE JEU
-    // ======================================
+    // --------------------------------------
+    // TOUR
+    // --------------------------------------
 
     fen +=
         " " +
@@ -512,11 +795,12 @@ function getFarisFEN(){
         );
 
 
-    // ======================================
+    // --------------------------------------
     // ROQUE
-    // ======================================
+    // --------------------------------------
 
-    let castling = "";
+    let castling =
+        "";
 
 
     if(
@@ -569,7 +853,8 @@ function getFarisFEN(){
 
     if(castling === ""){
 
-        castling = "-";
+        castling =
+            "-";
 
     }
 
@@ -579,11 +864,12 @@ function getFarisFEN(){
         castling;
 
 
-    // ======================================
+    // --------------------------------------
     // EN PASSANT
-    // ======================================
+    // --------------------------------------
 
-    let enPassant = "-";
+    let enPassant =
+        "-";
 
 
     if(
@@ -592,27 +878,11 @@ function getFarisFEN(){
     ){
 
         if(
-            lastMove.piece === "♙" &&
-            Math.abs(
-                lastMove.fromRow -
-                lastMove.toRow
-            ) === 2
-        ){
-
-            enPassant =
-                boardToSquare(
-                    (
-                        lastMove.fromRow +
-                        lastMove.toRow
-                    ) / 2,
-                    lastMove.fromCol
-                );
-
-        }
-
-
-        if(
-            lastMove.piece === "♟" &&
+            (
+                lastMove.piece === "♙" ||
+                lastMove.piece === "♟"
+            )
+            &&
             Math.abs(
                 lastMove.fromRow -
                 lastMove.toRow
@@ -638,17 +908,17 @@ function getFarisFEN(){
         enPassant;
 
 
-    // ======================================
+    // --------------------------------------
     // HALF MOVE
-    // ======================================
+    // --------------------------------------
 
     fen +=
         " 0";
 
 
-    // ======================================
+    // --------------------------------------
     // FULL MOVE
-    // ======================================
+    // --------------------------------------
 
     const fullMove =
         typeof moveNumber !== "undefined"
@@ -671,406 +941,6 @@ function getFarisFEN(){
 
 window.getFarisFullFEN =
     getFarisFEN;
-
-
-// ==========================================
-// POSITION SIMPLE
-// ==========================================
-
-function getPositionSignature(){
-
-    if(
-        typeof pieces === "undefined"
-    ){
-
-        return "";
-
-    }
-
-
-    return pieces
-        .map(
-            row => row.join("")
-        )
-        .join("/");
-
-}
-
-
-// ==========================================
-// COMPTER LES COUPS
-// ==========================================
-
-function getLegalMovesForColor(
-    color
-){
-
-    const result = [];
-
-
-    if(
-        typeof pieces === "undefined" ||
-        typeof getPossibleMoves !== "function" ||
-        typeof isMoveLegal !== "function"
-    ){
-
-        return result;
-
-    }
-
-
-    for(
-        let row = 0;
-        row < 8;
-        row++
-    ){
-
-        for(
-            let col = 0;
-            col < 8;
-            col++
-        ){
-
-            const piece =
-                pieces[row][col];
-
-
-            if(
-                !isFarisPieceOfColor(
-                    piece,
-                    color
-                )
-            ){
-
-                continue;
-
-            }
-
-
-            const moves =
-                getPossibleMoves(
-                    row,
-                    col
-                );
-
-
-            for(
-                const move of moves
-            ){
-
-                if(
-                    isMoveLegal(
-                        row,
-                        col,
-                        move[0],
-                        move[1]
-                    )
-                ){
-
-                    result.push({
-
-                        fromRow:
-                            row,
-
-                        fromCol:
-                            col,
-
-                        toRow:
-                            move[0],
-
-                        toCol:
-                            move[1]
-
-                    });
-
-                }
-
-            }
-
-        }
-
-    }
-
-
-    return result;
-
-}
-
-
-// ==========================================
-// OUVERTURES
-// ==========================================
-//
-// À partir de 11 ans.
-//
-// BLANC :
-// 1.e4
-// puis Nf3
-//
-// NOIR contre e4 :
-// Sicilienne : ...c5
-//
-// NOIR contre d4 c4 :
-// Gambit Dame Accepté : ...dxc4
-//
-
-function getOpeningMove(){
-
-    if(
-        farisAge < 11
-    ){
-
-        return null;
-
-    }
-
-
-    if(
-        typeof pieces === "undefined"
-    ){
-
-        return null;
-
-    }
-
-
-    const legalMoves =
-        getLegalMovesForColor(
-            farisColor
-        );
-
-
-    if(
-        legalMoves.length === 0
-    ){
-
-        return null;
-
-    }
-
-
-    // ======================================
-    // FARIS BLANC
-    // ======================================
-
-    if(
-        farisColor === "white"
-    ){
-
-        // -------------------------------
-        // PREMIER COUP : e4
-        // -------------------------------
-
-        const whiteFirstMove =
-            findMove(
-                legalMoves,
-                6,
-                4,
-                4,
-                4
-            );
-
-
-        if(
-            whiteFirstMove &&
-            isInitialPosition()
-        ){
-
-            console.log(
-                "📖 FARIS OPENING → 1.e4"
-            );
-
-            return whiteFirstMove;
-
-        }
-
-
-        // -------------------------------
-        // DEUXIÈME COUP : Nf3
-        // -------------------------------
-
-        const moveCount =
-            typeof moveHistory !== "undefined"
-                ? moveHistory.length
-                : 0;
-
-
-        if(moveCount >= 1){
-
-            const knightMove =
-                findMove(
-                    legalMoves,
-                    7,
-                    6,
-                    5,
-                    5
-                );
-
-
-            if(
-                knightMove &&
-                pieces[4][4] === "♙"
-            ){
-
-                console.log(
-                    "📖 FARIS OPENING → Nf3"
-                );
-
-                return knightMove;
-
-            }
-
-        }
-
-    }
-
-
-    // ======================================
-    // FARIS NOIR
-    // ======================================
-
-    if(
-        farisColor === "black"
-    ){
-
-        // ----------------------------------
-        // SICILIENNE
-        // Après 1.e4
-        // ----------------------------------
-
-        if(
-            pieces[4][4] === "♙" &&
-            pieces[6][4] === "" &&
-            pieces[6][3] === "♙"
-        ){
-
-            const sicilian =
-                findMove(
-                    legalMoves,
-                    6,
-                    2,
-                    4,
-                    2
-                );
-
-
-            if(sicilian){
-
-                console.log(
-                    "📖 FARIS OPENING → SICILIENNE ...c5"
-                );
-
-                return sicilian;
-
-            }
-
-        }
-
-
-        // ----------------------------------
-        // SICILIENNE SIMPLE
-        // Après 1.e4
-        // ----------------------------------
-
-        if(
-            pieces[4][4] === "♙" &&
-            pieces[6][4] === "♙" &&
-            pieces[6][3] === ""
-        ){
-
-            const sicilian =
-                findMove(
-                    legalMoves,
-                    1,
-                    2,
-                    3,
-                    2
-                );
-
-
-            if(sicilian){
-
-                console.log(
-                    "📖 FARIS OPENING → SICILIENNE ...c5"
-                );
-
-                return sicilian;
-
-            }
-
-        }
-
-
-        // ----------------------------------
-        // GAMBIT DAME ACCEPTÉ
-        //
-        // 1.d4 d5
-        // 2.c4
-        // ...dxc4
-        // ----------------------------------
-
-        if(
-            pieces[3][3] === "♙" &&
-            pieces[3][2] === "♙" &&
-            pieces[4][3] === "♟"
-        ){
-
-            const d4c4 =
-                findMove(
-                    legalMoves,
-                    3,
-                    3,
-                    4,
-                    2
-                );
-
-
-            if(d4c4){
-
-                console.log(
-                    "📖 FARIS OPENING → GAMBIT DAME ACCEPTÉ ...dxc4"
-                );
-
-                return d4c4;
-
-            }
-
-        }
-
-    }
-
-
-    return null;
-
-}
-
-
-// ==========================================
-// TROUVER COUP
-// ==========================================
-
-function findMove(
-    moves,
-    fromRow,
-    fromCol,
-    toRow,
-    toCol
-){
-
-    return moves.find(
-        function(move){
-
-            return (
-                move.fromRow === fromRow &&
-                move.fromCol === fromCol &&
-                move.toRow === toRow &&
-                move.toCol === toCol
-            );
-
-        }
-    ) || null;
-
-}
 
 
 // ==========================================
@@ -1141,21 +1011,50 @@ function isInitialPosition(){
 
 
 // ==========================================
-// ÉVALUATION
+// TROUVER LES COUPS LÉGAUX
 // ==========================================
 
-function evaluateBoard(){
+function getLegalMovesForColor(
+    color
+){
+
+    const result =
+        [];
+
 
     if(
         typeof pieces === "undefined"
     ){
 
-        return 0;
+        return result;
 
     }
 
 
-    let score = 0;
+    if(
+        typeof getPossibleMoves !== "function"
+    ){
+
+        console.error(
+            "❌ getPossibleMoves() absent."
+        );
+
+        return result;
+
+    }
+
+
+    if(
+        typeof isMoveLegal !== "function"
+    ){
+
+        console.error(
+            "❌ isMoveLegal() absent."
+        );
+
+        return result;
+
+    }
 
 
     for(
@@ -1174,29 +1073,74 @@ function evaluateBoard(){
                 pieces[row][col];
 
 
-            if(!piece){
+            if(
+                !isFarisPieceOfColor(
+                    piece,
+                    color
+                )
+            ){
 
                 continue;
 
             }
 
 
-            const value =
-                farisPieceValues[piece] ||
-                0;
+            const possible =
+                getPossibleMoves(
+                    row,
+                    col
+                );
 
 
             if(
-                isFarisWhitePiece(piece)
+                !Array.isArray(possible)
             ){
 
-                score += value;
+                continue;
 
             }
 
-            else{
 
-                score -= value;
+            for(
+                const move of possible
+            ){
+
+                if(
+                    !move ||
+                    move.length < 2
+                ){
+
+                    continue;
+
+                }
+
+
+                if(
+                    isMoveLegal(
+                        row,
+                        col,
+                        move[0],
+                        move[1]
+                    )
+                ){
+
+                    result.push({
+
+                        fromRow:
+                            row,
+
+                        fromCol:
+                            col,
+
+                        toRow:
+                            move[0],
+
+                        toCol:
+                            move[1]
+
+                    });
+
+                }
 
             }
 
@@ -1205,17 +1149,240 @@ function evaluateBoard(){
     }
 
 
-    return (
-        farisColor === "white"
-            ? score
-            : -score
-    );
+    return result;
 
 }
 
 
 // ==========================================
-// CHOISIR COUP DE SECOURS
+// FIND MOVE
+// ==========================================
+
+function findMove(
+    moves,
+    fromRow,
+    fromCol,
+    toRow,
+    toCol
+){
+
+    return moves.find(
+        function(move){
+
+            return (
+
+                move.fromRow === fromRow &&
+                move.fromCol === fromCol &&
+                move.toRow === toRow &&
+                move.toCol === toCol
+
+            );
+
+        }
+    ) || null;
+
+}
+
+
+// ==========================================
+// OUVERTURES
+// ==========================================
+
+function getOpeningMove(){
+
+    // --------------------------------------
+    // Avant 11 ans :
+    // pas d'ouverture forcée
+    // --------------------------------------
+
+    if(
+        farisAge < 11
+    ){
+
+        return null;
+
+    }
+
+
+    if(
+        typeof pieces === "undefined"
+    ){
+
+        return null;
+
+    }
+
+
+    const legalMoves =
+        getLegalMovesForColor(
+            farisColor
+        );
+
+
+    if(
+        legalMoves.length === 0
+    ){
+
+        return null;
+
+    }
+
+
+    // ======================================
+    // FARIS BLANC
+    // ======================================
+
+    if(
+        farisColor === "white"
+    ){
+
+        // ----------------------------------
+        // 1. e4
+        // ----------------------------------
+
+        if(
+            isInitialPosition()
+        ){
+
+            const e4 =
+                findMove(
+                    legalMoves,
+                    6,
+                    4,
+                    4,
+                    4
+                );
+
+
+            if(e4){
+
+                console.log(
+                    "📖 FARIS OPENING → e4"
+                );
+
+                return e4;
+
+            }
+
+        }
+
+
+        // ----------------------------------
+        // Nf3 après e4
+        // ----------------------------------
+
+        if(
+            pieces[4][4] === "♙"
+        ){
+
+            const nf3 =
+                findMove(
+                    legalMoves,
+                    7,
+                    6,
+                    5,
+                    5
+                );
+
+
+            if(nf3){
+
+                console.log(
+                    "📖 FARIS OPENING → Nf3"
+                );
+
+                return nf3;
+
+            }
+
+        }
+
+    }
+
+
+    // ======================================
+    // FARIS NOIR
+    // ======================================
+
+    if(
+        farisColor === "black"
+    ){
+
+        // ----------------------------------
+        // Après 1.e4 → c5
+        // ----------------------------------
+
+        if(
+            pieces[4][4] === "♙" &&
+            pieces[6][4] === "" &&
+            pieces[6][2] === "♟"
+        ){
+
+            const c5 =
+                findMove(
+                    legalMoves,
+                    1,
+                    2,
+                    3,
+                    2
+                );
+
+
+            if(c5){
+
+                console.log(
+                    "📖 FARIS OPENING → Sicilienne ...c5"
+                );
+
+                return c5;
+
+            }
+
+        }
+
+
+        // ----------------------------------
+        // Après 1.d4 d5 2.c4 → dxc4
+        // ----------------------------------
+
+        if(
+            pieces[3][3] === "♙" &&
+            pieces[3][2] === "♙" &&
+            pieces[4][3] === "♟"
+        ){
+
+            const dxc4 =
+                findMove(
+                    legalMoves,
+                    3,
+                    3,
+                    4,
+                    2
+                );
+
+
+            if(dxc4){
+
+                console.log(
+                    "📖 FARIS OPENING → ...dxc4"
+                );
+
+                return dxc4;
+
+            }
+
+        }
+
+    }
+
+
+    return null;
+
+}
+
+
+// ==========================================
+// COUP DE SECOURS
 // ==========================================
 
 function chooseFallbackMove(){
@@ -1235,9 +1402,9 @@ function chooseFallbackMove(){
     }
 
 
-    // ======================================
-    // CAPTURE LA PLUS FORTE
-    // ======================================
+    // --------------------------------------
+    // Chercher une capture
+    // --------------------------------------
 
     const captures =
         moves.filter(
@@ -1264,13 +1431,21 @@ function chooseFallbackMove(){
 
                 const valueA =
                     farisPieceValues[
-                        pieces[a.toRow][a.toCol]
+                        pieces[
+                            a.toRow
+                        ][
+                            a.toCol
+                        ]
                     ] || 0;
 
 
                 const valueB =
                     farisPieceValues[
-                        pieces[b.toRow][b.toCol]
+                        pieces[
+                            b.toRow
+                        ][
+                            b.toCol
+                        ]
                     ] || 0;
 
 
@@ -1285,23 +1460,30 @@ function chooseFallbackMove(){
     }
 
 
+    // --------------------------------------
+    // Sinon premier coup légal
+    // --------------------------------------
+
     return moves[0];
 
 }
 
 
 // ==========================================
-// EXÉCUTER COUP IA
+// EXÉCUTER LE COUP DE FARIS
 // ==========================================
 
 function executeAIMove(move){
 
     if(
-        !move ||
-        typeof pieces === "undefined"
+        !move
     ){
 
-        farisThinking = false;
+        farisThinking =
+            false;
+
+        window.farisThinking =
+            false;
 
         return;
 
@@ -1309,10 +1491,27 @@ function executeAIMove(move){
 
 
     if(
-        gameOver
+        typeof pieces === "undefined"
     ){
 
-        farisThinking = false;
+        farisThinking =
+            false;
+
+        window.farisThinking =
+            false;
+
+        return;
+
+    }
+
+
+    if(gameOver){
+
+        farisThinking =
+            false;
+
+        window.farisThinking =
+            false;
 
         return;
 
@@ -1323,7 +1522,15 @@ function executeAIMove(move){
         currentPlayer !== farisColor
     ){
 
-        farisThinking = false;
+        console.warn(
+            "⚠️ FARIS : ce n'est plus mon tour."
+        );
+
+        farisThinking =
+            false;
+
+        window.farisThinking =
+            false;
 
         return;
 
@@ -1346,10 +1553,14 @@ function executeAIMove(move){
     ){
 
         console.error(
-            "❌ FARIS : mauvaise couleur"
+            "❌ FARIS : mauvaise couleur de pièce."
         );
 
-        farisThinking = false;
+        farisThinking =
+            false;
+
+        window.farisThinking =
+            false;
 
         return;
 
@@ -1357,7 +1568,7 @@ function executeAIMove(move){
 
 
     // ======================================
-    // VÉRIFICATION
+    // VÉRIFIER LE COUP
     // ======================================
 
     if(
@@ -1366,10 +1577,14 @@ function executeAIMove(move){
     ){
 
         console.error(
-            "❌ Fonctions board.js absentes."
+            "❌ Fonctions de board.js absentes."
         );
 
-        farisThinking = false;
+        farisThinking =
+            false;
+
+        window.farisThinking =
+            false;
 
         return;
 
@@ -1384,18 +1599,22 @@ function executeAIMove(move){
 
 
     const legal =
+        Array.isArray(possible) &&
         possible.some(
             function(candidate){
 
                 return (
+
                     candidate[0] === move.toRow &&
                     candidate[1] === move.toCol &&
+
                     isMoveLegal(
                         move.fromRow,
                         move.fromCol,
                         move.toRow,
                         move.toCol
                     )
+
                 );
 
             }
@@ -1405,11 +1624,16 @@ function executeAIMove(move){
     if(!legal){
 
         console.error(
-            "❌ FARIS COUP ILLÉGAL:",
+            "❌ FARIS : COUP ILLÉGAL",
             move
         );
 
-        farisThinking = false;
+
+        farisThinking =
+            false;
+
+        window.farisThinking =
+            false;
 
         return;
 
@@ -1432,32 +1656,52 @@ function executeAIMove(move){
     }
 
 
-    const captured =
+    // ======================================
+    // CAPTURE
+    // ======================================
+
+    const capturedPiece =
         pieces[
             move.toRow
         ][
             move.toCol
-        ] !== "";
+        ];
 
+
+    const captured =
+        capturedPiece !== "";
+
+
+    // ======================================
+    // NOTATION
+    // ======================================
 
     let notation =
+        boardToSquare(
+            move.toRow,
+            move.toCol
+        );
+
+
+    if(
         typeof getMoveNotation === "function"
-            ? getMoveNotation(
+    ){
+
+        notation =
+            getMoveNotation(
                 movingPiece,
                 move.fromRow,
                 move.fromCol,
                 move.toRow,
                 move.toCol,
                 captured
-            )
-            : boardToSquare(
-                move.toRow,
-                move.toCol
             );
+
+    }
 
 
     // ======================================
-    // ROQUE
+    // ROQUE BLANC
     // ======================================
 
     if(
@@ -1500,6 +1744,10 @@ function executeAIMove(move){
     }
 
 
+    // ======================================
+    // ROQUE NOIR
+    // ======================================
+
     if(
         movingPiece === "♚" &&
         move.fromRow === 0 &&
@@ -1541,7 +1789,7 @@ function executeAIMove(move){
 
 
     // ======================================
-    // EN PASSANT
+    // EN PASSANT BLANC
     // ======================================
 
     if(
@@ -1564,6 +1812,10 @@ function executeAIMove(move){
 
     }
 
+
+    // ======================================
+    // EN PASSANT NOIR
+    // ======================================
 
     if(
         movingPiece === "♟" &&
@@ -1616,7 +1868,13 @@ function executeAIMove(move){
     ){
 
         pieces[0][move.toCol] =
-            "♕";
+            move.promotion === "r"
+                ? "♖"
+                : move.promotion === "b"
+                    ? "♗"
+                    : move.promotion === "n"
+                        ? "♘"
+                        : "♕";
 
     }
 
@@ -1627,7 +1885,13 @@ function executeAIMove(move){
     ){
 
         pieces[7][move.toCol] =
-            "♛";
+            move.promotion === "r"
+                ? "♜"
+                : move.promotion === "b"
+                    ? "♝"
+                    : move.promotion === "n"
+                        ? "♞"
+                        : "♛";
 
     }
 
@@ -1664,7 +1928,8 @@ function executeAIMove(move){
         movingPiece === "♔"
     ){
 
-        whiteKingMoved = true;
+        whiteKingMoved =
+            true;
 
     }
 
@@ -1673,61 +1938,78 @@ function executeAIMove(move){
         movingPiece === "♚"
     ){
 
-        blackKingMoved = true;
+        blackKingMoved =
+            true;
 
     }
 
 
     // ======================================
-    // TOURS
+    // TOURS BLANCHES
     // ======================================
 
     if(
-        movingPiece === "♖" &&
-        move.fromRow === 7 &&
-        move.fromCol === 0
+        movingPiece === "♖"
     ){
 
-        whiteRookLeftMoved = true;
+        if(
+            move.fromRow === 7 &&
+            move.fromCol === 0
+        ){
 
-    }
+            whiteRookLeftMoved =
+                true;
 
-
-    if(
-        movingPiece === "♖" &&
-        move.fromRow === 7 &&
-        move.fromCol === 7
-    ){
-
-        whiteRookRightMoved = true;
-
-    }
+        }
 
 
-    if(
-        movingPiece === "♜" &&
-        move.fromRow === 0 &&
-        move.fromCol === 0
-    ){
+        if(
+            move.fromRow === 7 &&
+            move.fromCol === 7
+        ){
 
-        blackRookLeftMoved = true;
+            whiteRookRightMoved =
+                true;
 
-    }
-
-
-    if(
-        movingPiece === "♜" &&
-        move.fromRow === 0 &&
-        move.fromCol === 7
-    ){
-
-        blackRookRightMoved = true;
+        }
 
     }
 
 
     // ======================================
-    // NOTATION
+    // TOURS NOIRES
+    // ======================================
+
+    if(
+        movingPiece === "♜"
+    ){
+
+        if(
+            move.fromRow === 0 &&
+            move.fromCol === 0
+        ){
+
+            blackRookLeftMoved =
+                true;
+
+        }
+
+
+        if(
+            move.fromRow === 0 &&
+            move.fromCol === 7
+        ){
+
+            blackRookRightMoved =
+                true;
+
+        }
+
+    }
+
+
+    // ======================================
+    // LISTE DES COUPS
     // ======================================
 
     if(
@@ -1766,7 +2048,9 @@ function executeAIMove(move){
         !clockStarted
     ){
 
-        clockStarted = true;
+        clockStarted =
+            true;
+
 
         if(
             typeof startClock === "function"
@@ -1780,11 +2064,11 @@ function executeAIMove(move){
 
 
     // ======================================
-    // CHANGER JOUEUR
+    // CHANGER DE JOUEUR
     // ======================================
 
     currentPlayer =
-        farisColor === "white"
+        currentPlayer === "white"
             ? "black"
             : "white";
 
@@ -1793,11 +2077,14 @@ function executeAIMove(move){
     // RESET SÉLECTION
     // ======================================
 
-    selectedRow = null;
+    selectedRow =
+        null;
 
-    selectedCol = null;
+    selectedCol =
+        null;
 
-    possibleMoves = [];
+    possibleMoves =
+        [];
 
 
     if(
@@ -1810,7 +2097,7 @@ function executeAIMove(move){
 
 
     // ======================================
-    // AFFICHAGE
+    // REDESSIN
     // ======================================
 
     if(
@@ -1831,11 +2118,27 @@ function executeAIMove(move){
     }
 
 
-    farisThinking = false;
+    // ======================================
+    // FIN
+    // ======================================
+
+    farisThinking =
+        false;
+
+    window.farisThinking =
+        false;
 
 
     console.log(
-        "🤖 FARIS A JOUÉ:",
+        "=========================================="
+    );
+
+    console.log(
+        "🤖 FARIS A JOUÉ"
+    );
+
+    console.log(
+        "♟️",
         boardToSquare(
             move.fromRow,
             move.fromCol
@@ -1847,33 +2150,21 @@ function executeAIMove(move){
         )
     );
 
-}
+    console.log(
+        "🎯 PROCHAIN TOUR:",
+        currentPlayer
+    );
 
+    console.log(
+        "=========================================="
 
-// ==========================================
-// STOCKFISH
-// ==========================================
-
-async function getStockfish(){
-
-    if(
-        typeof createStockfish !== "function"
-    ){
-
-        throw new Error(
-            "createStockfish() est absent. Vérifie stockfish-loader.js."
-        );
-
-    }
-
-
-    return await createStockfish();
+    );
 
 }
 
 
 // ==========================================
-// DEMANDER BESTMOVE À STOCKFISH
+// DEMANDER BESTMOVE
 // ==========================================
 
 function askStockfish(
@@ -1885,71 +2176,41 @@ function askStockfish(
     return new Promise(
         function(resolve,reject){
 
-            let finished = false;
+            let finished =
+                false;
 
 
-            const timeout =
-                setTimeout(
-                    function(){
-
-                        if(finished){
-
-                            return;
-
-                        }
+            let timeout =
+                null;
 
 
-                        finished = true;
-
-
-                        cleanup();
-
-
-                        reject(
-                            new Error(
-                                "Stockfish timeout"
-                            )
-                        );
-
-                    },
-                    Math.max(
-                        moveTime + 5000,
-                        7000
-                    )
-                );
-
-
-            function cleanup(){
-
-                clearTimeout(
-                    timeout
-                );
-
-
-                engine.removeEventListener(
-                    "message",
-                    onMessage
-                );
-
-
-                engine.removeEventListener(
-                    "error",
-                    onError
-                );
-
-            }
-
+            // ----------------------------------
+            // MESSAGE
+            // ----------------------------------
 
             function onMessage(event){
 
                 const message =
+                    typeof event === "string"
+                        ? event
+                        : event.data;
+
+
+                if(!message){
+
+                    return;
+
+                }
+
+
+                const text =
                     String(
-                        event.data || ""
+                        message
                     ).trim();
 
 
                 if(
-                    !message.startsWith(
+                    !text.startsWith(
                         "bestmove"
                     )
                 ){
@@ -1967,7 +2228,7 @@ function askStockfish(
 
 
                 const parts =
-                    message.split(
+                    text.split(
                         /\s+/
                     );
 
@@ -1981,7 +2242,9 @@ function askStockfish(
                     bestmove === "(none)"
                 ){
 
-                    finished = true;
+                    finished =
+                        true;
+
 
                     cleanup();
 
@@ -1992,12 +2255,15 @@ function askStockfish(
                         )
                     );
 
+
                     return;
 
                 }
 
 
-                finished = true;
+                finished =
+                    true;
+
 
                 cleanup();
 
@@ -2009,6 +2275,10 @@ function askStockfish(
             }
 
 
+            // ----------------------------------
+            // ERREUR
+            // ----------------------------------
+
             function onError(error){
 
                 if(finished){
@@ -2018,38 +2288,191 @@ function askStockfish(
                 }
 
 
-                finished = true;
+                finished =
+                    true;
+
 
                 cleanup();
 
 
-                reject(error);
+                reject(
+                    error
+                );
 
             }
 
 
-            engine.addEventListener(
-                "message",
-                onMessage
-            );
+            // ----------------------------------
+            // CLEANUP
+            // ----------------------------------
+
+            function cleanup(){
+
+                if(timeout){
+
+                    clearTimeout(
+                        timeout
+                    );
+
+                }
 
 
-            engine.addEventListener(
-                "error",
-                onError
-            );
+                if(
+                    typeof engine.removeEventListener ===
+                    "function"
+                ){
+
+                    engine.removeEventListener(
+                        "message",
+                        onMessage
+                    );
 
 
-            engine.postMessage(
-                "position fen " +
-                fen
-            );
+                    engine.removeEventListener(
+                        "error",
+                        onError
+                    );
+
+                }
+
+            }
 
 
-            engine.postMessage(
-                "go movetime " +
-                moveTime
-            );
+            // ----------------------------------
+            // ÉCOUTER
+            // ----------------------------------
+
+            if(
+                typeof engine.addEventListener ===
+                "function"
+            ){
+
+                engine.addEventListener(
+                    "message",
+                    onMessage
+                );
+
+
+                engine.addEventListener(
+                    "error",
+                    onError
+                );
+
+            }
+            else{
+
+                // --------------------------------
+                // Compatibilité Worker classique
+                // --------------------------------
+
+                const oldHandler =
+                    engine.onmessage;
+
+
+                engine.onmessage =
+                    function(event){
+
+                        onMessage(event);
+
+
+                        if(
+                            oldHandler
+                        ){
+
+                            try{
+
+                                oldHandler(
+                                    event
+                                );
+
+                            }
+                            catch(error){
+
+                                console.warn(
+                                    error
+                                );
+
+                            }
+
+                        }
+
+                    };
+
+            }
+
+
+            // ----------------------------------
+            // TIMEOUT
+            // ----------------------------------
+
+            timeout =
+                setTimeout(
+                    function(){
+
+                        if(finished){
+
+                            return;
+
+                        }
+
+
+                        finished =
+                            true;
+
+
+                        cleanup();
+
+
+                        reject(
+                            new Error(
+                                "Stockfish timeout."
+                            )
+                        );
+
+                    },
+                    Math.max(
+                        moveTime + 5000,
+                        7000
+                    )
+                );
+
+
+            // ----------------------------------
+            // POSITION
+            // ----------------------------------
+
+            try{
+
+                engine.postMessage(
+                    "position fen " +
+                    fen
+                );
+
+
+                engine.postMessage(
+                    "go movetime " +
+                    moveTime
+                );
+
+            }
+            catch(error){
+
+                if(!finished){
+
+                    finished =
+                        true;
+
+
+                    cleanup();
+
+
+                    reject(
+                        error
+                    );
+
+                }
+
+            }
 
         }
     );
@@ -2063,17 +2486,23 @@ function askStockfish(
 
 async function farisPlay(){
 
-    // ======================================
-    // PAS SON TOUR
-    // ======================================
+    // --------------------------------------
+    // VÉRIFICATIONS
+    // --------------------------------------
+
+    if(gameOver){
+
+        return;
+
+    }
+
 
     if(
-        typeof currentPlayer === "undefined" ||
-        currentPlayer !== farisColor
+        typeof currentPlayer === "undefined"
     ){
 
-        console.log(
-            "🤖 FARIS : ce n'est pas mon tour."
+        console.error(
+            "❌ currentPlayer n'existe pas."
         );
 
         return;
@@ -2081,7 +2510,13 @@ async function farisPlay(){
     }
 
 
-    if(gameOver){
+    if(
+        currentPlayer !== farisColor
+    ){
+
+        console.log(
+            "🤖 FARIS : ce n'est pas mon tour."
+        );
 
         return;
 
@@ -2095,19 +2530,50 @@ async function farisPlay(){
     }
 
 
-    farisThinking = true;
+    // --------------------------------------
+    // COMMENCER À RÉFLÉCHIR
+    // --------------------------------------
+
+    farisThinking =
+        true;
+
+    window.farisThinking =
+        true;
 
 
     const token =
         ++farisMoveToken;
 
 
+    window.farisMoveToken =
+        farisMoveToken;
+
+
     console.log(
-        "🤖 FARIS RÉFLÉCHIT...",
-        farisAge,
-        "ans",
-        "|",
+        "=========================================="
+    );
+
+    console.log(
+        "🤖 FARIS RÉFLÉCHIT..."
+    );
+
+    console.log(
+        "👤 ÂGE:",
+        farisAge
+    );
+
+    console.log(
+        "🎯 ELO:",
+        farisLevel.elo
+    );
+
+    console.log(
+        "🎨 COULEUR:",
         farisColor
+    );
+
+    console.log(
+        "=========================================="
     );
 
 
@@ -2121,19 +2587,25 @@ async function farisPlay(){
             getOpeningMove();
 
 
-        if(
-            openingMove
-        ){
+        if(openingMove){
+
+            console.log(
+                "📖 COUP D'OUVERTURE"
+            );
+
 
             await new Promise(
-                resolve =>
+                function(resolve){
+
                     setTimeout(
                         resolve,
                         Math.min(
                             350,
                             farisLevel.searchTime
                         )
-                    )
+                    );
+
+                }
             );
 
 
@@ -2143,7 +2615,11 @@ async function farisPlay(){
                 currentPlayer !== farisColor
             ){
 
-                farisThinking = false;
+                farisThinking =
+                    false;
+
+                window.farisThinking =
+                    false;
 
                 return;
 
@@ -2165,7 +2641,16 @@ async function farisPlay(){
         // ==================================
 
         const engine =
-            await getStockfish();
+            await waitForFarisEngine();
+
+
+        if(!engine){
+
+            throw new Error(
+                "Stockfish n'est pas disponible."
+            );
+
+        }
 
 
         if(
@@ -2174,7 +2659,11 @@ async function farisPlay(){
             currentPlayer !== farisColor
         ){
 
-            farisThinking = false;
+            farisThinking =
+                false;
+
+            window.farisThinking =
+                false;
 
             return;
 
@@ -2188,21 +2677,26 @@ async function farisPlay(){
         if(!fen){
 
             throw new Error(
-                "Impossible de construire le FEN."
+                "FEN impossible à créer."
             );
 
         }
 
 
         console.log(
-            "🧠 FARIS → STOCKFISH",
+            "🧠 POSITION:",
             fen
         );
 
 
         // ==================================
-        // NIVEAU ELO
+        // CONFIGURATION
         // ==================================
+
+        engine.postMessage(
+            "stop"
+        );
+
 
         engine.postMessage(
             "ucinewgame"
@@ -2220,8 +2714,29 @@ async function farisPlay(){
         );
 
 
+        engine.postMessage(
+            "isready"
+        );
+
+
         // ==================================
-        // STOCKFISH
+        // PETIT DÉLAI
+        // ==================================
+
+        await new Promise(
+            function(resolve){
+
+                setTimeout(
+                    resolve,
+                    50
+                );
+
+            }
+        );
+
+
+        // ==================================
+        // BESTMOVE
         // ==================================
 
         const bestmove =
@@ -2238,7 +2753,11 @@ async function farisPlay(){
             currentPlayer !== farisColor
         ){
 
-            farisThinking = false;
+            farisThinking =
+                false;
+
+            window.farisThinking =
+                false;
 
             return;
 
@@ -2260,7 +2779,7 @@ async function farisPlay(){
         if(!move){
 
             throw new Error(
-                "Coup UCI invalide."
+                "Coup Stockfish invalide."
             );
 
         }
@@ -2286,14 +2805,14 @@ async function farisPlay(){
         ){
 
             throw new Error(
-                "Stockfish a donné une pièce qui n'appartient pas à Faris."
+                "La pièce proposée n'appartient pas à Faris."
             );
 
         }
 
 
         // ==================================
-        // EXÉCUTER
+        // JOUER
         // ==================================
 
         executeAIMove(
@@ -2319,7 +2838,7 @@ async function farisPlay(){
         ){
 
             console.log(
-                "🛟 FARIS utilise un coup de secours..."
+                "🛟 FARIS → COUP DE SECOURS"
             );
 
 
@@ -2336,14 +2855,22 @@ async function farisPlay(){
             }
             else{
 
-                farisThinking = false;
+                farisThinking =
+                    false;
+
+                window.farisThinking =
+                    false;
 
             }
 
         }
         else{
 
-            farisThinking = false;
+            farisThinking =
+                false;
+
+            window.farisThinking =
+                false;
 
         }
 
@@ -2366,7 +2893,40 @@ function resetFarisAI(){
         false;
 
 
+    window.farisThinking =
+        false;
+
+
     farisMoveToken++;
+
+
+    window.farisMoveToken =
+        farisMoveToken;
+
+
+    if(farisEngine){
+
+        try{
+
+            farisEngine.postMessage(
+                "stop"
+            );
+
+        }
+        catch(error){
+
+            console.warn(
+                "⚠️ Impossible d'arrêter Stockfish."
+            );
+
+        }
+
+    }
+
+
+    console.log(
+        "🔄 FARIS AI RESET"
+    );
 
 }
 
@@ -2419,17 +2979,39 @@ console.log(
 
 
 // ==========================================
+// PRÉPARER STOCKFISH
+// ==========================================
+
+setTimeout(
+    async function(){
+
+        const engine =
+            await initializeFarisEngine();
+
+
+        if(engine){
+
+            console.log(
+                "✅ FARIS AI : STOCKFISH CONNECTÉ"
+            );
+
+        }
+        else{
+
+            console.warn(
+                "⚠️ FARIS AI : Stockfish sera recherché au moment du coup."
+            );
+
+        }
+
+    },
+    300
+);
+
+
+// ==========================================
 // SI FARIS EST BLANC
 // ==========================================
-//
-// C'EST LA PARTIE IMPORTANTE.
-//
-// Avant, board.js lançait Faris uniquement
-// après un coup blanc.
-//
-// Maintenant, si Faris est blanc,
-// il commence automatiquement.
-//
 
 function startFarisIfNeeded(){
 
@@ -2445,6 +3027,11 @@ function startFarisIfNeeded(){
     if(
         typeof currentPlayer === "undefined"
     ){
+
+        setTimeout(
+            startFarisIfNeeded,
+            300
+        );
 
         return;
 
@@ -2467,12 +3054,17 @@ function startFarisIfNeeded(){
     }
 
 
+    console.log(
+        "🤖 FARIS EST BLANC → IL COMMENCE"
+    );
+
+
     setTimeout(
         function(){
 
             if(
-                currentPlayer === "white" &&
-                !gameOver
+                !gameOver &&
+                currentPlayer === "white"
             ){
 
                 farisPlay();
@@ -2480,11 +3072,15 @@ function startFarisIfNeeded(){
             }
 
         },
-        400
+        500
     );
 
 }
 
+
+// ==========================================
+// LANCEMENT
+// ==========================================
 
 if(
     document.readyState === "loading"
@@ -2492,12 +3088,22 @@ if(
 
     document.addEventListener(
         "DOMContentLoaded",
-        startFarisIfNeeded
+        function(){
+
+            setTimeout(
+                startFarisIfNeeded,
+                300
+            );
+
+        }
     );
 
 }
 else{
 
-    startFarisIfNeeded();
+    setTimeout(
+        startFarisIfNeeded,
+        300
+    );
 
 }
