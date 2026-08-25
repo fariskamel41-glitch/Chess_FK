@@ -1,60 +1,31 @@
 // ======================================================
-// CHESS_FK
-// AUTHENTICATION + PROFILE SYSTEM
-// GOOGLE + SUPABASE
+// CHESS_FK - AUTHENTIFICATION GOOGLE + PROFIL
 // ======================================================
 
-console.log("🔐 CHESS_FK AUTH SYSTEM STARTING...");
-
-
-// ======================================================
-// SUPABASE CLIENT
-// ======================================================
+console.log("🔐 CHESS_FK AUTH STARTING...");
 
 const chessfkAuth = window.chessfkSupabase;
-
-if (!chessfkAuth) {
-
-    console.error("❌ CHESS_FK : Supabase client introuvable.");
-
-} else {
-
-    console.log("✅ CHESS_FK : Supabase client trouvé.");
-
-}
-
-
-// ======================================================
-// ELEMENTS
-// ======================================================
 
 let loginButton = null;
 
 
 // ======================================================
-// FIND LOGIN BUTTON
+// ÉLÉMENTS DE LA PAGE
 // ======================================================
 
 function findAuthElements() {
-
-    loginButton =
-        document.getElementById("loginButton");
-
+    loginButton = document.getElementById("loginButton");
 }
 
 
 // ======================================================
-// USER NAME
+// INFOS UTILISATEUR GOOGLE
 // ======================================================
 
 function getUserDisplayName(user) {
+    if (!user) return "PLAYER";
 
-    if (!user) {
-        return "PLAYER";
-    }
-
-    const metadata =
-        user.user_metadata || {};
+    const metadata = user.user_metadata || {};
 
     return (
         metadata.chess_username ||
@@ -63,1231 +34,412 @@ function getUserDisplayName(user) {
         user.email?.split("@")[0] ||
         "PLAYER"
     );
-
 }
-
-
-// ======================================================
-// AVATAR
-// ======================================================
 
 function getUserAvatar(user) {
+    if (!user) return "";
 
-    if (!user) {
-        return "";
-    }
+    const metadata = user.user_metadata || {};
 
-    const metadata =
-        user.user_metadata || {};
-
-    return (
-        metadata.avatar_url ||
-        metadata.picture ||
-        ""
-    );
-
+    return metadata.avatar_url || metadata.picture || "";
 }
 
 
 // ======================================================
-// CHECK PROFILE IN DATABASE
+// LIRE LE PROFIL DANS SUPABASE
 // ======================================================
 
 async function getChessFKProfile(user) {
+    if (!user || !chessfkAuth) return null;
 
-    if (!user || !chessfkAuth) {
+    const { data, error } = await chessfkAuth
+        .from("profiles")
+        .select("*")
+        .eq("id", user.id)
+        .maybeSingle();
+
+    if (error) {
+        console.error("Erreur lecture profil :", error);
         return null;
     }
 
-    try {
-
-        const {
-            data,
-            error
-        } =
-            await chessfkAuth
-                .from("profiles")
-                .select("*")
-                .eq("id", user.id)
-                .maybeSingle();
-
-
-        if (error) {
-
-            console.error(
-                "❌ Erreur récupération profil:",
-                error
-            );
-
-            return null;
-        }
-
-
-        return data || null;
-
-    }
-
-    catch (error) {
-
-        console.error(
-            "🔥 Profile error:",
-            error
-        );
-
-        return null;
-    }
-
+    return data;
 }
 
 
 // ======================================================
-// CREATE PROFILE
+// PREMIÈRE CONNEXION : CRÉER LE PROFIL
 // ======================================================
 
 async function createChessFKProfile(user) {
+    const username = prompt(
+        "♟️ Bienvenue sur CHESS_FK !\n\nChoisis ton pseudo (3 à 20 caractères) :"
+    );
 
-    if (!user || !chessfkAuth) {
+    if (!username || username.trim().length < 3) {
+        alert("Ton pseudo doit contenir au moins 3 caractères.");
         return null;
     }
 
-
-    const username =
-        prompt(
-            "♟️ CHESS_FK\n\nChoisis ton Username :"
-        );
-
-
-    if (!username || !username.trim()) {
-
-        alert(
-            "Tu dois choisir un Username."
-        );
-
-        return null;
-    }
-
-
-    const country =
-        prompt(
-            "🌍 CHESS_FK\n\nÉcris ton pays :"
-        );
-
+    const country = prompt("🌍 Dans quel pays habites-tu ?");
 
     if (!country || !country.trim()) {
-
-        alert(
-            "Tu dois choisir ton pays."
-        );
-
+        alert("Tu dois écrire ton pays.");
         return null;
     }
 
-
-    const cleanUsername =
-        username.trim();
-
-
-    const cleanCountry =
-        country.trim();
-
-
-    console.log(
-        "💾 Création du profil..."
-    );
-
-
-    const {
-        data,
-        error
-    } =
-        await chessfkAuth
-            .from("profiles")
-            .insert({
-
-                id:
-                    user.id,
-
-                username:
-                    cleanUsername,
-
-                country:
-                    cleanCountry,
-
-                avatar_url:
-                    getUserAvatar(user)
-
-            })
-            .select()
-            .single();
-
+    const { data, error } = await chessfkAuth
+        .from("profiles")
+        .insert({
+            id: user.id,
+            username: username.trim(),
+            country: country.trim(),
+            avatar_url: getUserAvatar(user)
+        })
+        .select()
+        .single();
 
     if (error) {
+        console.error("Erreur création profil :", error);
 
-        console.error(
-            "❌ Impossible de créer le profil:",
-            error
-        );
-
-
-        if (
-            error.code === "23505"
-        ) {
-
-            alert(
-                "❌ Ce Username est déjà utilisé.\n\nChoisis-en un autre."
-            );
-
+        if (error.code === "23505") {
+            alert("Ce pseudo existe déjà. Choisis un autre pseudo.");
         } else {
-
-            alert(
-                "❌ Erreur lors de la création du profil :\n\n" +
-                error.message
-            );
-
+            alert("Impossible de créer ton profil : " + error.message);
         }
-
 
         return null;
     }
 
-
-    console.log(
-        "✅ Profil CHESS_FK créé:",
-        data
-    );
-
-
     return data;
-
 }
 
 
 // ======================================================
-// PROFILE INTERFACE
+// AFFICHER LE PROFIL À LA PLACE DE SIGN IN
 // ======================================================
 
-function createProfileInterface(
-    user,
-    profile
-) {
+function showProfileInterface(user, profile) {
+    if (!user) return;
 
-    if (!user) {
+    // Ne pas créer deux fois le profil dans le header
+    const existingProfile = document.getElementById("chessfkProfileArea");
+
+    if (existingProfile) {
+        updateProfileInterface(user, profile);
         return;
     }
 
+    const playerName = profile?.username || getUserDisplayName(user);
+    const avatarUrl = profile?.avatar_url || getUserAvatar(user);
 
-    const existing =
-        document.getElementById(
-            "chessfkProfileArea"
-        );
+    const profileArea = document.createElement("div");
+    profileArea.id = "chessfkProfileArea";
+    profileArea.style.position = "relative";
+    profileArea.style.display = "flex";
+    profileArea.style.alignItems = "center";
 
+    const profileButton = document.createElement("button");
+    profileButton.type = "button";
+    profileButton.id = "chessfkProfileButton";
+    profileButton.style.display = "flex";
+    profileButton.style.alignItems = "center";
+    profileButton.style.gap = "8px";
+    profileButton.style.padding = "7px 12px";
+    profileButton.style.border = "1px solid rgba(255,255,255,0.18)";
+    profileButton.style.borderRadius = "999px";
+    profileButton.style.background = "rgba(0,0,0,0.35)";
+    profileButton.style.color = "white";
+    profileButton.style.fontWeight = "bold";
+    profileButton.style.cursor = "pointer";
 
-    if (existing) {
+    const avatar = document.createElement("img");
+    avatar.id = "chessfkProfileAvatar";
+    avatar.width = 30;
+    avatar.height = 30;
+    avatar.style.width = "30px";
+    avatar.style.height = "30px";
+    avatar.style.borderRadius = "50%";
+    avatar.style.objectFit = "cover";
+    avatar.style.background = "#b51f2d";
 
-        updateProfileInterface(
-            user,
-            profile
-        );
-
-        return;
-
-    }
-
-
-    const name =
-        profile?.username ||
-        getUserDisplayName(user);
-
-
-    const avatar =
-        profile?.avatar_url ||
-        getUserAvatar(user);
-
-
-    const profileArea =
-        document.createElement("div");
-
-
-    profileArea.id =
-        "chessfkProfileArea";
-
-
-    profileArea.style.position =
-        "relative";
-
-    profileArea.style.display =
-        "flex";
-
-    profileArea.style.alignItems =
-        "center";
-
-
-    // ==================================================
-    // PROFILE BUTTON
-    // ==================================================
-
-    const profileButton =
-        document.createElement("button");
-
-
-    profileButton.id =
-        "chessfkProfileButton";
-
-
-    profileButton.type =
-        "button";
-
-
-    profileButton.style.display =
-        "flex";
-
-    profileButton.style.alignItems =
-        "center";
-
-    profileButton.style.gap =
-        "10px";
-
-    profileButton.style.padding =
-        "8px 14px";
-
-    profileButton.style.border =
-        "1px solid rgba(255,255,255,0.15)";
-
-    profileButton.style.borderRadius =
-        "30px";
-
-    profileButton.style.background =
-        "rgba(0,0,0,0.35)";
-
-    profileButton.style.color =
-        "white";
-
-    profileButton.style.cursor =
-        "pointer";
-
-
-    // ==================================================
-    // AVATAR
-    // ==================================================
-
-    const avatarElement =
-        document.createElement("img");
-
-
-    avatarElement.id =
-        "chessfkProfileAvatar";
-
-
-    avatarElement.width =
-        34;
-
-    avatarElement.height =
-        34;
-
-
-    avatarElement.style.width =
-        "34px";
-
-    avatarElement.style.height =
-        "34px";
-
-    avatarElement.style.borderRadius =
-        "50%";
-
-    avatarElement.style.objectFit =
-        "cover";
-
-
-    if (avatar) {
-
-        avatarElement.src =
-            avatar;
-
+    if (avatarUrl) {
+        avatar.src = avatarUrl;
     } else {
-
-        avatarElement.style.display =
-            "none";
-
+        avatar.style.display = "none";
     }
 
-
-    // ==================================================
-    // NAME
-    // ==================================================
-
-    const nameElement =
-        document.createElement("span");
-
-
-    nameElement.id =
-        "chessfkProfileName";
-
-
-    nameElement.textContent =
-        name;
-
-
-    // ==================================================
-    // ARROW
-    // ==================================================
-
-    const arrow =
-        document.createElement("span");
-
-
-    arrow.textContent =
-        "▼";
-
-
-    arrow.style.fontSize =
-        "9px";
-
-
-    profileButton.appendChild(
-        avatarElement
-    );
-
-    profileButton.appendChild(
-        nameElement
-    );
-
-    profileButton.appendChild(
-        arrow
-    );
-
-
-    // ==================================================
-    // MENU
-    // ==================================================
-
-    const menu =
-        document.createElement("div");
-
-
-    menu.id =
-        "chessfkProfileMenu";
-
-
-    menu.style.display =
-        "none";
-
-    menu.style.position =
-        "absolute";
-
-    menu.style.top =
-        "55px";
-
-    menu.style.right =
-        "0";
-
-    menu.style.width =
-        "280px";
-
-    menu.style.padding =
-        "20px";
-
-    menu.style.background =
-        "#17110e";
-
-    menu.style.border =
-        "1px solid rgba(255,255,255,0.15)";
-
-    menu.style.borderRadius =
-        "16px";
-
-    menu.style.boxShadow =
-        "0 20px 50px rgba(0,0,0,0.5)";
-
-    menu.style.zIndex =
-        "99999";
-
-
-    // ==================================================
-    // TITLE
-    // ==================================================
-
-    const menuTitle =
-        document.createElement("div");
-
-
-    menuTitle.textContent =
-        "CHESS_FK ACCOUNT";
-
-
-    menuTitle.style.fontSize =
-        "11px";
-
-    menuTitle.style.letterSpacing =
-        "2px";
-
-    menuTitle.style.opacity =
-        "0.6";
-
-    menuTitle.style.marginBottom =
-        "10px";
-
-
-    // ==================================================
-    // USERNAME
-    // ==================================================
-
-    const menuName =
-        document.createElement("div");
-
-
-    menuName.id =
-        "chessfkMenuName";
-
-
-    menuName.textContent =
-        name;
-
-
-    menuName.style.fontSize =
-        "22px";
-
-    menuName.style.fontWeight =
-        "bold";
-
-
-    // ==================================================
-    // EMAIL
-    // ==================================================
-
-    const menuEmail =
-        document.createElement("div");
-
-
-    menuEmail.textContent =
-        user.email || "";
-
-
-    menuEmail.style.fontSize =
-        "13px";
-
-    menuEmail.style.opacity =
-        "0.6";
-
-    menuEmail.style.marginTop =
-        "4px";
-
-
-    // ==================================================
-    // COUNTRY
-    // ==================================================
-
-    const menuCountry =
-        document.createElement("div");
-
-
-    menuCountry.id =
-        "chessfkMenuCountry";
-
-
-    menuCountry.textContent =
-        "🌍 " +
-        (profile?.country || "Unknown");
-
-
-    menuCountry.style.fontSize =
-        "13px";
-
-    menuCountry.style.marginTop =
-        "8px";
-
-
-    // ==================================================
-    // PROFILE BUTTON
-    // ==================================================
-
-    const profilePageButton =
-        document.createElement("button");
-
-
-    profilePageButton.type =
-        "button";
-
-
-    profilePageButton.textContent =
-        "MY PROFILE";
-
-
-    profilePageButton.style.width =
-        "100%";
-
-    profilePageButton.style.marginTop =
-        "18px";
-
-    profilePageButton.style.padding =
-        "12px";
-
-    profilePageButton.style.border =
-        "none";
-
-    profilePageButton.style.borderRadius =
-        "10px";
-
-    profilePageButton.style.background =
-        "#b51f2d";
-
-    profilePageButton.style.color =
-        "white";
-
-    profilePageButton.style.fontWeight =
-        "bold";
-
-    profilePageButton.style.cursor =
-        "pointer";
-
-
-    profilePageButton.addEventListener(
-        "click",
-        function () {
-
-            window.location.href =
-                "pages/profile.html";
-
-        }
-    );
-
-
-    // ==================================================
-    // LOGOUT
-    // ==================================================
-
-    const logoutButton =
-        document.createElement("button");
-
-
-    logoutButton.type =
-        "button";
-
-
-    logoutButton.textContent =
-        "SIGN OUT";
-
-
-    logoutButton.style.width =
-        "100%";
-
-    logoutButton.style.marginTop =
-        "8px";
-
-    logoutButton.style.padding =
-        "12px";
-
-    logoutButton.style.border =
-        "1px solid rgba(255,255,255,0.15)";
-
-    logoutButton.style.borderRadius =
-        "10px";
-
-    logoutButton.style.background =
-        "transparent";
-
-    logoutButton.style.color =
-        "white";
-
-    logoutButton.style.cursor =
-        "pointer";
-
-
-    logoutButton.addEventListener(
-        "click",
-        signOutChessFK
-    );
-
-
-    // ==================================================
-    // BUILD MENU
-    // ==================================================
-
-    menu.appendChild(
-        menuTitle
-    );
-
-    menu.appendChild(
-        menuName
-    );
-
-    menu.appendChild(
-        menuEmail
-    );
-
-    menu.appendChild(
-        menuCountry
-    );
-
-    menu.appendChild(
-        profilePageButton
-    );
-
-    menu.appendChild(
+    const name = document.createElement("span");
+    name.id = "chessfkProfileName";
+    name.textContent = playerName;
+
+    const arrow = document.createElement("span");
+    arrow.textContent = "▼";
+    arrow.style.fontSize = "9px";
+
+    profileButton.append(avatar, name, arrow);
+
+    // Menu du profil
+    const menu = document.createElement("div");
+    menu.id = "chessfkProfileMenu";
+    menu.style.display = "none";
+    menu.style.position = "absolute";
+    menu.style.right = "0";
+    menu.style.top = "calc(100% + 10px)";
+    menu.style.width = "260px";
+    menu.style.padding = "18px";
+    menu.style.borderRadius = "15px";
+    menu.style.background = "#18110f";
+    menu.style.border = "1px solid rgba(255,255,255,0.18)";
+    menu.style.boxShadow = "0 20px 50px rgba(0,0,0,0.55)";
+    menu.style.zIndex = "99999";
+
+    const title = document.createElement("p");
+    title.textContent = "CHESS_FK ACCOUNT";
+    title.style.margin = "0 0 10px";
+    title.style.fontSize = "10px";
+    title.style.fontWeight = "bold";
+    title.style.letterSpacing = "1.5px";
+    title.style.opacity = "0.6";
+
+    const menuName = document.createElement("strong");
+    menuName.id = "chessfkMenuName";
+    menuName.textContent = playerName;
+    menuName.style.display = "block";
+    menuName.style.fontSize = "20px";
+
+    const email = document.createElement("p");
+    email.textContent = user.email || "";
+    email.style.margin = "5px 0";
+    email.style.fontSize = "12px";
+    email.style.opacity = "0.7";
+
+    const country = document.createElement("p");
+    country.id = "chessfkMenuCountry";
+    country.textContent = "🌍 " + (profile?.country || "Non renseigné");
+    country.style.fontSize = "13px";
+
+    const rating = document.createElement("p");
+    rating.id = "chessfkMenuRating";
+    rating.textContent = "♟ Rating : " + (profile?.rating || 800);
+    rating.style.color = "#ffcc66";
+    rating.style.fontWeight = "bold";
+
+    const coins = document.createElement("p");
+    coins.id = "chessfkMenuCoins";
+    coins.textContent = "🪙 FK Coins : " + (profile?.fk_coins || 0);
+    coins.style.color = "#ffcc66";
+    coins.style.fontWeight = "bold";
+
+    const profilePageButton = document.createElement("button");
+    profilePageButton.type = "button";
+    profilePageButton.textContent = "MY PROFILE";
+    profilePageButton.style.width = "100%";
+    profilePageButton.style.padding = "11px";
+    profilePageButton.style.border = "0";
+    profilePageButton.style.borderRadius = "9px";
+    profilePageButton.style.background = "#b51f2d";
+    profilePageButton.style.color = "white";
+    profilePageButton.style.fontWeight = "bold";
+    profilePageButton.style.cursor = "pointer";
+
+    profilePageButton.addEventListener("click", () => {
+        window.location.href = "pages/profile.html";
+    });
+
+    const logoutButton = document.createElement("button");
+    logoutButton.type = "button";
+    logoutButton.textContent = "SIGN OUT";
+    logoutButton.style.width = "100%";
+    logoutButton.style.marginTop = "8px";
+    logoutButton.style.padding = "11px";
+    logoutButton.style.border = "1px solid rgba(255,255,255,0.2)";
+    logoutButton.style.borderRadius = "9px";
+    logoutButton.style.background = "transparent";
+    logoutButton.style.color = "white";
+    logoutButton.style.cursor = "pointer";
+
+    logoutButton.addEventListener("click", signOutChessFK);
+
+    menu.append(
+        title,
+        menuName,
+        email,
+        country,
+        rating,
+        coins,
+        profilePageButton,
         logoutButton
     );
 
+    profileArea.append(profileButton, menu);
 
-    profileArea.appendChild(
-        profileButton
-    );
-
-    profileArea.appendChild(
-        menu
-    );
-
-
-    // ==================================================
-    // REPLACE LOGIN BUTTON
-    // ==================================================
-
-    if (loginButton) {
-
-        loginButton.style.display =
-            "none";
-
-
-        loginButton.parentNode.insertBefore(
-            profileArea,
-            loginButton
-        );
-
+    // Cache SIGN IN et ajoute le profil à sa place
+    if (loginButton && loginButton.parentNode) {
+        loginButton.style.display = "none";
+        loginButton.parentNode.insertBefore(profileArea, loginButton);
     }
 
+    profileButton.addEventListener("click", (event) => {
+        event.stopPropagation();
+        menu.style.display = menu.style.display === "block" ? "none" : "block";
+    });
 
-    // ==================================================
-    // OPEN MENU
-    // ==================================================
-
-    profileButton.addEventListener(
-        "click",
-        function (event) {
-
-            event.stopPropagation();
-
-
-            menu.style.display =
-                menu.style.display === "block"
-                    ? "none"
-                    : "block";
-
-        }
-    );
-
-
-    document.addEventListener(
-        "click",
-        function () {
-
-            menu.style.display =
-                "none";
-
-        }
-    );
-
-
-    console.log(
-        "👤 Profile interface created"
-    );
-
+    document.addEventListener("click", () => {
+        menu.style.display = "none";
+    });
 }
 
 
 // ======================================================
-// UPDATE PROFILE
+// METTRE À JOUR LE PROFIL DÉJÀ AFFICHÉ
 // ======================================================
 
-function updateProfileInterface(
-    user,
-    profile
-) {
+function updateProfileInterface(user, profile) {
+    const playerName = profile?.username || getUserDisplayName(user);
 
-    const name =
-        profile?.username ||
-        getUserDisplayName(user);
+    const name = document.getElementById("chessfkProfileName");
+    const menuName = document.getElementById("chessfkMenuName");
+    const country = document.getElementById("chessfkMenuCountry");
+    const rating = document.getElementById("chessfkMenuRating");
+    const coins = document.getElementById("chessfkMenuCoins");
 
-
-    const nameElement =
-        document.getElementById(
-            "chessfkProfileName"
-        );
-
-
-    const menuName =
-        document.getElementById(
-            "chessfkMenuName"
-        );
-
-
-    const menuCountry =
-        document.getElementById(
-            "chessfkMenuCountry"
-        );
-
-
-    if (nameElement) {
-
-        nameElement.textContent =
-            name;
-
-    }
-
-
-    if (menuName) {
-
-        menuName.textContent =
-            name;
-
-    }
-
-
-    if (menuCountry) {
-
-        menuCountry.textContent =
-            "🌍 " +
-            (profile?.country || "Unknown");
-
-    }
-
+    if (name) name.textContent = playerName;
+    if (menuName) menuName.textContent = playerName;
+    if (country) country.textContent = "🌍 " + (profile?.country || "Non renseigné");
+    if (rating) rating.textContent = "♟ Rating : " + (profile?.rating || 800);
+    if (coins) coins.textContent = "🪙 FK Coins : " + (profile?.fk_coins || 0);
 }
 
 
 // ======================================================
-// REMOVE PROFILE
-// ======================================================
-
-function removeProfileInterface() {
-
-    const profileArea =
-        document.getElementById(
-            "chessfkProfileArea"
-        );
-
-
-    if (profileArea) {
-
-        profileArea.remove();
-
-    }
-
-
-    if (loginButton) {
-
-        loginButton.style.display =
-            "block";
-
-        loginButton.textContent =
-            "SIGN IN";
-
-    }
-
-}
-
-
-// ======================================================
-// GOOGLE LOGIN
+// CONNEXION GOOGLE
 // ======================================================
 
 async function startChessFKGoogleLogin() {
-
-    console.log(
-        "🔐 Starting Google authentication..."
-    );
-
-
     if (!chessfkAuth) {
-
-        alert(
-            "Supabase n'est pas chargé."
-        );
-
+        alert("Supabase n'est pas chargé. Vérifie js/supabase.js.");
         return;
-
     }
 
-
-    try {
-
-        const redirectURL =
-            window.location.origin +
-            window.location.pathname;
-
-
-        console.log(
-            "↩️ Redirect:",
-            redirectURL
-        );
-
-
-        const {
-            error
-        } =
-            await chessfkAuth.auth.signInWithOAuth({
-
-                provider:
-                    "google",
-
-                options: {
-
-                    redirectTo:
-                        redirectURL
-
-                }
-
-            });
-
-
-        if (error) {
-
-            console.error(
-                "❌ Google login error:",
-                error
-            );
-
-
-            alert(
-                "Erreur Google :\n\n" +
-                error.message
-            );
-
+    const { error } = await chessfkAuth.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+            redirectTo: "https://fariskamel41-glitch.github.io/Chess_FK/"
         }
+    });
 
+    if (error) {
+        console.error("Erreur Google :", error);
+        alert("Erreur de connexion Google : " + error.message);
     }
-
-    catch (error) {
-
-        console.error(
-            "🔥 Google login exception:",
-            error
-        );
-
-    }
-
 }
 
 
 // ======================================================
-// AFTER GOOGLE LOGIN
+// UTILISATEUR CONNECTÉ
 // ======================================================
 
 async function handleChessFKUser(user) {
+    if (!user) return;
 
-    if (!user) {
-
-        removeProfileInterface();
-
-        return;
-
-    }
-
-
-    console.log(
-        "👤 Google user connected:",
-        user.email
-    );
-
-
-    let profile =
-        await getChessFKProfile(user);
-
-
-    // --------------------------------------------------
-    // FIRST LOGIN
-    // --------------------------------------------------
+    let profile = await getChessFKProfile(user);
 
     if (!profile) {
+        profile = await createChessFKProfile(user);
 
-        console.log(
-            "🆕 First CHESS_FK login"
-        );
-
-
-        profile =
-            await createChessFKProfile(user);
-
-
-        // User cancelled or error
-
-        if (!profile) {
-
-            return;
-
-        }
-
+        if (!profile) return;
     }
 
-
-    // --------------------------------------------------
-    // SHOW PROFILE
-    // --------------------------------------------------
-
-    createProfileInterface(
-        user,
-        profile
-    );
-
+    showProfileInterface(user, profile);
 
     window.dispatchEvent(
-        new CustomEvent(
-            "chessfk-user-connected",
-            {
-                detail: {
-
-                    user:
-                        user,
-
-                    profile:
-                        profile
-
-                }
-
-            }
-        )
+        new CustomEvent("chessfk-user-connected", {
+            detail: { user, profile }
+        })
     );
-
 }
 
 
 // ======================================================
-// SIGN OUT
+// DÉCONNEXION
 // ======================================================
 
 async function signOutChessFK() {
+    if (!chessfkAuth) return;
 
-    if (!chessfkAuth) {
+    const { error } = await chessfkAuth.auth.signOut();
+
+    if (error) {
+        console.error("Erreur déconnexion :", error);
         return;
     }
 
+    const profileArea = document.getElementById("chessfkProfileArea");
 
-    try {
-
-        const {
-            error
-        } =
-            await chessfkAuth.auth.signOut();
-
-
-        if (error) {
-
-            console.error(
-                "❌ Logout error:",
-                error
-            );
-
-            return;
-
-        }
-
-
-        console.log(
-            "🚪 CHESS_FK user signed out"
-        );
-
-
-        removeProfileInterface();
-
-
-        window.dispatchEvent(
-            new CustomEvent(
-                "chessfk-user-disconnected"
-            )
-        );
-
-
+    if (profileArea) {
+        profileArea.remove();
     }
 
-    catch (error) {
-
-        console.error(
-            "🔥 Logout exception:",
-            error
-        );
-
+    if (loginButton) {
+        loginButton.style.display = "block";
     }
-
 }
 
 
 // ======================================================
-// CHECK SESSION
+// VÉRIFIER SI L'UTILISATEUR EST DÉJÀ CONNECTÉ
 // ======================================================
 
 async function checkChessFKUser() {
-
-    console.log(
-        "🔎 Checking ChessFK session..."
-    );
-
-
     if (!chessfkAuth) {
-
-        console.error(
-            "❌ Supabase client absent."
-        );
-
-        return null;
-
+        console.error("Client Supabase introuvable.");
+        return;
     }
 
+    const { data, error } = await chessfkAuth.auth.getSession();
 
-    try {
-
-        const {
-            data,
-            error
-        } =
-            await chessfkAuth.auth.getSession();
-
-
-        if (error) {
-
-            console.error(
-                "❌ Session error:",
-                error
-            );
-
-            return null;
-
-        }
-
-
-        const user =
-            data?.session?.user || null;
-
-
-        if (user) {
-
-            console.log(
-                "👤 ChessFK user:",
-                user.email
-            );
-
-
-            await handleChessFKUser(
-                user
-            );
-
-
-            return user;
-
-        }
-
-
-        console.log(
-            "👤 No user connected"
-        );
-
-
-        return null;
-
+    if (error) {
+        console.error("Erreur session :", error);
+        return;
     }
 
-    catch (error) {
+    const user = data?.session?.user;
 
-        console.error(
-            "🔥 Session exception:",
-            error
-        );
-
-        return null;
-
+    if (user) {
+        await handleChessFKUser(user);
     }
-
 }
 
 
 // ======================================================
-// AUTH STATE
+// DÉMARRAGE
 // ======================================================
 
-if (chessfkAuth) {
+document.addEventListener("DOMContentLoaded", async () => {
+    findAuthElements();
 
-    chessfkAuth.auth.onAuthStateChange(
-        async function (
-            event,
-            session
-        ) {
+    if (loginButton) {
+        loginButton.addEventListener("click", startChessFKGoogleLogin);
+    } else {
+        console.error("Le bouton #loginButton est introuvable dans index.html.");
+    }
 
-            console.log(
-                "🔄 AUTH EVENT:",
-                event
-            );
+    await checkChessFKUser();
 
-
-            const user =
-                session?.user || null;
-
+    if (chessfkAuth) {
+        chessfkAuth.auth.onAuthStateChange((event, session) => {
+            const user = session?.user;
 
             if (user) {
-
-                await handleChessFKUser(
-                    user
-                );
-
-            } else {
-
-                removeProfileInterface();
-
-                window.dispatchEvent(
-                    new CustomEvent(
-                        "chessfk-user-disconnected"
-                    )
-                );
-
+                setTimeout(() => handleChessFKUser(user), 0);
             }
-
-        }
-    );
-
-}
-
-
-// ======================================================
-// START
-// ======================================================
-
-document.addEventListener(
-    "DOMContentLoaded",
-    async function () {
-
-        findAuthElements();
-
-
-        if (loginButton) {
-
-            loginButton.addEventListener(
-                "click",
-                startChessFKGoogleLogin
-            );
-
-        } else {
-
-            console.warn(
-                "⚠️ #loginButton introuvable."
-            );
-
-        }
-
-
-        await checkChessFKUser();
-
+        });
     }
-);
+});
 
 
-// ======================================================
-// GLOBAL
-// ======================================================
-
-window.startChessFKGoogleLogin =
-    startChessFKGoogleLogin;
-
-window.signOutChessFK =
-    signOutChessFK;
-
-window.checkChessFKUser =
-    checkChessFKUser;
-
-
-console.log(
-    "🚀 CHESS_FK AUTH SYSTEM READY"
-);
+// Fonctions accessibles depuis les autres fichiers
+window.startChessFKGoogleLogin = startChessFKGoogleLogin;
+window.signOutChessFK = signOutChessFK;
+window.checkChessFKUser = checkChessFKUser;

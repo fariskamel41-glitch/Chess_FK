@@ -3704,3 +3704,235 @@ footer p {
     }
 
 }
+/* =====================================================
+   CHESS_FK - AUTH / PROFILE
+===================================================== */
+
+.chessfk-profile-area {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.chessfk-profile-button {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-height: 42px;
+    padding: 6px 12px 6px 7px;
+    border: 1px solid rgba(255, 255, 255, 0.17);
+    border-radius: 999px;
+    background: rgba(10, 10, 10, 0.55);
+    color: white;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.7px;
+    cursor: pointer;
+}
+
+.chessfk-profile-avatar,
+.chessfk-profile-avatar-fallback {
+    display: grid;
+    width: 30px;
+    height: 30px;
+    place-items: center;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #b51f2d;
+    color: white;
+    font-size: 18px;
+}
+
+.chessfk-profile-arrow {
+    font-size: 8px;
+    opacity: 0.7;
+}
+
+.chessfk-profile-menu {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    display: none;
+    width: 270px;
+    padding: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 16px;
+    background: #18110f;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+    color: white;
+    z-index: 99999;
+}
+
+.chessfk-profile-menu.open {
+    display: block;
+}
+
+.chessfk-menu-label {
+    margin: 0 0 10px;
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.6px;
+}
+
+.chessfk-profile-menu strong {
+    display: block;
+    font-size: 21px;
+}
+
+.chessfk-menu-email,
+#chessfkMenuCountry {
+    display: block;
+    margin-top: 5px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 12px;
+}
+
+.chessfk-menu-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 16px 0;
+}
+
+.chessfk-menu-stats div {
+    padding: 10px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.chessfk-menu-stats span {
+    display: block;
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.chessfk-menu-stats strong {
+    margin-top: 4px;
+    color: #ffcc66;
+    font-size: 17px;
+}
+
+.chessfk-profile-menu button {
+    width: 100%;
+    margin-top: 8px;
+    padding: 11px;
+    border: 0;
+    border-radius: 9px;
+    background: #b51f2d;
+    color: white;
+    font: inherit;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    cursor: pointer;
+}
+
+.chessfk-profile-menu button.signout {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: transparent;
+}
+
+/* Création de profil */
+
+#createProfileModal {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+}
+
+.chessfk-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.76);
+    backdrop-filter: blur(5px);
+}
+
+.chessfk-profile-modal {
+    position: relative;
+    width: min(92vw, 430px);
+    margin: 10vh auto 0;
+    padding: 28px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 20px;
+    background: #18110f;
+    color: white;
+    box-shadow: 0 30px 90px rgba(0, 0, 0, 0.7);
+}
+
+.chessfk-modal-label {
+    margin: 0;
+    color: #ff5964;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 2px;
+}
+
+.chessfk-profile-modal h2 {
+    margin: 10px 0;
+    font-size: 30px;
+}
+
+.chessfk-profile-modal h2 span {
+    color: #d52d3b;
+}
+
+.chessfk-modal-text {
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 14px;
+}
+
+.chessfk-profile-modal label {
+    display: block;
+    margin-top: 18px;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 1.2px;
+}
+
+.chessfk-profile-modal input {
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 7px;
+    padding: 13px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 9px;
+    outline: none;
+    background: rgba(255, 255, 255, 0.07);
+    color: white;
+    font: inherit;
+}
+
+.chessfk-profile-modal input:focus {
+    border-color: #d52d3b;
+}
+
+.chessfk-form-error {
+    min-height: 18px;
+    margin: 12px 0 0;
+    color: #ff7981;
+    font-size: 12px;
+}
+
+.chessfk-profile-modal button {
+    width: 100%;
+    margin-top: 8px;
+    padding: 14px;
+    border: 0;
+    border-radius: 10px;
+    background: #b51f2d;
+    color: white;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    cursor: pointer;
+}
+
+.chessfk-profile-modal button:disabled {
+    opacity: 0.6;
+    cursor: wait;
+}
