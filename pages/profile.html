@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile — CHESS_FK</title>
+
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="profile.css">
+</head>
+
+<body data-theme="red">
+
+    <div class="background-grid"></div>
+    <div class="background-glow background-glow-left"></div>
+    <div class="background-glow background-glow-right"></div>
+
+    <header class="site-header">
+        <a href="../index.html" class="logo">
+            <span class="logo-piece">♟</span>
+            <span>CHESS</span>
+            <strong>_FK</strong>
+        </a>
+
+        <nav class="main-nav">
+            <a href="../index.html">HOME</a>
+            <a href="plat.html">PLAY</a>
+            <a href="faris-ai.html">FARIS AI</a>
+            <a href="profile.html" class="active">PROFILE</a>
+        </nav>
+
+        <div class="header-actions">
+            <button id="profileSignOut" class="login-btn" type="button">
+                SIGN OUT
+            </button>
+
+            <a class="profile-home-button" href="../index.html">
+                ← HOME
+            </a>
+        </div>
+    </header>
+
+    <main class="profile-page">
+
+        <section class="profile-hero">
+            <p class="profile-kicker">♟ CHESS_FK PLAYER CARD</p>
+            <h1>MY <span>PROFILE.</span></h1>
+            <p>Manage your identity, your chess progress and your FK Coins.</p>
+        </section>
+
+        <p id="profileLoading" class="profile-loading">Loading your profile...</p>
+
+        <section id="profileContent" class="profile-layout" hidden>
+
+            <aside class="profile-card">
+                <div class="profile-photo-frame">
+                    <img id="profileAvatar" alt="Profile photo">
+                    <span id="profileAvatarFallback">♟</span>
+                </div>
+
+                <label for="profilePhotoInput" class="change-photo-button">
+                    CHANGE PHOTO
+                </label>
+
+                <input
+                    id="profilePhotoInput"
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp"
+                    hidden
+                >
+
+                <small class="photo-help">JPG, PNG or WEBP · Maximum 5 MB</small>
+
+                <div class="profile-card-name">
+                    <h2 id="profileTitleName">PLAYER</h2>
+                    <p id="profileEmail"></p>
+                    <p id="profileCountryView">🌍 Country</p>
+                </div>
+
+                <div class="profile-private-note">
+                    🔒 Your FK Coins and game statistics are private.
+                </div>
+            </aside>
+
+            <div class="profile-main">
+
+                <section class="profile-section">
+                    <div class="section-title">
+                        <div>
+                            <p>ACCOUNT</p>
+                            <h2>YOUR IDENTITY</h2>
+                        </div>
+                        <span>✦</span>
+                    </div>
+
+                    <div class="profile-form-grid">
+                        <label>
+                            PSEUDO
+                            <input id="profileUsername" type="text" minlength="3" maxlength="20">
+                        </label>
+
+                        <label>
+                            COUNTRY
+                            <select id="profileCountry">
+                                <option value="">Choose your country</option>
+                                <option value="Afghanistan">Afghanistan</option>
+                                <option value="Albania">Albania</option>
+                                <option value="Algeria">Algeria</option>
+                                <option value="Belgium">Belgium</option>
+                                <option value="Brazil">Brazil</option>
+                                <option value="Canada">Canada</option>
+                                <option value="China">China</option>
+                                <option value="France">France</option>
+                                <option value="Germany">Germany</option>
+                                <option value="Italy">Italy</option>
+                                <option value="Japan">Japan</option>
+                                <option value="Luxembourg">Luxembourg</option>
+                                <option value="Morocco">Morocco</option>
+                                <option value="Netherlands">Netherlands</option>
+                                <option value="Portugal">Portugal</option>
+                                <option value="Spain">Spain</option>
+                                <option value="Switzerland">Switzerland</option>
+                                <option value="Tunisia">Tunisia</option>
+                                <option value="Turkey">Turkey</option>
+                                <option value="United Kingdom">United Kingdom</option>
+                                <option value="United States">United States</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </label>
+                    </div>
+
+                    <p id="profileMessage" class="profile-message"></p>
+
+                    <button id="saveProfileButton" class="save-profile-button" type="button">
+                        SAVE CHANGES →
+                    </button>
+                </section>
+
+                <section class="profile-section">
+                    <div class="section-title">
+                        <div>
+                            <p>CHESS LEVEL</p>
+                            <h2>YOUR RATINGS</h2>
+                        </div>
+                        <span>♟</span>
+                    </div>
+
+                    <div class="rating-grid">
+                        <article class="rating-card blitz-card">
+                            <span>⚡ BLITZ</span>
+                            <strong id="blitzRating">800</strong>
+                            <small>Fast chess</small>
+                        </article>
+
+                        <article class="rating-card rapid-card">
+                            <span>◈ RAPID</span>
+                            <strong id="rapidRating">800</strong>
+                            <small>Think and play</small>
+                        </article>
+
+                        <article class="rating-card classical-card">
+                            <span>♜ CLASSICAL</span>
+                            <strong id="classicalRating">800</strong>
+                            <small>Long chess</small>
+                        </article>
+                    </div>
+                </section>
+
+                <section class="profile-section">
+                    <div class="section-title">
+                        <div>
+                            <p>YOUR RESULTS</p>
+                            <h2>GAME STATISTICS</h2>
+                        </div>
+                        <span>🏆</span>
+                    </div>
+
+                    <div class="stats-grid">
+                        <article class="stat-card">
+                            <span>GAMES PLAYED</span>
+                            <strong id="gamesPlayed">0</strong>
+                        </article>
+
+                        <article class="stat-card stat-win">
+                            <span>GAMES WON</span>
+                            <strong id="gamesWon">0</strong>
+                        </article>
+
+                        <article class="stat-card">
+                            <span>WINS AS WHITE</span>
+                            <strong id="winsWhite">0</strong>
+                        </article>
+
+                        <article class="stat-card">
+                            <span>WINS AS BLACK</span>
+                            <strong id="winsBlack">0</strong>
+                        </article>
+
+                        <article class="stat-card">
+                            <span>DRAWN</span>
+                            <strong id="gamesDrawn">0</strong>
+                        </article>
+
+                        <article class="stat-card stat-loss">
+                            <span>LOST</span>
+                            <strong id="gamesLost">0</strong>
+                        </article>
+                    </div>
+                </section>
+
+                <section class="coins-card">
+                    <div>
+                        <p>YOUR PRIVATE BALANCE</p>
+                        <h2>🪙 FK COINS</h2>
+                        <small>Earn coins by playing. Use them later for themes, profile effects and cosmetics.</small>
+                    </div>
+
+                    <strong id="fkCoins">0</strong>
+                </section>
+
+            </div>
+        </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase.js"></script>
+    <script src="profile.js"></script>
+</body>
+</html>
+
