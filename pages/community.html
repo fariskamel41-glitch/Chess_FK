@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community — CHESS_FK</title>
+
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/community.css">
+</head>
+
+<body data-theme="red">
+
+    <div class="background-grid"></div>
+    <div class="background-glow background-glow-left"></div>
+    <div class="background-glow background-glow-right"></div>
+
+    <header class="site-header">
+        <a href="../index.html" class="logo">
+            <span class="logo-piece">♟</span>
+            <span>CHESS</span>
+            <strong>_FK</strong>
+        </a>
+
+        <nav class="main-nav">
+            <a href="../index.html">HOME</a>
+            <a href="plat.html">PLAY</a>
+            <a href="faris-ai.html">FARIS AI</a>
+            <a href="community.html" class="active">COMMUNITY</a>
+            <a href="profile.html">PROFILE</a>
+        </nav>
+
+        <div class="header-actions">
+            <a class="community-home-button" href="../index.html">← HOME</a>
+        </div>
+    </header>
+
+    <main class="community-page">
+
+        <section class="community-hero">
+            <p class="community-kicker">♟ CHESS_FK COMMUNITY</p>
+            <h1>MEET THE <span>PLAYERS.</span></h1>
+            <p>
+                Discover the players building the CHESS_FK community.
+                Find opponents, compare ratings and play.
+            </p>
+        </section>
+
+        <section class="community-statistics">
+            <article class="community-total-card">
+                <span class="total-icon">♟</span>
+
+                <div>
+                    <p>REGISTERED PLAYERS</p>
+                    <strong id="totalPlayers">0</strong>
+                </div>
+
+                <small>Players in CHESS_FK</small>
+            </article>
+
+            <article class="community-small-stat">
+                <span>⚡</span>
+                <div>
+                    <p>TOP BLITZ</p>
+                    <strong id="topBlitz">—</strong>
+                </div>
+            </article>
+
+            <article class="community-small-stat">
+                <span>🏆</span>
+                <div>
+                    <p>GAMES PLAYED</p>
+                    <strong id="totalGames">0</strong>
+                </div>
+            </article>
+        </section>
+
+        <section class="community-toolbar">
+            <div class="community-search">
+                <span>⌕</span>
+                <input
+                    id="playerSearch"
+                    type="search"
+                    placeholder="Search a player or country..."
+                    autocomplete="off"
+                >
+            </div>
+
+            <p id="communityResults">Loading players...</p>
+        </section>
+
+        <p id="communityError" class="community-error" hidden></p>
+
+        <section id="communityGrid" class="community-grid" aria-live="polite">
+            <!-- Les joueurs apparaissent ici automatiquement -->
+        </section>
+
+        <div id="emptyCommunity" class="empty-community" hidden>
+            <span>♟</span>
+            <h2>No player found</h2>
+            <p>Try another search.</p>
+        </div>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase.js"></script>
+    <script src="../js/community.js"></script>
+
+</body>
+</html>
