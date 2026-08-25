@@ -3936,3 +3936,314 @@ footer p {
     opacity: 0.6;
     cursor: wait;
 }
+/* ======================================================
+   CHESS_FK - PROFILE / AVATAR
+====================================================== */
+
+.chessfk-profile-area {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.chessfk-profile-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 42px;
+    padding: 6px 12px 6px 7px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.35);
+    color: white;
+    font-weight: 800;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.chessfk-profile-button:hover {
+    border-color: #e33847;
+    transform: translateY(-1px);
+}
+
+.chessfk-profile-avatar,
+.chessfk-profile-fallback {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+
+.chessfk-profile-avatar {
+    object-fit: cover;
+    background: #b51f2d;
+}
+
+.chessfk-profile-fallback {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #e33847, #6b0f18);
+    font-size: 18px;
+}
+
+.chessfk-profile-arrow {
+    font-size: 9px;
+    opacity: 0.75;
+}
+
+.chessfk-profile-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 10px);
+    z-index: 99999;
+    width: 260px;
+    padding: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.17);
+    border-radius: 15px;
+    background: #18110f;
+    color: white;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+}
+
+.chessfk-profile-menu.open {
+    display: block;
+}
+
+.profile-menu-label {
+    margin: 0 0 10px;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    opacity: 0.6;
+}
+
+.chessfk-profile-menu strong {
+    display: block;
+    font-size: 20px;
+}
+
+.profile-menu-email {
+    margin: 5px 0 14px;
+    font-size: 12px;
+    opacity: 0.65;
+    overflow-wrap: anywhere;
+}
+
+.profile-menu-gold {
+    color: #ffcc66;
+    font-weight: 800;
+}
+
+.profile-menu-main-button,
+.profile-menu-signout {
+    width: 100%;
+    padding: 11px;
+    border-radius: 9px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.profile-menu-main-button {
+    border: 0;
+    background: #b51f2d;
+    color: white;
+}
+
+.profile-menu-signout {
+    margin-top: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: transparent;
+    color: white;
+}
+
+/* Création du profil */
+
+.profile-setup-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 100000;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+}
+
+.profile-setup-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+}
+
+.profile-setup-box {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 470px);
+    padding: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 22px;
+    background: #18110f;
+    color: white;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.7);
+}
+
+.profile-setup-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #ffcc66;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.profile-setup-status {
+    color: #67e88c;
+    font-size: 10px;
+}
+
+.profile-setup-box h2 {
+    margin: 20px 0 8px;
+    font-size: clamp(28px, 6vw, 42px);
+}
+
+.profile-setup-box h2 span {
+    color: #e33847;
+}
+
+.profile-setup-text {
+    margin: 0 0 22px;
+    color: rgba(255, 255, 255, 0.65);
+}
+
+.avatar-picker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 22px;
+}
+
+.avatar-preview-wrap {
+    display: grid;
+    width: 100px;
+    height: 100px;
+    place-items: center;
+    overflow: hidden;
+    border: 3px solid #b51f2d;
+    border-radius: 50%;
+    background: #291513;
+}
+
+.avatar-preview,
+.avatar-fallback {
+    grid-area: 1 / 1;
+    width: 100%;
+    height: 100%;
+}
+
+.avatar-preview {
+    display: none;
+    object-fit: cover;
+}
+
+.avatar-fallback {
+    display: grid;
+    place-items: center;
+    color: white;
+    font-size: 44px;
+}
+
+.choose-avatar-button {
+    margin-top: 13px;
+    padding: 10px 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: white;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.choose-avatar-button:hover {
+    border-color: #e33847;
+    color: #ffcc66;
+}
+
+.avatar-picker small {
+    margin-top: 8px;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 10px;
+}
+
+.profile-field-label {
+    display: block;
+    margin: 14px 0 7px;
+    color: #ffcc66;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.profile-field {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 13px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 9px;
+    outline: none;
+    background: rgba(255, 255, 255, 0.07);
+    color: white;
+    font-size: 15px;
+}
+
+.profile-field:focus {
+    border-color: #e33847;
+}
+
+.profile-field option {
+    background: #18110f;
+    color: white;
+}
+
+.profile-setup-error {
+    min-height: 20px;
+    margin: 12px 0 4px;
+    color: #ff737d;
+    font-size: 13px;
+}
+
+.create-profile-button {
+    width: 100%;
+    margin-top: 8px;
+    padding: 14px;
+    border: 0;
+    border-radius: 9px;
+    background: #b51f2d;
+    color: white;
+    font-weight: 900;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+}
+
+.create-profile-button:hover {
+    background: #db3342;
+}
+
+.create-profile-button:disabled {
+    cursor: wait;
+    opacity: 0.65;
+}
+
+@media (max-width: 650px) {
+    .profile-setup-box {
+        padding: 24px 18px;
+    }
+
+    .chessfk-profile-button {
+        padding-right: 8px;
+    }
+
+    .chessfk-profile-button #chessfkProfileName {
+        display: none;
+    }
+}

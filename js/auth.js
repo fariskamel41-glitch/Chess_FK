@@ -7,19 +7,19 @@ console.log("🔐 CHESS_FK AUTH STARTING...");
 const chessfkAuth = window.chessfkSupabase;
 
 let loginButton = null;
-
+let selectedAvatarFile = null;
+let selectedAvatarPreview = "";
 
 // ======================================================
-// ÉLÉMENTS DE LA PAGE
+// ÉLÉMENTS
 // ======================================================
 
 function findAuthElements() {
     loginButton = document.getElementById("loginButton");
 }
 
-
 // ======================================================
-// INFOS UTILISATEUR GOOGLE
+// INFOS UTILISATEUR
 // ======================================================
 
 function getUserDisplayName(user) {
@@ -36,17 +36,8 @@ function getUserDisplayName(user) {
     );
 }
 
-function getUserAvatar(user) {
-    if (!user) return "";
-
-    const metadata = user.user_metadata || {};
-
-    return metadata.avatar_url || metadata.picture || "";
-}
-
-
 // ======================================================
-// LIRE LE PROFIL DANS SUPABASE
+// PROFIL SUPABASE
 // ======================================================
 
 async function getChessFKProfile(user) {
@@ -66,63 +57,257 @@ async function getChessFKProfile(user) {
     return data;
 }
 
-
 // ======================================================
-// PREMIÈRE CONNEXION : CRÉER LE PROFIL
+// UPLOAD IMAGE PROFIL
 // ======================================================
 
-async function createChessFKProfile(user) {
-    const username = prompt(
-        "♟️ Bienvenue sur CHESS_FK !\n\nChoisis ton pseudo (3 à 20 caractères) :"
-    );
+async function uploadAvatar(user, file) {
+    if (!file) return "";
 
-    if (!username || username.trim().length < 3) {
-        alert("Ton pseudo doit contenir au moins 3 caractères.");
-        return null;
+    if (!file.type.startsWith("image/")) {
+        alert("Choisis seulement une image : JPG, PNG ou WEBP.");
+        return "";
     }
 
-    const country = prompt("🌍 Dans quel pays habites-tu ?");
-
-    if (!country || !country.trim()) {
-        alert("Tu dois écrire ton pays.");
-        return null;
+    if (file.size > 5 * 1024 * 1024) {
+        alert("Ton image est trop grande. Choisis une image de moins de 5 Mo.");
+        return "";
     }
 
-    const { data, error } = await chessfkAuth
-        .from("profiles")
-        .insert({
-            id: user.id,
-            username: username.trim(),
-            country: country.trim(),
-            avatar_url: getUserAvatar(user)
-        })
-        .select()
-        .single();
+    const extension = file.name.split(".").pop().toLowerCase() || "jpg";
+    const filePath = `${user.id}/avatar-${Date.now()}.${extension}`;
 
-    if (error) {
-        console.error("Erreur création profil :", error);
+    const { error: uploadError } = await chessfkAuth.storage
+        .from("avatars")
+        .upload(filePath, file, {
+            cacheControl: "3600",
+            upsert: false
+        });
 
-        if (error.code === "23505") {
-            alert("Ce pseudo existe déjà. Choisis un autre pseudo.");
-        } else {
-            alert("Impossible de créer ton profil : " + error.message);
-        }
-
-        return null;
+    if (uploadError) {
+        console.error("Erreur image :", uploadError);
+        alert("Impossible d'envoyer l'image : " + uploadError.message);
+        return "";
     }
 
-    return data;
+    const { data } = chessfkAuth.storage
+        .from("avatars")
+        .getPublicUrl(filePath);
+
+    return data.publicUrl;
 }
 
+// ======================================================
+// FENÊTRE CRÉATION PROFIL
+// ======================================================
+
+function createProfileModal(user) {
+    return new Promise((resolve) => {
+        const oldModal = document.getElementById("profileSetupModal");
+        if (oldModal) oldModal.remove();
+
+        selectedAvatarFile = null;
+        selectedAvatarPreview = "";
+
+        const modal = document.createElement("div");
+        modal.id = "profileSetupModal";
+        modal.className = "profile-setup-modal";
+
+        modal.innerHTML = `
+            <div class="profile-setup-backdrop"></div>
+
+            <div class="profile-setup-box" role="dialog" aria-modal="true">
+                <div class="profile-setup-top">
+                    <span>♟ CHESS_FK</span>
+                    <span class="profile-setup-status">NEW PLAYER</span>
+                </div>
+
+                <h2>CREATE YOUR <span>PROFILE.</span></h2>
+
+                <p class="profile-setup-text">
+                    Choose your identity before entering the game.
+                </p>
+
+                <div class="avatar-picker">
+                    <div class="avatar-preview-wrap">
+                        <img
+                            id="avatarPreview"
+                            class="avatar-preview"
+                            alt="Profile preview"
+                        >
+                        <span id="avatarFallback" class="avatar-fallback">♟</span>
+                    </div>
+
+                    <label for="avatarInput" class="choose-avatar-button">
+                        CHOOSE A PHOTO
+                    </label>
+
+                    <input
+                        id="avatarInput"
+                        type="file"
+                        accept="image/png,image/jpeg,image/webp"
+                        hidden
+                    >
+
+                    <small>JPG, PNG or WEBP · Maximum 5 MB</small>
+                </div>
+
+                <label class="profile-field-label" for="profileUsername">
+                    PSEUDO
+                </label>
+
+                <input
+                    id="profileUsername"
+                    class="profile-field"
+                    type="text"
+                    minlength="3"
+                    maxlength="20"
+                    placeholder="Exemple : FarisKing"
+                    autocomplete="nickname"
+                >
+
+                <label class="profile-field-label" for="profileCountry">
+                    COUNTRY
+                </label>
+
+                <select id="profileCountry" class="profile-field">
+                    <option value="">Choose your country</option>
+                    <option value="Afghanistan">Afghanistan</option>
+                    <option value="Albania">Albania</option>
+                    <option value="Algeria">Algeria</option>
+                    <option value="Belgium">Belgium</option>
+                    <option value="Brazil">Brazil</option>
+                    <option value="Canada">Canada</option>
+                    <option value="China">China</option>
+                    <option value="France">France</option>
+                    <option value="Germany">Germany</option>
+                    <option value="Italy">Italy</option>
+                    <option value="Japan">Japan</option>
+                    <option value="Luxembourg">Luxembourg</option>
+                    <option value="Morocco">Morocco</option>
+                    <option value="Netherlands">Netherlands</option>
+                    <option value="Portugal">Portugal</option>
+                    <option value="Spain">Spain</option>
+                    <option value="Switzerland">Switzerland</option>
+                    <option value="Tunisia">Tunisia</option>
+                    <option value="Turkey">Turkey</option>
+                    <option value="United Kingdom">United Kingdom</option>
+                    <option value="United States">United States</option>
+                    <option value="Other">Other</option>
+                </select>
+
+                <p id="profileSetupError" class="profile-setup-error"></p>
+
+                <button id="createProfileButton" class="create-profile-button" type="button">
+                    CREATE PROFILE →
+                </button>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+
+        const imageInput = document.getElementById("avatarInput");
+        const preview = document.getElementById("avatarPreview");
+        const fallback = document.getElementById("avatarFallback");
+        const createButton = document.getElementById("createProfileButton");
+        const errorText = document.getElementById("profileSetupError");
+        const usernameInput = document.getElementById("profileUsername");
+        const countryInput = document.getElementById("profileCountry");
+
+        imageInput.addEventListener("change", () => {
+            const file = imageInput.files?.[0];
+
+            if (!file) return;
+
+            if (!file.type.startsWith("image/")) {
+                errorText.textContent = "Choose a valid image.";
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                errorText.textContent = "Image too large: maximum 5 MB.";
+                return;
+            }
+
+            selectedAvatarFile = file;
+            selectedAvatarPreview = URL.createObjectURL(file);
+
+            preview.src = selectedAvatarPreview;
+            preview.style.display = "block";
+            fallback.style.display = "none";
+            errorText.textContent = "";
+        });
+
+        createButton.addEventListener("click", async () => {
+            const username = usernameInput.value.trim();
+            const country = countryInput.value;
+
+            if (username.length < 3 || username.length > 20) {
+                errorText.textContent = "Your username must contain 3 to 20 characters.";
+                return;
+            }
+
+            if (!country) {
+                errorText.textContent = "Choose your country.";
+                return;
+            }
+
+            createButton.disabled = true;
+            createButton.textContent = "CREATING PROFILE...";
+            errorText.textContent = "";
+
+            let avatarUrl = "";
+
+            if (selectedAvatarFile) {
+                avatarUrl = await uploadAvatar(user, selectedAvatarFile);
+
+                if (!avatarUrl) {
+                    createButton.disabled = false;
+                    createButton.textContent = "CREATE PROFILE →";
+                    return;
+                }
+            }
+
+            const { data, error } = await chessfkAuth
+                .from("profiles")
+                .insert({
+                    id: user.id,
+                    username,
+                    country,
+                    avatar_url: avatarUrl,
+                    rating: 800,
+                    fk_coins: 0
+                })
+                .select()
+                .single();
+
+            if (error) {
+                console.error("Erreur création profil :", error);
+
+                if (error.code === "23505") {
+                    errorText.textContent = "This username already exists. Choose another.";
+                } else {
+                    errorText.textContent = "Error: " + error.message;
+                }
+
+                createButton.disabled = false;
+                createButton.textContent = "CREATE PROFILE →";
+                return;
+            }
+
+            modal.remove();
+            resolve(data);
+        });
+    });
+}
 
 // ======================================================
-// AFFICHER LE PROFIL À LA PLACE DE SIGN IN
+// AFFICHER PROFIL DANS LE HEADER
 // ======================================================
 
 function showProfileInterface(user, profile) {
     if (!user) return;
 
-    // Ne pas créer deux fois le profil dans le header
     const existingProfile = document.getElementById("chessfkProfileArea");
 
     if (existingProfile) {
@@ -131,37 +316,21 @@ function showProfileInterface(user, profile) {
     }
 
     const playerName = profile?.username || getUserDisplayName(user);
-    const avatarUrl = profile?.avatar_url || getUserAvatar(user);
+    const avatarUrl = profile?.avatar_url || "";
 
     const profileArea = document.createElement("div");
     profileArea.id = "chessfkProfileArea";
-    profileArea.style.position = "relative";
-    profileArea.style.display = "flex";
-    profileArea.style.alignItems = "center";
+    profileArea.className = "chessfk-profile-area";
 
     const profileButton = document.createElement("button");
     profileButton.type = "button";
     profileButton.id = "chessfkProfileButton";
-    profileButton.style.display = "flex";
-    profileButton.style.alignItems = "center";
-    profileButton.style.gap = "8px";
-    profileButton.style.padding = "7px 12px";
-    profileButton.style.border = "1px solid rgba(255,255,255,0.18)";
-    profileButton.style.borderRadius = "999px";
-    profileButton.style.background = "rgba(0,0,0,0.35)";
-    profileButton.style.color = "white";
-    profileButton.style.fontWeight = "bold";
-    profileButton.style.cursor = "pointer";
+    profileButton.className = "chessfk-profile-button";
 
     const avatar = document.createElement("img");
     avatar.id = "chessfkProfileAvatar";
-    avatar.width = 30;
-    avatar.height = 30;
-    avatar.style.width = "30px";
-    avatar.style.height = "30px";
-    avatar.style.borderRadius = "50%";
-    avatar.style.objectFit = "cover";
-    avatar.style.background = "#b51f2d";
+    avatar.className = "chessfk-profile-avatar";
+    avatar.alt = "Profile";
 
     if (avatarUrl) {
         avatar.src = avatarUrl;
@@ -169,112 +338,46 @@ function showProfileInterface(user, profile) {
         avatar.style.display = "none";
     }
 
+    const fallback = document.createElement("span");
+    fallback.id = "chessfkProfileFallback";
+    fallback.className = "chessfk-profile-fallback";
+    fallback.textContent = "♟";
+
+    if (avatarUrl) {
+        fallback.style.display = "none";
+    }
+
     const name = document.createElement("span");
     name.id = "chessfkProfileName";
     name.textContent = playerName;
 
     const arrow = document.createElement("span");
+    arrow.className = "chessfk-profile-arrow";
     arrow.textContent = "▼";
-    arrow.style.fontSize = "9px";
 
-    profileButton.append(avatar, name, arrow);
+    profileButton.append(avatar, fallback, name, arrow);
 
-    // Menu du profil
     const menu = document.createElement("div");
     menu.id = "chessfkProfileMenu";
-    menu.style.display = "none";
-    menu.style.position = "absolute";
-    menu.style.right = "0";
-    menu.style.top = "calc(100% + 10px)";
-    menu.style.width = "260px";
-    menu.style.padding = "18px";
-    menu.style.borderRadius = "15px";
-    menu.style.background = "#18110f";
-    menu.style.border = "1px solid rgba(255,255,255,0.18)";
-    menu.style.boxShadow = "0 20px 50px rgba(0,0,0,0.55)";
-    menu.style.zIndex = "99999";
+    menu.className = "chessfk-profile-menu";
 
-    const title = document.createElement("p");
-    title.textContent = "CHESS_FK ACCOUNT";
-    title.style.margin = "0 0 10px";
-    title.style.fontSize = "10px";
-    title.style.fontWeight = "bold";
-    title.style.letterSpacing = "1.5px";
-    title.style.opacity = "0.6";
-
-    const menuName = document.createElement("strong");
-    menuName.id = "chessfkMenuName";
-    menuName.textContent = playerName;
-    menuName.style.display = "block";
-    menuName.style.fontSize = "20px";
-
-    const email = document.createElement("p");
-    email.textContent = user.email || "";
-    email.style.margin = "5px 0";
-    email.style.fontSize = "12px";
-    email.style.opacity = "0.7";
-
-    const country = document.createElement("p");
-    country.id = "chessfkMenuCountry";
-    country.textContent = "🌍 " + (profile?.country || "Non renseigné");
-    country.style.fontSize = "13px";
-
-    const rating = document.createElement("p");
-    rating.id = "chessfkMenuRating";
-    rating.textContent = "♟ Rating : " + (profile?.rating || 800);
-    rating.style.color = "#ffcc66";
-    rating.style.fontWeight = "bold";
-
-    const coins = document.createElement("p");
-    coins.id = "chessfkMenuCoins";
-    coins.textContent = "🪙 FK Coins : " + (profile?.fk_coins || 0);
-    coins.style.color = "#ffcc66";
-    coins.style.fontWeight = "bold";
-
-    const profilePageButton = document.createElement("button");
-    profilePageButton.type = "button";
-    profilePageButton.textContent = "MY PROFILE";
-    profilePageButton.style.width = "100%";
-    profilePageButton.style.padding = "11px";
-    profilePageButton.style.border = "0";
-    profilePageButton.style.borderRadius = "9px";
-    profilePageButton.style.background = "#b51f2d";
-    profilePageButton.style.color = "white";
-    profilePageButton.style.fontWeight = "bold";
-    profilePageButton.style.cursor = "pointer";
-
-    profilePageButton.addEventListener("click", () => {
-        window.location.href = "pages/profile.html";
-    });
-
-    const logoutButton = document.createElement("button");
-    logoutButton.type = "button";
-    logoutButton.textContent = "SIGN OUT";
-    logoutButton.style.width = "100%";
-    logoutButton.style.marginTop = "8px";
-    logoutButton.style.padding = "11px";
-    logoutButton.style.border = "1px solid rgba(255,255,255,0.2)";
-    logoutButton.style.borderRadius = "9px";
-    logoutButton.style.background = "transparent";
-    logoutButton.style.color = "white";
-    logoutButton.style.cursor = "pointer";
-
-    logoutButton.addEventListener("click", signOutChessFK);
-
-    menu.append(
-        title,
-        menuName,
-        email,
-        country,
-        rating,
-        coins,
-        profilePageButton,
-        logoutButton
-    );
+    menu.innerHTML = `
+        <p class="profile-menu-label">CHESS_FK ACCOUNT</p>
+        <strong id="chessfkMenuName">${playerName}</strong>
+        <p class="profile-menu-email">${user.email || ""}</p>
+        <p id="chessfkMenuCountry">🌍 ${profile?.country || "Not set"}</p>
+        <p id="chessfkMenuRating" class="profile-menu-gold">♟ Rating: ${profile?.rating || 800}</p>
+        <p id="chessfkMenuCoins" class="profile-menu-gold">🪙 FK Coins: ${profile?.fk_coins || 0}</p>
+        <button id="openMyProfile" class="profile-menu-main-button" type="button">
+            MY PROFILE
+        </button>
+        <button id="signOutButton" class="profile-menu-signout" type="button">
+            SIGN OUT
+        </button>
+    `;
 
     profileArea.append(profileButton, menu);
 
-    // Cache SIGN IN et ajoute le profil à sa place
     if (loginButton && loginButton.parentNode) {
         loginButton.style.display = "none";
         loginButton.parentNode.insertBefore(profileArea, loginButton);
@@ -282,43 +385,55 @@ function showProfileInterface(user, profile) {
 
     profileButton.addEventListener("click", (event) => {
         event.stopPropagation();
-        menu.style.display = menu.style.display === "block" ? "none" : "block";
+        menu.classList.toggle("open");
     });
 
+    document.getElementById("openMyProfile").addEventListener("click", () => {
+        window.location.href = "pages/profile.html";
+    });
+
+    document.getElementById("signOutButton").addEventListener("click", signOutChessFK);
+
     document.addEventListener("click", () => {
-        menu.style.display = "none";
+        menu.classList.remove("open");
     });
 }
 
-
-// ======================================================
-// METTRE À JOUR LE PROFIL DÉJÀ AFFICHÉ
-// ======================================================
-
 function updateProfileInterface(user, profile) {
     const playerName = profile?.username || getUserDisplayName(user);
+    const avatarUrl = profile?.avatar_url || "";
 
     const name = document.getElementById("chessfkProfileName");
     const menuName = document.getElementById("chessfkMenuName");
     const country = document.getElementById("chessfkMenuCountry");
     const rating = document.getElementById("chessfkMenuRating");
     const coins = document.getElementById("chessfkMenuCoins");
+    const avatar = document.getElementById("chessfkProfileAvatar");
+    const fallback = document.getElementById("chessfkProfileFallback");
 
     if (name) name.textContent = playerName;
     if (menuName) menuName.textContent = playerName;
-    if (country) country.textContent = "🌍 " + (profile?.country || "Non renseigné");
-    if (rating) rating.textContent = "♟ Rating : " + (profile?.rating || 800);
-    if (coins) coins.textContent = "🪙 FK Coins : " + (profile?.fk_coins || 0);
+    if (country) country.textContent = "🌍 " + (profile?.country || "Not set");
+    if (rating) rating.textContent = "♟ Rating: " + (profile?.rating || 800);
+    if (coins) coins.textContent = "🪙 FK Coins: " + (profile?.fk_coins || 0);
+
+    if (avatar && avatarUrl) {
+        avatar.src = avatarUrl;
+        avatar.style.display = "block";
+    }
+
+    if (fallback) {
+        fallback.style.display = avatarUrl ? "none" : "flex";
+    }
 }
 
-
 // ======================================================
-// CONNEXION GOOGLE
+// CONNEXION
 // ======================================================
 
 async function startChessFKGoogleLogin() {
     if (!chessfkAuth) {
-        alert("Supabase n'est pas chargé. Vérifie js/supabase.js.");
+        alert("Supabase is not loaded. Check js/supabase.js.");
         return;
     }
 
@@ -331,10 +446,9 @@ async function startChessFKGoogleLogin() {
 
     if (error) {
         console.error("Erreur Google :", error);
-        alert("Erreur de connexion Google : " + error.message);
+        alert("Google login error: " + error.message);
     }
 }
-
 
 // ======================================================
 // UTILISATEUR CONNECTÉ
@@ -346,7 +460,7 @@ async function handleChessFKUser(user) {
     let profile = await getChessFKProfile(user);
 
     if (!profile) {
-        profile = await createChessFKProfile(user);
+        profile = await createProfileModal(user);
 
         if (!profile) return;
     }
@@ -359,7 +473,6 @@ async function handleChessFKUser(user) {
         })
     );
 }
-
 
 // ======================================================
 // DÉCONNEXION
@@ -375,27 +488,21 @@ async function signOutChessFK() {
         return;
     }
 
-    const profileArea = document.getElementById("chessfkProfileArea");
-
-    if (profileArea) {
-        profileArea.remove();
-    }
+    document.getElementById("chessfkProfileArea")?.remove();
 
     if (loginButton) {
         loginButton.style.display = "block";
     }
+
+    window.location.href = "../index.html";
 }
 
-
 // ======================================================
-// VÉRIFIER SI L'UTILISATEUR EST DÉJÀ CONNECTÉ
+// SESSION
 // ======================================================
 
 async function checkChessFKUser() {
-    if (!chessfkAuth) {
-        console.error("Client Supabase introuvable.");
-        return;
-    }
+    if (!chessfkAuth) return;
 
     const { data, error } = await chessfkAuth.auth.getSession();
 
@@ -404,13 +511,10 @@ async function checkChessFKUser() {
         return;
     }
 
-    const user = data?.session?.user;
-
-    if (user) {
-        await handleChessFKUser(user);
+    if (data?.session?.user) {
+        await handleChessFKUser(data.session.user);
     }
 }
-
 
 // ======================================================
 // DÉMARRAGE
@@ -421,25 +525,19 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (loginButton) {
         loginButton.addEventListener("click", startChessFKGoogleLogin);
-    } else {
-        console.error("Le bouton #loginButton est introuvable dans index.html.");
     }
 
     await checkChessFKUser();
 
     if (chessfkAuth) {
         chessfkAuth.auth.onAuthStateChange((event, session) => {
-            const user = session?.user;
-
-            if (user) {
-                setTimeout(() => handleChessFKUser(user), 0);
+            if (event === "SIGNED_IN" && session?.user) {
+                setTimeout(() => handleChessFKUser(session.user), 0);
             }
         });
     }
 });
 
-
-// Fonctions accessibles depuis les autres fichiers
 window.startChessFKGoogleLogin = startChessFKGoogleLogin;
 window.signOutChessFK = signOutChessFK;
 window.checkChessFKUser = checkChessFKUser;
