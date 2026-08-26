@@ -358,3 +358,98 @@ body[data-theme="orange"] {
         flex-direction: column;
     }
 }
+/* =========================================================
+   PROFILE — LINKED TO GLOBAL CHESS_FK THEME
+========================================================= */
+
+:root {
+    --profile-color: var(--primary);
+    --profile-soft: var(--glow-primary);
+    --profile-gold: var(--primary-bright);
+}
+
+.profile-home-button {
+    color: var(--text-main);
+}
+
+.profile-kicker,
+.section-title p,
+.coins-card p {
+    color: var(--primary);
+}
+
+.profile-hero h1,
+.section-title h2,
+.profile-card-name h2,
+.coins-card h2,
+.profile-loading {
+    color: var(--text-main);
+}
+
+.profile-hero > p:last-child,
+.profile-card-name p,
+.photo-help,
+.coins-card small {
+    color: var(--text-muted);
+}
+
+.profile-card,
+.profile-section,
+.coins-card {
+    background: var(--bg-card);
+    border-color: var(--border-card);
+}
+
+.profile-card-name {
+    border-color: var(--border);
+}
+
+.profile-private-note,
+.profile-photo-frame {
+    background: var(--glow-primary);
+}
+
+.profile-private-note {
+    color: var(--text-soft);
+}
+
+.profile-form-grid input,
+.profile-form-grid select {
+    background: var(--bg-main);
+    color: var(--text-main);
+    border-color: var(--border);
+}
+
+.profile-form-grid option {
+    background: var(--bg-card);
+    color: var(--text-main);
+}
+
+.rating-card,
+.stat-card {
+    background: var(--bg-main);
+    border-color: var(--border);
+}
+
+.rating-card span,
+.stat-card span,
+.rating-card small {
+    color: var(--text-muted);
+}
+
+.rating-card strong {
+    color: var(--primary);
+}
+
+.stat-card strong {
+    color: var(--text-main);
+}
+
+.coins-card {
+    border-color: var(--primary);
+    background: linear-gradient(135deg, var(--glow-primary), var(--bg-card));
+}
+
+.coins-card > strong {
+    color: var(--primary-bright);
+}

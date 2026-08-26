@@ -387,3 +387,102 @@
     border-radius: 2px;
     border: 1px solid rgba(255, 255, 255, 0.28);
 }
+/* =========================================================
+   COMMUNITY — LINKED TO GLOBAL CHESS_FK THEME
+========================================================= */
+
+.community-kicker,
+.community-hero h1 span {
+    color: var(--primary);
+}
+
+.community-hero h1,
+.community-total-card strong,
+.community-small-stat strong,
+.player-info h2,
+.player-ratings strong,
+.empty-community h2,
+.community-search input {
+    color: var(--text-main);
+}
+
+.community-hero > p:last-child,
+.community-total-card p,
+.community-small-stat p,
+.community-toolbar > p,
+.player-country,
+.player-bottom,
+.player-bottom small,
+.player-ratings span {
+    color: var(--text-muted);
+}
+
+.community-total-card,
+.community-small-stat,
+.player-card {
+    background: var(--bg-card);
+    border-color: var(--border);
+}
+
+.community-total-card {
+    border-color: var(--primary);
+    background:
+        linear-gradient(120deg, var(--glow-primary), transparent 60%),
+        var(--bg-card);
+}
+
+.community-total-card::after {
+    background: var(--glow-primary);
+}
+
+.total-icon,
+.community-small-stat > span {
+    color: var(--primary);
+    background: var(--glow-primary);
+}
+
+.community-search {
+    background: var(--bg-main);
+    border-color: var(--border);
+    color: var(--primary);
+}
+
+.community-search input::placeholder {
+    color: var(--text-dark);
+}
+
+.player-card:hover {
+    border-color: var(--primary);
+}
+
+.community-avatar {
+    border-color: var(--primary);
+    background: linear-gradient(135deg, var(--glow-primary), var(--bg-main));
+}
+
+.player-ratings > div {
+    background: var(--bg-main);
+}
+
+.player-bottom {
+    border-color: var(--border);
+}
+
+.empty-community {
+    border-color: var(--border);
+    color: var(--text-muted);
+}
+
+.empty-community > span {
+    color: var(--primary);
+}
+
+.community-home-button {
+    color: var(--text-main);
+    border-color: var(--border);
+}
+
+.community-home-button:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}

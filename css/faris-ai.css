@@ -24,6 +24,31 @@
 
     --accent-rgb: 255,23,23;
 }
+/* =========================================================
+   BLACK
+========================================================= */
+
+body[data-theme="black"] {
+    --bg-main: #000000;
+    --bg-section: #050505;
+    --bg-card: #0b0b0b;
+    --bg-header: rgba(0,0,0,0.94);
+
+    --border-main: #242424;
+    --border-soft: #121212;
+    --border-header: #1b1b1b;
+
+    --text-main: #ffffff;
+    --text-muted: #8a8a8a;
+    --text-soft: #c5c5c5;
+    --text-dark: #5c5c5c;
+
+    --accent: #ffffff;
+    --accent-bright: #ffffff;
+    --accent-dark: #aaaaaa;
+
+    --accent-rgb: 255,255,255;
+}
 
 
 /* =========================================================
