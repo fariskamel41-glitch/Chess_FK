@@ -378,3 +378,12 @@
         display: none;
     }
 }
+.community-syria-flag {
+    width: 25px;
+    height: 16px;
+    object-fit: cover;
+    vertical-align: -3px;
+    margin-right: 5px;
+    border-radius: 2px;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+}

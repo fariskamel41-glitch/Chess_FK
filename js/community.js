@@ -80,7 +80,7 @@ const countryFlags = {
     "Sudan": "🇸🇩",
     "Sweden": "🇸🇪",
     "Switzerland": "🇨🇭",
-    "Syria": "🟩",
+    
     "Thailand": "🇹🇭",
     "Tunisia": "🇹🇳",
     "Turkey": "🇹🇷",
@@ -108,8 +108,20 @@ function getCountryDisplay(country) {
         return "🌍 World";
     }
 
+    if (country === "Syria") {
+        return `
+            <img
+                class="community-syria-flag"
+                src="../image/syria-new-flag.svg"
+                alt="New Syrian flag"
+            >
+            Syria
+        `;
+    }
+
     return `${countryFlags[country] || "🌍"} ${escapeHtml(country)}`;
 }
+
 
 function getInitial(username) {
     return escapeHtml((username || "P").charAt(0).toUpperCase());
