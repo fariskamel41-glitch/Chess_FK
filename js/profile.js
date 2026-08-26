@@ -3,14 +3,42 @@ const supabaseProfile = window.chessfkSupabase;
 let currentUser = null;
 let currentProfile = null;
 
+/* Affiche du texte normal */
 function setText(id, value) {
     const element = document.getElementById(id);
-    if (element) element.textContent = value;
+
+    if (element) {
+        element.textContent = value;
+    }
 }
 
+/* Affiche le pays et le vrai drapeau vert syrien */
+function setCountryDisplay(country) {
+    const element = document.getElementById("profileCountryView");
+
+    if (!element) return;
+
+    if (country === "Syria") {
+        element.innerHTML = `
+            <img
+                class="country-flag-image"
+                src="../image/syria-new-flag.svg"
+                alt="New Syrian flag"
+            >
+            <span>Syria</span>
+        `;
+        return;
+    }
+
+    element.textContent = "🌍 " + (country || "Country not set");
+}
+
+/* Affiche la photo de profil */
 function showAvatar(url) {
     const avatar = document.getElementById("profileAvatar");
     const fallback = document.getElementById("profileAvatarFallback");
+
+    if (!avatar || !fallback) return;
 
     if (url) {
         avatar.src = url;
@@ -22,12 +50,13 @@ function showAvatar(url) {
     }
 }
 
+/* Met toutes les infos du joueur sur la page */
 function displayProfile(profile) {
     currentProfile = profile;
 
     setText("profileTitleName", profile.username || "PLAYER");
-    setText("profileEmail", currentUser.email || "");
-    setText("profileCountryView", "🌍 " + (profile.country || "Country not set"));
+    setText("profileEmail", currentUser?.email || "");
+    setCountryDisplay(profile.country);
 
     document.getElementById("profileUsername").value = profile.username || "";
     document.getElementById("profileCountry").value = profile.country || "";
@@ -47,6 +76,7 @@ function displayProfile(profile) {
     showAvatar(profile.avatar_url || "");
 }
 
+/* Envoie une nouvelle photo vers Supabase */
 async function uploadNewAvatar(file) {
     if (!file || !currentUser) return;
 
@@ -97,6 +127,7 @@ async function uploadNewAvatar(file) {
     message.textContent = "Photo updated successfully.";
 }
 
+/* Sauvegarde le pseudo et le pays */
 async function saveProfileChanges() {
     const username = document.getElementById("profileUsername").value.trim();
     const country = document.getElementById("profileCountry").value;
@@ -128,9 +159,10 @@ async function saveProfileChanges() {
     button.textContent = "SAVE CHANGES →";
 
     if (error) {
-        message.textContent = error.code === "23505"
-            ? "This username already exists."
-            : "Error: " + error.message;
+        message.textContent =
+            error.code === "23505"
+                ? "This username already exists."
+                : "Error: " + error.message;
         return;
     }
 
@@ -138,7 +170,13 @@ async function saveProfileChanges() {
     message.textContent = "Profile saved successfully.";
 }
 
+/* Démarre la page Profile */
 async function startProfilePage() {
+    if (!supabaseProfile) {
+        console.error("Supabase is not loaded.");
+        return;
+    }
+
     const { data } = await supabaseProfile.auth.getSession();
     currentUser = data?.session?.user;
 
@@ -154,6 +192,7 @@ async function startProfilePage() {
         .single();
 
     if (error || !profile) {
+        console.error("Profile loading error:", error);
         window.location.href = "../index.html";
         return;
     }
@@ -163,16 +202,22 @@ async function startProfilePage() {
 
     displayProfile(profile);
 
-    document.getElementById("profilePhotoInput").addEventListener("change", (event) => {
-        uploadNewAvatar(event.target.files?.[0]);
-    });
+    document
+        .getElementById("profilePhotoInput")
+        .addEventListener("change", (event) => {
+            uploadNewAvatar(event.target.files?.[0]);
+        });
 
-    document.getElementById("saveProfileButton").addEventListener("click", saveProfileChanges);
+    document
+        .getElementById("saveProfileButton")
+        .addEventListener("click", saveProfileChanges);
 
-    document.getElementById("profileSignOut").addEventListener("click", async () => {
-        await supabaseProfile.auth.signOut();
-        window.location.href = "../index.html";
-    });
+    document
+        .getElementById("profileSignOut")
+        .addEventListener("click", async () => {
+            await supabaseProfile.auth.signOut();
+            window.location.href = "../index.html";
+        });
 }
 
 document.addEventListener("DOMContentLoaded", startProfilePage);
