@@ -4399,3 +4399,74 @@ footer p {
         padding: 16px;
     }
 }
+/* =========================================================
+   PROFILE SETUP MODAL - FIX SCROLL
+========================================================= */
+
+.profile-setup-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+.profile-setup-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.82);
+    backdrop-filter: blur(8px);
+}
+
+/* Toute la fenêtre tient dans l'écran */
+.profile-setup-box {
+    position: relative;
+    z-index: 1;
+    width: min(500px, 100%);
+    max-height: calc(100vh - 32px);
+
+    overflow-y: auto; /* C'est cette ligne qui permet de descendre */
+    -webkit-overflow-scrolling: touch;
+
+    padding: 24px;
+    background: var(--bg-card);
+    border: 1px solid var(--primary);
+    box-shadow: 0 0 35px var(--glow-primary);
+}
+
+/* Le bouton reste utilisable et prend toute la largeur */
+.create-profile-button {
+    display: block;
+    width: 100%;
+    margin-top: 18px;
+    margin-bottom: 4px;
+    padding: 15px;
+    cursor: pointer;
+}
+
+/* Pour éviter que la liste des pays prenne trop de place ouverte */
+#profileCountry {
+    width: 100%;
+    max-width: 100%;
+    min-height: 44px;
+}
+
+/* Téléphone */
+@media (max-width: 600px) {
+    .profile-setup-modal {
+        align-items: flex-start;
+        padding: 10px;
+    }
+
+    .profile-setup-box {
+        width: 100%;
+        max-height: calc(100vh - 20px);
+        padding: 18px 16px;
+    }
+
+    .profile-setup-box h2 {
+        font-size: 27px;
+    }
+}
