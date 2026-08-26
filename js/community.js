@@ -112,7 +112,7 @@ function getCountryDisplay(country) {
         return `
             <img
                 class="community-syria-flag"
-                src="../image/syria-new-flag.svg"
+                src="../images/syria-new-flag.svg"
                 alt="New Syrian flag"
             >
             Syria
