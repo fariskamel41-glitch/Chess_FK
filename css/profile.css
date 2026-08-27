@@ -559,3 +559,82 @@ body[data-theme="black"] .rating-card strong,
 body[data-theme="black"] .coins-card > strong {
     color: #ffffff !important;
 }
+/* =========================================================
+   PROFILE — BLACKOUT & IVORY FINAL FIX
+========================================================= */
+
+/* On lie toutes les anciennes couleurs du profil au thème */
+body {
+    --profile-color: var(--primary) !important;
+    --profile-soft: var(--glow-primary) !important;
+    --profile-gold: var(--primary-bright) !important;
+}
+
+/* Tous les éléments colorés du profil */
+.profile-kicker,
+.section-title p,
+.coins-card p,
+.profile-hero h1 span,
+.section-title > span,
+.profile-form-grid label,
+.rating-card strong,
+.coins-card > strong {
+    color: var(--profile-color) !important;
+}
+
+/* Cercle / contour autour de la photo */
+.profile-photo-frame {
+    border-color: var(--profile-color) !important;
+    background: var(--profile-soft) !important;
+    box-shadow: 0 0 30px var(--profile-soft) !important;
+}
+
+/* Boutons */
+.change-photo-button,
+.save-profile-button {
+    background: var(--profile-color) !important;
+    color: #ffffff !important;
+}
+
+/* =========================================================
+   BLACKOUT : blanc partout, aucun rouge
+========================================================= */
+
+body[data-theme="black"] {
+    --profile-color: #ffffff !important;
+    --profile-soft: rgba(255, 255, 255, 0.12) !important;
+    --profile-gold: #ffffff !important;
+}
+
+body[data-theme="black"] .profile-kicker,
+body[data-theme="black"] .section-title p,
+body[data-theme="black"] .coins-card p,
+body[data-theme="black"] .profile-hero h1 span,
+body[data-theme="black"] .section-title > span,
+body[data-theme="black"] .profile-form-grid label,
+body[data-theme="black"] .rating-card strong,
+body[data-theme="black"] .coins-card > strong {
+    color: #ffffff !important;
+}
+
+body[data-theme="black"] .profile-photo-frame {
+    border-color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.10) !important;
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.22) !important;
+}
+
+/* =========================================================
+   IVORY / BEIGE : brun lisible, aucun rouge
+========================================================= */
+
+body[data-theme="beige"] {
+    --profile-color: #93642f !important;
+    --profile-soft: rgba(147, 100, 47, 0.18) !important;
+    --profile-gold: #93642f !important;
+}
+
+body[data-theme="beige"] .profile-photo-frame {
+    border-color: #93642f !important;
+    background: rgba(147, 100, 47, 0.18) !important;
+    box-shadow: 0 0 30px rgba(147, 100, 47, 0.22) !important;
+}
