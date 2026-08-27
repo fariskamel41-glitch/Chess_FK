@@ -638,3 +638,14 @@ body[data-theme="beige"] .profile-photo-frame {
     background: rgba(147, 100, 47, 0.18) !important;
     box-shadow: 0 0 30px rgba(147, 100, 47, 0.22) !important;
 }
+/* Photo de profil lisible en thème BLACKOUT */
+body[data-theme="black"] .profile-photo-frame {
+    border-color: #d8d8d8 !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    box-shadow: 0 0 16px rgba(255, 255, 255, 0.12) !important;
+}
+
+body[data-theme="black"] .profile-private-note {
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #e6e6e6 !important;
+}
