@@ -4470,3 +4470,91 @@ footer p {
         font-size: 27px;
     }
 }
+/* =========================================================
+   ACCESSIBILITÉ — CONTRASTE BLACKOUT & BEIGE
+   À LA TOUTE FIN DE style.css
+========================================================= */
+
+/* BLACKOUT : blanc doux, lumières discrètes et boutons lisibles */
+body[data-theme="black"] {
+    --primary: #d8d8d8;
+    --primary-bright: #ffffff;
+    --primary-dark: #5f5f5f;
+
+    --bg-main: #050505;
+    --bg-section: #0a0a0a;
+    --bg-card: #111111;
+    --bg-header: rgba(5, 5, 5, 0.95);
+
+    --text-main: #ffffff;
+    --text-soft: #e6e6e6;
+    --text-muted: #b8b8b8; /* Avant trop foncé, maintenant lisible */
+    --text-dark: #969696;  /* Avant trop foncé, maintenant lisible */
+
+    --border: #4a4a4a;
+    --border-soft: #303030;
+    --border-card: #3d3d3d;
+
+    /* Lumières faibles : pas de gros halo blanc */
+    --glow-primary: rgba(255, 255, 255, 0.07);
+    --glow-strong: rgba(255, 255, 255, 0.16);
+    --image-glow: rgba(255, 255, 255, 0.18);
+}
+
+/* Les boutons clairs ont toujours un texte noir lisible */
+body[data-theme="black"] .btn-main,
+body[data-theme="black"] .quick-play-button,
+body[data-theme="black"] .final-button,
+body[data-theme="black"] .change-photo-button,
+body[data-theme="black"] .save-profile-button {
+    color: #080808 !important;
+    text-shadow: none !important;
+}
+
+/* Les petits textes dans les boutons restent foncés */
+body[data-theme="black"] .btn-main small {
+    color: rgba(0, 0, 0, 0.72) !important;
+}
+
+/* On enlève les gros halos blancs gênants */
+body[data-theme="black"] .hero h1 span,
+body[data-theme="black"] .logo-piece,
+body[data-theme="black"] .logo strong,
+body[data-theme="black"] .quote-piece,
+body[data-theme="black"] .final-cta h2 span {
+    text-shadow: none !important;
+}
+
+body[data-theme="black"] .profile-photo-frame {
+    box-shadow: 0 0 16px rgba(255, 255, 255, 0.12) !important;
+}
+
+/* Les cartes restent bien séparées du fond */
+body[data-theme="black"] .profile-card,
+body[data-theme="black"] .profile-section,
+body[data-theme="black"] .coins-card,
+body[data-theme="black"] .community-total-card,
+body[data-theme="black"] .community-small-stat,
+body[data-theme="black"] .player-card {
+    border-color: #4a4a4a !important;
+}
+
+/* BEIGE : texte sombre, contrasté et facile à lire */
+body[data-theme="beige"] {
+    --text-main: #211a14;
+    --text-soft: #3f3429;
+    --text-muted: #5d5144; /* Plus foncé et lisible */
+    --text-dark: #55493d;
+
+    --border: #ad9c80;
+    --border-card: #b8a589;
+}
+
+/* Boutons beige : texte blanc net sur le marron */
+body[data-theme="beige"] .btn-main,
+body[data-theme="beige"] .quick-play-button,
+body[data-theme="beige"] .final-button,
+body[data-theme="beige"] .change-photo-button,
+body[data-theme="beige"] .save-profile-button {
+    color: #ffffff !important;
+}
