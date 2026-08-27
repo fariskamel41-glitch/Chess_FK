@@ -453,3 +453,109 @@ body[data-theme="orange"] {
 .coins-card > strong {
     color: var(--primary-bright);
 }
+/* =========================================================
+   PROFILE — FINAL THEME COLORS
+========================================================= */
+
+/* Les éléments rouges/violets/verts utilisent désormais
+   la couleur active du thème global */
+.profile-kicker,
+.section-title p,
+.coins-card p,
+.profile-hero h1 span,
+.section-title > span,
+.profile-form-grid label,
+.rating-card strong,
+.coins-card > strong {
+    color: var(--primary) !important;
+}
+
+.profile-photo-frame {
+    border-color: var(--primary) !important;
+    background: var(--glow-primary) !important;
+    box-shadow: 0 0 30px var(--glow-primary) !important;
+}
+
+.change-photo-button,
+.save-profile-button {
+    background: var(--primary) !important;
+    color: #ffffff !important;
+}
+
+.profile-card,
+.profile-section {
+    background: var(--bg-card) !important;
+    border-color: var(--border-card) !important;
+}
+
+.coins-card {
+    border-color: var(--primary) !important;
+    background: linear-gradient(
+        135deg,
+        var(--glow-primary),
+        var(--bg-card)
+    ) !important;
+}
+
+.rating-card,
+.stat-card {
+    background: var(--bg-main) !important;
+    border-color: var(--border) !important;
+}
+
+.profile-hero h1,
+.section-title h2,
+.profile-card-name h2,
+.coins-card h2,
+.profile-loading,
+.stat-card strong {
+    color: var(--text-main) !important;
+}
+
+.profile-hero > p:last-child,
+.profile-card-name p,
+.photo-help,
+.coins-card small,
+.rating-card span,
+.rating-card small,
+.stat-card span {
+    color: var(--text-muted) !important;
+}
+
+.profile-private-note {
+    background: var(--glow-primary) !important;
+    color: var(--text-soft) !important;
+}
+
+.profile-card-name {
+    border-top-color: var(--border) !important;
+}
+
+.profile-form-grid input,
+.profile-form-grid select {
+    background: var(--bg-main) !important;
+    color: var(--text-main) !important;
+    border-color: var(--border) !important;
+}
+
+.profile-form-grid option {
+    background: var(--bg-card) !important;
+    color: var(--text-main) !important;
+}
+
+/* IVORY / BEIGE : le texte devient sombre et bien lisible */
+body[data-theme="beige"] .profile-photo-frame span {
+    color: var(--primary) !important;
+}
+
+/* BLACKOUT : toute la couleur spéciale devient blanche */
+body[data-theme="black"] .profile-kicker,
+body[data-theme="black"] .section-title p,
+body[data-theme="black"] .coins-card p,
+body[data-theme="black"] .profile-hero h1 span,
+body[data-theme="black"] .section-title > span,
+body[data-theme="black"] .profile-form-grid label,
+body[data-theme="black"] .rating-card strong,
+body[data-theme="black"] .coins-card > strong {
+    color: #ffffff !important;
+}

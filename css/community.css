@@ -486,3 +486,113 @@
     border-color: var(--primary);
     color: var(--primary);
 }
+/* =========================================================
+   COMMUNITY — FINAL THEME COLORS
+========================================================= */
+
+.community-kicker,
+.community-hero h1 span,
+.total-icon,
+.community-small-stat > span,
+.community-search,
+.empty-community > span {
+    color: var(--primary) !important;
+}
+
+.community-total-card {
+    border-color: var(--primary) !important;
+    background:
+        linear-gradient(120deg, var(--glow-primary), transparent 60%),
+        var(--bg-card) !important;
+}
+
+.community-total-card::after {
+    background: var(--glow-primary) !important;
+}
+
+.community-total-card,
+.community-small-stat,
+.player-card {
+    background: var(--bg-card) !important;
+    border-color: var(--border) !important;
+}
+
+.community-small-stat > span {
+    background: var(--glow-primary) !important;
+}
+
+.community-search {
+    background: var(--bg-main) !important;
+    border-color: var(--border) !important;
+}
+
+.community-search input {
+    color: var(--text-main) !important;
+}
+
+.community-search input::placeholder {
+    color: var(--text-dark) !important;
+}
+
+.community-hero h1,
+.community-total-card strong,
+.community-small-stat strong,
+.player-info h2,
+.player-ratings strong,
+.empty-community h2 {
+    color: var(--text-main) !important;
+}
+
+.community-hero > p:last-child,
+.community-total-card p,
+.community-total-card small,
+.community-small-stat p,
+.community-toolbar > p,
+.player-country,
+.player-bottom,
+.player-bottom small,
+.player-ratings span,
+.empty-community {
+    color: var(--text-muted) !important;
+}
+
+.community-avatar {
+    border-color: var(--primary) !important;
+    background: linear-gradient(
+        135deg,
+        var(--glow-primary),
+        var(--bg-main)
+    ) !important;
+}
+
+.player-ratings > div {
+    background: var(--bg-main) !important;
+}
+
+.player-bottom {
+    border-top-color: var(--border) !important;
+}
+
+.player-card:hover {
+    border-color: var(--primary) !important;
+}
+
+.community-home-button {
+    color: var(--text-main) !important;
+    border-color: var(--border) !important;
+}
+
+.community-home-button:hover {
+    color: var(--primary) !important;
+    border-color: var(--primary) !important;
+}
+
+/* Blackout : les accents deviennent blancs */
+body[data-theme="black"] .community-kicker,
+body[data-theme="black"] .community-hero h1 span,
+body[data-theme="black"] .total-icon,
+body[data-theme="black"] .community-small-stat > span,
+body[data-theme="black"] .community-search,
+body[data-theme="black"] .empty-community > span {
+    color: #ffffff !important;
+}
