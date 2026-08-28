@@ -2,11 +2,10 @@
 // CHESS_FK — ONLINE MATCHMAKING
 // js/online.js
 //
-// VRAI JOUEUR D'ABORD
-// → même contrôle de temps
-// → ELO proche
-// → recherche continue
-// → bot après délai si personne
+// VRAIS JOUEURS D'ABORD
+// Même temps + ELO proche
+// Les DEUX joueurs reçoivent le même gameId
+// Bot seulement après attente
 // =========================================================
 
 (function () {
@@ -22,11 +21,8 @@
     const GAME_TABLE = "online_games";
 
     const SEARCH_INTERVAL = 2000;
-
-    // Le bot arrive seulement après 20 secondes
     const BOT_DELAY = 20000;
 
-    // La différence ELO augmente avec le temps
     const ELO_STEPS = [
         { after: 0, range: 100 },
         { after: 5000, range: 200 },
@@ -42,7 +38,9 @@
     let matchmakingActive = false;
     let matchmakingTimer = null;
     let botTimer = null;
+
     let currentSearch = null;
+    let redirectingToGame = false;
 
 
     // =====================================================
@@ -71,12 +69,11 @@
         console.error("❌ Supabase client introuvable");
 
         return null;
-
     }
 
 
     // =====================================================
-    // ID JOUEUR
+    // ID DU JOUEUR
     // =====================================================
 
     function ensurePlayerId() {
@@ -93,16 +90,14 @@
                 "chess_fk_user_id",
                 id
             );
-
         }
 
         return id;
-
     }
 
 
     // =====================================================
-    // LIRE LES INFOS DU JOUEUR
+    // JOUEUR ACTUEL
     // =====================================================
 
     function getCurrentPlayer() {
@@ -116,96 +111,25 @@
             name:
                 localStorage.getItem(
                     "chess_fk_username"
-                ) ||
-                localStorage.getItem(
-                    "username"
-                ) ||
-                "Joueur",
+                ) || "Joueur",
 
             elo:
                 Number(
                     localStorage.getItem(
                         "chess_fk_rating"
                     )
-                ) ||
-                Number(
-                    localStorage.getItem(
-                        "chess_fk_elo"
-                    )
-                ) ||
-                800,
+                ) || 800,
 
             country:
                 localStorage.getItem(
                     "chess_fk_country"
-                ) ||
-                "Monde",
+                ) || "Monde",
 
             avatar:
                 localStorage.getItem(
                     "chess_fk_avatar"
-                ) ||
-                localStorage.getItem(
-                    "profile_avatar"
-                ) ||
-                ""
-
+                ) || ""
         };
-
-    }
-
-
-    // =====================================================
-    // DIFFÉRENCE ELO ACTUELLE
-    // =====================================================
-
-    function getEloRange() {
-
-        if (!currentSearch) {
-            return 100;
-        }
-
-        const elapsed =
-            Date.now() -
-            currentSearch.startedAt;
-
-        let range = 100;
-
-        for (const step of ELO_STEPS) {
-
-            if (elapsed >= step.after) {
-                range = step.range;
-            }
-
-        }
-
-        return range;
-
-    }
-
-
-    // =====================================================
-    // NETTOYER LES TIMERS
-    // =====================================================
-
-    function clearSearchTimers() {
-
-        if (matchmakingTimer) {
-
-            clearInterval(matchmakingTimer);
-
-            matchmakingTimer = null;
-
-        }
-
-        if (botTimer) {
-
-            clearTimeout(botTimer);
-
-            botTimer = null;
-
-        }
-
     }
 
 
@@ -219,7 +143,6 @@
             "chess_fk_match",
             JSON.stringify(match)
         );
-
     }
 
 
@@ -237,17 +160,68 @@
                 )
             );
 
-        } catch {
+        } catch (error) {
 
             return null;
-
         }
-
     }
 
 
     // =====================================================
-    // SUPPRIMER MA RECHERCHE
+    // DIFFÉRENCE ELO AUTORISÉE
+    // =====================================================
+
+    function getEloRange() {
+
+        if (!currentSearch) {
+            return 100;
+        }
+
+        const elapsed =
+            Date.now() -
+            currentSearch.startedAt;
+
+        let range = 100;
+
+        ELO_STEPS.forEach(step => {
+
+            if (elapsed >= step.after) {
+                range = step.range;
+            }
+        });
+
+        return range;
+    }
+
+
+    // =====================================================
+    // NETTOYER LES TIMERS
+    // =====================================================
+
+    function clearSearchTimers() {
+
+        if (matchmakingTimer) {
+
+            clearInterval(
+                matchmakingTimer
+            );
+
+            matchmakingTimer = null;
+        }
+
+        if (botTimer) {
+
+            clearTimeout(
+                botTimer
+            );
+
+            botTimer = null;
+        }
+    }
+
+
+    // =====================================================
+    // SUPPRIMER DE LA FILE
     // =====================================================
 
     async function removeFromQueue(
@@ -266,13 +240,11 @@
 
         if (result.error) {
 
-            console.warn(
-                "⚠️ Impossible de supprimer la recherche :",
+            console.error(
+                "❌ Impossible de supprimer la recherche :",
                 result.error
             );
-
         }
-
     }
 
 
@@ -313,7 +285,6 @@
 
                     time_control:
                         timeControl
-
                 });
 
         if (result.error) {
@@ -323,59 +294,63 @@
                 result.error
             );
 
-            return false;
-
+            throw result.error;
         }
-
-        console.log(
-            "✅ Joueur ajouté à la file"
-        );
-
-        return true;
-
     }
 
 
     // =====================================================
-    // TROUVER UN ADVERSAIRE
+    // CHERCHER UN ADVERSAIRE
     // =====================================================
 
-    async function findOpponent(
-        supabaseClient
-    ) {
+    async function findOpponent() {
 
         if (
+            !matchmakingActive ||
             !currentSearch ||
-            !matchmakingActive
+            redirectingToGame
         ) {
-            return null;
+            return;
         }
+
+        const supabaseClient =
+            currentSearch.supabaseClient;
 
         const player =
             currentSearch.player;
 
-        const eloRange =
+        const timeControl =
+            currentSearch.timeControl;
+
+        const range =
             getEloRange();
+
+        const minElo =
+            player.elo - range;
+
+        const maxElo =
+            player.elo + range;
+
 
         const result =
             await supabaseClient
                 .from(QUEUE_TABLE)
                 .select("*")
-                .eq(
-                    "time_control",
-                    currentSearch.timeControl
-                )
                 .neq(
                     "player_id",
                     player.id
                 )
+                .eq(
+                    "time_control",
+                    timeControl
+                )
                 .gte(
                     "player_elo",
-                    player.elo - eloRange
+                    minElo
                 )
                 .lte(
                     "player_elo",
-                    player.elo + eloRange
+                    maxElo
                 )
                 .order(
                     "created_at",
@@ -383,87 +358,74 @@
                         ascending: true
                     }
                 )
-                .limit(10);
+                .limit(1);
+
 
         if (result.error) {
 
             console.error(
-                "❌ Erreur recherche joueur :",
+                "❌ Erreur recherche adversaire :",
                 result.error
             );
 
-            return null;
-
+            return;
         }
+
 
         if (
             !result.data ||
             result.data.length === 0
         ) {
-            return null;
-        }
-
-
-        // Prendre le joueur avec l'ELO
-        // le plus proche
-        result.data.sort(
-            function (a, b) {
-
-                const diffA =
-                    Math.abs(
-                        Number(a.player_elo) -
-                        player.elo
-                    );
-
-                const diffB =
-                    Math.abs(
-                        Number(b.player_elo) -
-                        player.elo
-                    );
-
-                return diffA - diffB;
-
-            }
-        );
-
-        return result.data[0];
-
-    }
-
-
-    // =====================================================
-    // CRÉER UNE PARTIE CONTRE UN VRAI JOUEUR
-    // =====================================================
-
-    async function createOnlineGame(
-        supabaseClient,
-        opponent
-    ) {
-
-        if (
-            !currentSearch ||
-            !matchmakingActive
-        ) {
             return;
         }
 
-        // Empêche le timer du bot
+
+        const opponent =
+            result.data[0];
+
+
+        console.log(
+            "🎯 ADVERSAIRE TROUVÉ :",
+            opponent.player_name
+        );
+
+
+        // =================================================
+        // ARRÊTER LA RECHERCHE LOCALE
+        // =================================================
+
         matchmakingActive = false;
 
         clearSearchTimers();
 
-        const player =
-            currentSearch.player;
+
+        // =================================================
+        // SUPPRIMER LES DEUX JOUEURS DE LA FILE
+        // =================================================
+
+        await supabaseClient
+            .from(QUEUE_TABLE)
+            .delete()
+            .in(
+                "player_id",
+                [
+                    player.id,
+                    opponent.player_id
+                ]
+            );
+
+
+        // =================================================
+        // COULEURS
+        // =================================================
 
         const youAreWhite =
             Math.random() >= 0.5;
 
 
-        console.log(
-            "🎯 VRAI JOUEUR TROUVÉ :",
-            opponent.player_name
-        );
-
+        // =================================================
+        // CRÉER LA PARTIE
+        // =================================================
 
         const gameResult =
             await supabaseClient
@@ -481,11 +443,10 @@
                             : player.id,
 
                     time_control:
-                        currentSearch.timeControl,
+                        timeControl,
 
                     status:
                         "playing"
-
                 })
                 .select()
                 .single();
@@ -501,36 +462,38 @@
             matchmakingActive = true;
 
             return;
-
         }
 
 
-        // Retirer les deux joueurs de la file
-        await removeFromQueue(
-            supabaseClient,
-            player.id
+        const game =
+            gameResult.data;
+
+
+        console.log(
+            "♟️ PARTIE CRÉÉE :",
+            game.id
         );
 
-        await supabaseClient
-            .from(QUEUE_TABLE)
-            .delete()
-            .eq(
-                "id",
-                opponent.id
-            );
+
+        // =================================================
+        // SAUVEGARDER LE MATCH POUR CE JOUEUR
+        // =================================================
+
+        const yourColor =
+            youAreWhite
+                ? "white"
+                : "black";
+
+        const opponentColor =
+            youAreWhite
+                ? "black"
+                : "white";
 
 
-        // Sauvegarder les vraies informations
         saveMatch({
 
             gameId:
-                gameResult.data.id,
-
-            mode:
-                "online",
-
-            timeControl:
-                currentSearch.timeControl,
+                game.id,
 
             you: {
 
@@ -550,16 +513,13 @@
                     player.avatar,
 
                 color:
-                    youAreWhite
-                        ? "white"
-                        : "black",
+                    yourColor,
 
                 isYou:
                     true,
 
                 status:
                     "TOI"
-
             },
 
             opponent: {
@@ -572,9 +532,7 @@
                     "Adversaire",
 
                 elo:
-                    Number(
-                        opponent.player_elo
-                    ) ||
+                    opponent.player_elo ||
                     800,
 
                 country:
@@ -586,201 +544,107 @@
                     "",
 
                 color:
-                    youAreWhite
-                        ? "black"
-                        : "white",
+                    opponentColor,
 
                 status:
                     "EN LIGNE"
-
             }
-
         });
 
 
-        // Aller vers l'échiquier
-        window.location.href =
-            "pages/plat.html?game=" +
-            gameResult.data.id;
-
+        redirectToGame(
+            game.id
+        );
     }
 
 
     // =====================================================
-    // BOTS DE SECOURS
+    // VÉRIFIER SI UN AUTRE JOUEUR A CRÉÉ NOTRE PARTIE
     // =====================================================
 
-    const BOTS = [
-
-        {
-            id: "bot_leo",
-            name: "LeoChess",
-            country: "France",
-            elo: 750,
-            level: "Débutant",
-            avatar: "",
-            isBot: true
-        },
-
-        {
-            id: "bot_sami",
-            name: "Sami",
-            country: "Maroc",
-            elo: 950,
-            level: "Amateur",
-            avatar: "",
-            isBot: true
-        },
-
-        {
-            id: "bot_alex",
-            name: "Alex",
-            country: "Allemagne",
-            elo: 1200,
-            level: "Intermédiaire",
-            avatar: "",
-            isBot: true
-        },
-
-        {
-            id: "bot_noah",
-            name: "Noah",
-            country: "Canada",
-            elo: 1450,
-            level: "Confirmé",
-            avatar: "",
-            isBot: true
-        },
-
-        {
-            id: "bot_amina",
-            name: "Amina",
-            country: "Algérie",
-            elo: 1700,
-            level: "Avancé",
-            avatar: "",
-            isBot: true
-        },
-
-        {
-            id: "bot_faris",
-            name: "Faris AI",
-            country: "Syrie",
-            elo: 2000,
-            level: "Expert",
-            avatar: "",
-            isBot: true
-        }
-
-    ];
-
-
-    // =====================================================
-    // CHOISIR LE BOT LE PLUS PROCHE
-    // =====================================================
-
-    function getBestBot(
-        playerElo
-    ) {
-
-        const sorted =
-            [...BOTS].sort(
-                function (a, b) {
-
-                    return (
-                        Math.abs(
-                            a.elo -
-                            playerElo
-                        ) -
-                        Math.abs(
-                            b.elo -
-                            playerElo
-                        )
-                    );
-
-                }
-            );
-
-        // Un peu de variété parmi les
-        // 2 bots les plus proches
-        const choices =
-            sorted.slice(
-                0,
-                Math.min(
-                    2,
-                    sorted.length
-                )
-            );
-
-        return choices[
-            Math.floor(
-                Math.random() *
-                choices.length
-            )
-        ];
-
-    }
-
-
-    // =====================================================
-    // LANCER LE BOT
-    // =====================================================
-
-    async function startBotGame() {
+    async function checkForCreatedGame() {
 
         if (
             !matchmakingActive ||
-            !currentSearch
+            !currentSearch ||
+            redirectingToGame
         ) {
             return;
         }
+
+        const supabaseClient =
+            currentSearch.supabaseClient;
+
+        const player =
+            currentSearch.player;
+
+
+        const result =
+            await supabaseClient
+                .from(GAME_TABLE)
+                .select("*")
+                .or(
+                    `white_player_id.eq.${player.id},black_player_id.eq.${player.id}`
+                )
+                .eq(
+                    "status",
+                    "playing"
+                )
+                .order(
+                    "created_at",
+                    {
+                        ascending: false
+                    }
+                )
+                .limit(1);
+
+
+        if (
+            result.error ||
+            !result.data ||
+            result.data.length === 0
+        ) {
+            return;
+        }
+
+
+        const game =
+            result.data[0];
+
+
+        console.log(
+            "♟️ UNE PARTIE A ÉTÉ CRÉÉE POUR MOI :",
+            game.id
+        );
+
 
         matchmakingActive = false;
 
         clearSearchTimers();
 
-        const supabaseClient =
-            getSupabaseClient();
-
-        const player =
-            currentSearch.player;
-
-        const bot =
-            getBestBot(
-                player.elo
-            );
-
-        console.log(
-            "🤖 Aucun joueur trouvé → BOT :",
-            bot.name
+        await removeFromQueue(
+            supabaseClient,
+            player.id
         );
 
 
-        if (supabaseClient) {
-
-            await removeFromQueue(
-                supabaseClient,
-                player.id
-            );
-
-        }
-
-
         const youAreWhite =
-            Math.random() >= 0.5;
+            game.white_player_id ===
+            player.id;
 
+        const opponentId =
+            youAreWhite
+                ? game.black_player_id
+                : game.white_player_id;
+
+
+        // On cherche les infos de l'adversaire
+        // dans la recherche actuelle si possible.
 
         saveMatch({
 
             gameId:
-                "bot_" +
-                crypto.randomUUID(),
-
-            mode:
-                "bot",
-
-            timeControl:
-                currentSearch.timeControl,
+                game.id,
 
             you: {
 
@@ -801,131 +665,135 @@
 
                 color:
                     youAreWhite
-                        ? "white"
-                        : "black",
+                    ? "white"
+                    : "black",
 
                 isYou:
                     true,
 
                 status:
                     "TOI"
-
             },
 
             opponent: {
 
-                ...bot,
+                id:
+                    opponentId,
+
+                name:
+                    "Adversaire",
+
+                elo:
+                    800,
+
+                country:
+                    "Monde",
+
+                avatar:
+                    "",
 
                 color:
                     youAreWhite
-                        ? "black"
-                        : "white",
+                    ? "black"
+                    : "white",
 
                 status:
-                    "EN JEU"
-
+                    "EN LIGNE"
             }
-
         });
 
 
-        // Le paramètre bot permet à
-        // online-players.js / l'échiquier
-        // de savoir que c'est un bot
+        redirectToGame(
+            game.id
+        );
+    }
+
+
+    // =====================================================
+    // REDIRECTION VERS LA PARTIE
+    // =====================================================
+
+    function redirectToGame(gameId) {
+
+        if (redirectingToGame) {
+            return;
+        }
+
+        redirectingToGame = true;
+
         window.location.href =
-            "pages/plat.html" +
-            "?bot=" +
-            encodeURIComponent(bot.id) +
-            "&color=" +
-            encodeURIComponent(
-                youAreWhite
-                    ? "black"
-                    : "white"
-            ) +
-            "&time=" +
-            encodeURIComponent(
-                currentSearch.timeControl
-            );
-
+            `pages/plat.html?game=${gameId}&mode=online`;
     }
 
 
     // =====================================================
-    // BOUCLE DE RECHERCHE
+    // BOT DE SECOURS
     // =====================================================
 
-    async function searchLoop() {
+    function startBotFallback() {
 
-        if (
-            !matchmakingActive
-        ) {
-            return;
-        }
+        botTimer =
+            setTimeout(async () => {
 
-        const supabaseClient =
-            getSupabaseClient();
-
-        if (!supabaseClient) {
-            return;
-        }
-
-        const opponent =
-            await findOpponent(
-                supabaseClient
-            );
-
-        if (opponent) {
-
-            await createOnlineGame(
-                supabaseClient,
-                opponent
-            );
-
-        }
-
-    }
-
-
-    // =====================================================
-    // AFFICHAGE
-    // =====================================================
-
-    function showSearching(
-        timeControl
-    ) {
-
-        console.log(
-            "🔎 Recherche d'un joueur...",
-            timeControl
-        );
-
-        // Événement disponible si ton
-        // interface veut afficher une popup
-        window.dispatchEvent(
-            new CustomEvent(
-                "chessfk:searching",
-                {
-                    detail: {
-                        timeControl:
-                            timeControl
-                    }
+                if (
+                    !matchmakingActive ||
+                    !currentSearch
+                ) {
+                    return;
                 }
-            )
-        );
 
+
+                console.log(
+                    "🤖 Aucun joueur trouvé, lancement du bot."
+                );
+
+
+                const supabaseClient =
+                    currentSearch.supabaseClient;
+
+                const player =
+                    currentSearch.player;
+
+
+                matchmakingActive = false;
+
+                clearSearchTimers();
+
+                await removeFromQueue(
+                    supabaseClient,
+                    player.id
+                );
+
+
+                const botAge =
+                    Math.floor(
+                        Math.random() * 6
+                    ) + 13;
+
+
+                window.location.href =
+                    `pages/faris-ai.html?age=${botAge}&color=black`;
+
+            }, BOT_DELAY);
     }
 
 
     // =====================================================
-    // DÉMARRER LE MATCHMAKING
+    // LANCER LE MATCHMAKING
     // =====================================================
 
     async function startMatchmaking(
         timeControl
     ) {
 
-        // Arrêter une ancienne recherche
-        await cancelMatchmaking();
+        if (matchmakingActive) {
+
+            console.log(
+                "⚠️ Recherche déjà en cours"
+            );
+
+            return;
+        }
 
 
         const supabaseClient =
@@ -934,11 +802,10 @@
         if (!supabaseClient) {
 
             alert(
-                "Erreur : Supabase n'est pas connecté."
+                "❌ Supabase n'est pas connecté."
             );
 
             return;
-
         }
 
 
@@ -946,71 +813,101 @@
             getCurrentPlayer();
 
 
+        console.log(
+            "🔎 RECHERCHE D'UN VRAI JOUEUR...",
+            player
+        );
+
+
+        matchmakingActive = true;
+
+        redirectingToGame = false;
+
+
         currentSearch = {
+
+            supabaseClient:
+                supabaseClient,
 
             player:
                 player,
 
             timeControl:
-                String(timeControl),
+                timeControl,
 
             startedAt:
                 Date.now()
-
         };
 
 
-        matchmakingActive = true;
+        try {
 
+            // Ajouter ce joueur à la file
 
-        console.log(
-            "🔎 MATCHMAKING START",
-            currentSearch
-        );
-
-
-        const joined =
             await joinQueue(
                 supabaseClient,
                 player,
-                String(timeControl)
+                timeControl
             );
 
 
-        if (!joined) {
+            console.log(
+                `⌛ Recherche : ${timeControl}`
+            );
+
+
+            // Vérification immédiate
+
+            await checkForCreatedGame();
+
+            if (matchmakingActive) {
+
+                await findOpponent();
+            }
+
+
+            // Vérifier régulièrement :
+            // 1. un adversaire dans la file
+            // 2. une partie créée par l'autre joueur
+
+            matchmakingTimer =
+                setInterval(async () => {
+
+                    if (!matchmakingActive) {
+                        return;
+                    }
+
+                    await checkForCreatedGame();
+
+                    if (!matchmakingActive) {
+                        return;
+                    }
+
+                    await findOpponent();
+
+                }, SEARCH_INTERVAL);
+
+
+            // Bot seulement après 20 secondes
+
+            startBotFallback();
+
+
+        } catch (error) {
+
+            console.error(
+                "❌ ERREUR MATCHMAKING :",
+                error
+            );
 
             matchmakingActive = false;
 
-            return;
+            clearSearchTimers();
 
+            alert(
+                "Erreur lors de la recherche d'un adversaire."
+            );
         }
-
-
-        showSearching(
-            timeControl
-        );
-
-
-        // Vérifier immédiatement
-        await searchLoop();
-
-
-        // Puis vérifier toutes les 2 secondes
-        matchmakingTimer =
-            setInterval(
-                searchLoop,
-                SEARCH_INTERVAL
-            );
-
-
-        // Après 20 secondes sans joueur :
-        // lancer un bot
-        botTimer =
-            setTimeout(
-                startBotGame,
-                BOT_DELAY
-            );
-
     }
 
 
@@ -1020,29 +917,27 @@
 
     async function cancelMatchmaking() {
 
-        clearSearchTimers();
+        if (!currentSearch) {
+            return;
+        }
+
+
+        const supabaseClient =
+            currentSearch.supabaseClient;
+
+        const player =
+            currentSearch.player;
+
 
         matchmakingActive = false;
 
-        const supabaseClient =
-            getSupabaseClient();
+        clearSearchTimers();
 
-        const playerId =
-            localStorage.getItem(
-                "chess_fk_user_id"
-            );
 
-        if (
-            supabaseClient &&
-            playerId
-        ) {
-
-            await removeFromQueue(
-                supabaseClient,
-                playerId
-            );
-
-        }
+        await removeFromQueue(
+            supabaseClient,
+            player.id
+        );
 
 
         currentSearch = null;
@@ -1051,56 +946,7 @@
         console.log(
             "❌ Recherche annulée"
         );
-
-
-        window.dispatchEvent(
-            new CustomEvent(
-                "chessfk:search-cancelled"
-            )
-        );
-
     }
-
-
-    // =====================================================
-    // NETTOYER SI LE JOUEUR QUITTE
-    // =====================================================
-
-    window.addEventListener(
-        "beforeunload",
-        function () {
-
-            if (
-                matchmakingActive
-            ) {
-
-                const supabaseClient =
-                    getSupabaseClient();
-
-                const playerId =
-                    localStorage.getItem(
-                        "chess_fk_user_id"
-                    );
-
-                if (
-                    supabaseClient &&
-                    playerId
-                ) {
-
-                    supabaseClient
-                        .from(QUEUE_TABLE)
-                        .delete()
-                        .eq(
-                            "player_id",
-                            playerId
-                        );
-
-                }
-
-            }
-
-        }
-    );
 
 
     // =====================================================
@@ -1119,21 +965,8 @@
     FK.saveMatch =
         saveMatch;
 
-    FK.getBotById =
-        function (botId) {
 
-            return BOTS.find(
-                function (bot) {
-
-                    return bot.id === botId;
-
-                }
-            ) || null;
-
-        };
-
-
-    // Compatibilité avec ton HTML actuel
+    // Compatibilité
 
     window.startMatchmaking =
         startMatchmaking;
