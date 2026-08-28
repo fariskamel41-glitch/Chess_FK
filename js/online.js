@@ -2,7 +2,7 @@
 // CHESS_FK — ONLINE SYSTEM
 // js/online.js
 // =========================================================
-
+const supabaseClient = window.supabaseClient;
 (function () {
 
     console.log("♟️ CHESS_FK ONLINE SYSTEM STARTING...");

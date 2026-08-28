@@ -13,26 +13,24 @@ const CHESSFK_SUPABASE_KEY =
 
 if (!window.supabase) {
 
-    console.error(
-        "❌ SUPABASE CDN NON CHARGÉ"
-    );
+    console.error("❌ SUPABASE CDN NON CHARGÉ");
 
 } else {
 
-    console.log(
-        "✅ SUPABASE JS DÉTECTÉ"
-    );
+    console.log("✅ SUPABASE JS DÉTECTÉ");
 
-
-    window.chessfkSupabase =
+    const client =
         window.supabase.createClient(
             CHESSFK_SUPABASE_URL,
             CHESSFK_SUPABASE_KEY
         );
 
+    // Ancien nom : compatible avec auth.js
+    window.chessfkSupabase = client;
 
-    console.log(
-        "✅ CHESS_FK CONNECTÉ À SUPABASE"
-    );
+    // Nouveau nom : utilisé par online.js
+    window.supabaseClient = client;
+
+    console.log("✅ CHESS_FK CONNECTÉ À SUPABASE");
 
 }
