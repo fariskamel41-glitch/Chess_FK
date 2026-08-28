@@ -4,95 +4,19 @@
 // VERSION PRO — FARIS BLANC / NOIR
 // ======================================
 
-console.log("♟️ CHESS_FK BOARD STARTING...");
+
+// ======================================
+// PLATEAU
+// ======================================
+
+const board = document.getElementById("board");
 
 
 // ======================================
-// PARAMÈTRES DE LA PARTIE
+// POSITION DE DÉPART
 // ======================================
 
-const chessParams =
-    new URLSearchParams(
-        window.location.search
-    );
-
-const chessMode =
-    chessParams.get("mode") || "ai";
-
-const onlineMode =
-    chessMode === "online";
-
-const onlineGameId =
-    chessParams.get("game");
-
-let onlineMatch =
-    null;
-
-try{
-
-    onlineMatch =
-        JSON.parse(
-            localStorage.getItem(
-                "chess_fk_match"
-            )
-        );
-
-}catch(error){
-
-    onlineMatch = null;
-
-}
-
-let onlineMyColor =
-    onlineMatch &&
-    onlineMatch.you &&
-    onlineMatch.you.color
-        ? onlineMatch.you.color
-        : "white";
-
-let onlineSupabase =
-    null;
-
-let onlineChannel =
-    null;
-
-let onlineLastMoveId =
-    null;
-
-let onlineWaiting =
-    false;
-
-
-// ======================================
-// CONFIGURATION
-// ======================================
-
-const boardElement =
-    document.getElementById("board");
-
-const movesElement =
-    document.getElementById("moves");
-
-const turnElement =
-    document.querySelector(".turn");
-
-const gameResultElement =
-    document.getElementById("gameResult");
-
-const boardSizeLabel =
-    document.getElementById(
-        "boardSizeLabel"
-    );
-
-let squareSize =
-    60;
-
-
-// ======================================
-// PIÈCES
-// ======================================
-
-let pieces = [
+const initialPieces = [
 
     ["♜","♞","♝","♛","♚","♝","♞","♜"],
 
@@ -114,461 +38,423 @@ let pieces = [
 
 
 // ======================================
-// ÉTAT DU JEU
+// COPIE
 // ======================================
 
-let currentPlayer =
-    "white";
+let pieces =
+    initialPieces.map(row => [...row]);
 
-let selectedRow =
-    null;
 
-let selectedCol =
-    null;
+// ======================================
+// SÉLECTION
+// ======================================
 
-let possibleMoves =
-    [];
+let markedSquare = null;
 
-let gameOver =
-    false;
+let selectedRow = null;
+let selectedCol = null;
 
-let moveHistory =
-    [];
+let possibleMoves = [];
 
-let lastMove =
-    null;
 
-let enPassantTarget =
-    null;
+// ======================================
+// JOUEUR
+// ======================================
+
+let currentPlayer = "white";
+
+
+// ======================================
+// COULEUR FARIS / JOUEUR
+// ======================================
+//
+// faris-ai.js définit :
+//
+// window.farisColor = "white" / "black"
+// window.humanColor = "white" / "black"
+//
+// Sécurité : par défaut Faris = noir.
+//
+
+function getFarisColor(){
+
+    return (
+        typeof window.farisColor !== "undefined"
+        &&
+        (
+            window.farisColor === "white" ||
+            window.farisColor === "black"
+        )
+    )
+        ? window.farisColor
+        : "black";
+
+}
+
+
+function getHumanColor(){
+
+    const faris =
+        getFarisColor();
+
+    return faris === "white"
+        ? "black"
+        : "white";
+
+}
+
+
+function isFarisTurn(){
+
+    return (
+        currentPlayer ===
+        getFarisColor()
+    );
+
+}
+
+
+function isHumanTurn(){
+
+    return (
+        currentPlayer ===
+        getHumanColor()
+    );
+
+}
+
+
+// ======================================
+// PARTIE TERMINÉE
+// ======================================
+
+let gameOver = false;
+
+
+// ======================================
+// DERNIER COUP
+// ======================================
+
+let lastMove = null;
 
 
 // ======================================
 // ROQUE
 // ======================================
 
-let whiteKingMoved =
-    false;
+let whiteKingMoved = false;
+let blackKingMoved = false;
 
-let blackKingMoved =
-    false;
+let whiteRookLeftMoved = false;
+let whiteRookRightMoved = false;
 
-let whiteLeftRookMoved =
-    false;
-
-let whiteRightRookMoved =
-    false;
-
-let blackLeftRookMoved =
-    false;
-
-let blackRightRookMoved =
-    false;
+let blackRookLeftMoved = false;
+let blackRookRightMoved = false;
 
 
 // ======================================
-// PROMOTION
+// PENDULE
 // ======================================
 
-let promotionInProgress =
-    false;
+function getGameTimeFromURL(){
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+
+    const urlTime =
+        parseInt(
+            params.get("time"),
+            10
+        );
+
+
+    if(
+        !Number.isFinite(urlTime) ||
+        urlTime <= 0
+    ){
+
+        return 10 * 60;
+
+    }
+
+
+    if(urlTime > 24 * 60 * 60){
+
+        return 10 * 60;
+
+    }
+
+
+    return urlTime;
+
+}
+
+
+// ======================================
+// INCRÉMENT
+// ======================================
+
+function getIncrementFromURL(){
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+
+    const urlIncrement =
+        parseInt(
+            params.get("increment"),
+            10
+        );
+
+
+    if(
+        !Number.isFinite(urlIncrement) ||
+        urlIncrement < 0
+    ){
+
+        return 0;
+
+    }
+
+
+    if(urlIncrement > 60 * 60){
+
+        return 0;
+
+    }
+
+
+    return urlIncrement;
+
+}
+
+
+// ======================================
+// TEMPS CHOISI
+// ======================================
+
+const selectedGameTime =
+    getGameTimeFromURL();
+
+
+// ======================================
+// INCRÉMENT CHOISI
+// ======================================
+
+const selectedIncrement =
+    getIncrementFromURL();
+
+
+// ======================================
+// TEMPS ACTUEL
+// ======================================
+
+let whiteTime =
+    selectedGameTime;
+
+let blackTime =
+    selectedGameTime;
+
+
+// ======================================
+// CHRONOMÈTRE
+// ======================================
+
+let clockInterval = null;
+
+let clockStarted = false;
+
+
+// ======================================
+// NOTATION
+// ======================================
+
+let moveNumber = 1;
+
+let whiteMoveNotation = null;
+
+
+// ======================================
+// HISTORIQUE
+// ======================================
+
+let moveHistory = [];
+
+
+// ======================================
+// FLÈCHES
+// ======================================
+
+let arrows = [];
+
+let drawingArrow = null;
+
+
+// ======================================
+// HORLOGES
+// ======================================
+
+const whiteClock =
+    document.querySelector(
+        ".white-player .clock"
+    );
+
+
+const blackClock =
+    document.querySelector(
+        ".black-player .clock"
+    );
 
 
 // ======================================
 // TEMPS
 // ======================================
 
-let whiteTime =
-    10 * 60;
-
-let blackTime =
-    10 * 60;
-
-let gameTimer =
-    null;
-
-
-// ======================================
-// CAPTURE INITIALE
-// ======================================
-
-let whiteCaptured =
-    [];
-
-let blackCaptured =
-    [];
-
-
-// ======================================
-// FONCTIONS COULEUR
-// ======================================
-
-function isWhitePiece(piece){
-
-    return [
-        "♙",
-        "♖",
-        "♘",
-        "♗",
-        "♕",
-        "♔"
-    ].includes(piece);
-
-}
-
-
-function isBlackPiece(piece){
-
-    return [
-        "♟",
-        "♜",
-        "♞",
-        "♝",
-        "♛",
-        "♚"
-    ].includes(piece);
-
-}
-
-
-function getPieceColor(piece){
-
-    if(
-        isWhitePiece(piece)
-    ){
-
-        return "white";
-
-    }
-
-    if(
-        isBlackPiece(piece)
-    ){
-
-        return "black";
-
-    }
-
-    return null;
-
-}
-
-
-// ======================================
-// MODE ONLINE
-// ======================================
-
-function isOnlineGame(){
-
-    return (
-        onlineMode &&
-        !!onlineGameId
-    );
-
-}
-
-
-function getOnlinePlayerColor(){
-
-    return onlineMyColor;
-
-}
-
-
-function canHumanMove(){
-
-    if(
-        !isOnlineGame()
-    ){
-
-        return true;
-
-    }
-
-    return (
-        currentPlayer ===
-        getOnlinePlayerColor()
-    );
-
-}
-
-
-// ======================================
-// SUPABASE
-// ======================================
-
-function getOnlineSupabase(){
-
-    if(
-        window.chessfkSupabase
-    ){
-
-        return window.chessfkSupabase;
-
-    }
-
-    if(
-        window.supabaseClient
-    ){
-
-        return window.supabaseClient;
-
-    }
-
-    return null;
-
-}
-
-
-// ======================================
-// CRÉER LA TABLE DE COUPS
-// ======================================
-// Le code attend une table Supabase :
-//
-// online_moves
-//
-// colonnes :
-// id
-// game_id
-// player_id
-// move_data
-// created_at
-//
-// ======================================
-
-
-// ======================================
-// INITIALISATION ONLINE
-// ======================================
-
-async function chessfkStartOnlineGame(){
-
-    if(
-        !isOnlineGame()
-    ){
-
-        return;
-
-    }
-
-    console.log(
-        "🌐 ONLINE GAME MODE",
-        onlineGameId
-    );
-
-    onlineSupabase =
-        getOnlineSupabase();
-
-    if(
-        !onlineSupabase
-    ){
-
-        console.error(
-            "❌ SUPABASE NOT READY"
+function formatTime(seconds){
+
+    seconds =
+        Math.max(
+            0,
+            Math.floor(seconds)
         );
 
-        return;
 
-    }
+    const minutes =
+        Math.floor(
+            seconds / 60
+        );
 
-    await chessfkLoadOnlineGame();
 
-    chessfkSubscribeOnlineMoves();
+    const remainingSeconds =
+        seconds % 60;
 
-    updateTurn();
+
+    return (
+        String(minutes).padStart(2,"0")
+        +
+        ":"
+        +
+        String(remainingSeconds).padStart(2,"0")
+    );
 
 }
 
 
 // ======================================
-// CHARGER LA PARTIE
+// METTRE À JOUR LES HORLOGES
 // ======================================
 
-async function chessfkLoadOnlineGame(){
+function updateClocks(){
 
-    if(
-        !onlineSupabase ||
-        !onlineGameId
-    ){
+    if(whiteClock){
+
+        whiteClock.textContent =
+            formatTime(whiteTime);
+
+    }
+
+
+    if(blackClock){
+
+        blackClock.textContent =
+            formatTime(blackTime);
+
+    }
+
+}
+
+
+// ======================================
+// DÉMARRER LA PENDULE
+// ======================================
+
+function startClock(){
+
+    if(clockInterval !== null){
 
         return;
 
     }
 
-    try{
 
-        const result =
-            await onlineSupabase
-                .from("online_games")
-                .select("*")
-                .eq(
-                    "id",
-                    onlineGameId
-                )
-                .single();
+    clockInterval =
+        setInterval(function(){
 
-        if(
-            result.error
-        ){
+            if(gameOver){
 
-            console.error(
-                "❌ Impossible de charger la partie :",
-                result.error
-            );
+                stopClock();
 
-            return;
-
-        }
-
-        const game =
-            result.data;
-
-        if(
-            !game
-        ){
-
-            return;
-
-        }
-
-        let localId =
-            null;
-
-        try{
-
-            localId =
-                localStorage.getItem(
-                    "chess_fk_user_id"
-                );
-
-        }catch(error){
-
-        }
-
-        if(
-            localId &&
-            game.white_player_id ===
-            localId
-        ){
-
-            onlineMyColor =
-                "white";
-
-        }else if(
-            localId &&
-            game.black_player_id ===
-            localId
-        ){
-
-            onlineMyColor =
-                "black";
-
-        }
-
-        console.log(
-            "♟️ ONLINE COLOR:",
-            onlineMyColor
-        );
-
-        if(
-            onlineMatch
-        ){
-
-            if(
-                onlineMatch.you
-            ){
-
-                onlineMatch.you.color =
-                    onlineMyColor;
+                return;
 
             }
 
-            localStorage.setItem(
-                "chess_fk_match",
-                JSON.stringify(
-                    onlineMatch
-                )
-            );
 
-        }
+            if(currentPlayer === "white"){
 
+                whiteTime--;
 
-        // Charger les coups déjà joués
+                if(whiteTime <= 0){
 
-        const movesResult =
-            await onlineSupabase
-                .from("online_moves")
-                .select("*")
-                .eq(
-                    "game_id",
-                    onlineGameId
-                )
-                .order(
-                    "created_at",
-                    {
-                        ascending:true
-                    }
-                );
+                    whiteTime = 0;
 
-        if(
-            movesResult.error
-        ){
+                    updateClocks();
 
-            console.warn(
-                "⚠️ Impossible de charger les anciens coups :",
-                movesResult.error
-            );
+                    finishGame(
+                        "⏰ TIME OUT ! BLACK WINS !"
+                    );
 
-            return;
-
-        }
-
-        const moves =
-            movesResult.data || [];
-
-        if(
-            moves.length > 0
-        ){
-
-            resetOnlineBoard();
-
-            for(
-                const moveRow of moves
-            ){
-
-                if(
-                    !moveRow.move_data
-                ){
-
-                    continue;
+                    return;
 
                 }
 
-                const move =
-                    typeof moveRow.move_data ===
-                    "string"
-                        ? JSON.parse(
-                            moveRow.move_data
-                        )
-                        : moveRow.move_data;
+            }
 
-                applyOnlineMove(
-                    move,
-                    true
-                );
+            else{
 
-                onlineLastMoveId =
-                    moveRow.id;
+                blackTime--;
+
+                if(blackTime <= 0){
+
+                    blackTime = 0;
+
+                    updateClocks();
+
+                    finishGame(
+                        "⏰ TIME OUT ! WHITE WINS !"
+                    );
+
+                    return;
+
+                }
 
             }
 
-        }
 
-    }catch(error){
+            updateClocks();
 
-        console.error(
-            "❌ Erreur online game :",
-            error
+        },1000);
+
+}
+
+
+// ======================================
+// ARRÊTER LA PENDULE
+// ======================================
+
+function stopClock(){
+
+    if(clockInterval !== null){
+
+        clearInterval(
+            clockInterval
         );
+
+        clockInterval = null;
 
     }
 
@@ -576,402 +462,240 @@ async function chessfkLoadOnlineGame(){
 
 
 // ======================================
-// RESET ONLINE BOARD
+// AJOUTER L'INCRÉMENT
 // ======================================
 
-function resetOnlineBoard(){
+function addIncrement(player){
 
-    pieces = [
+    if(selectedIncrement <= 0){
 
-        ["♜","♞","♝","♛","♚","♝","♞","♜"],
+        return;
 
-        ["♟","♟","♟","♟","♟","♟","♟","♟"],
+    }
 
-        ["","","","","","","",""],
 
-        ["","","","","","","",""],
+    if(player === "white"){
 
-        ["","","","","","","",""],
+        whiteTime +=
+            selectedIncrement;
 
-        ["","","","","","","",""],
+    }
 
-        ["♙","♙","♙","♙","♙","♙","♙","♙"],
+    else{
 
-        ["♖","♘","♗","♕","♔","♗","♘","♖"]
+        blackTime +=
+            selectedIncrement;
 
-    ];
+    }
+
+
+    updateClocks();
+
+}
+
+
+// ======================================
+// SAUVEGARDER POSITION
+// ======================================
+
+function saveGameState(){
+
+    return {
+
+        pieces:
+            pieces.map(
+                row => [...row]
+            ),
+
+        currentPlayer:
+            currentPlayer,
+
+        gameOver:
+            gameOver,
+
+        lastMove:
+            lastMove
+            ? {...lastMove}
+            : null,
+
+        whiteKingMoved:
+            whiteKingMoved,
+
+        blackKingMoved:
+            blackKingMoved,
+
+        whiteRookLeftMoved:
+            whiteRookLeftMoved,
+
+        whiteRookRightMoved:
+            whiteRookRightMoved,
+
+        blackRookLeftMoved:
+            blackRookLeftMoved,
+
+        blackRookRightMoved:
+            blackRookRightMoved,
+
+        whiteTime:
+            whiteTime,
+
+        blackTime:
+            blackTime,
+
+        clockStarted:
+            clockStarted,
+
+        moveNumber:
+            moveNumber,
+
+        whiteMoveNotation:
+            whiteMoveNotation,
+
+        movesHTML:
+            document.getElementById("moves")
+            ? document.getElementById("moves").innerHTML
+            : ""
+
+    };
+
+}
+
+
+// ======================================
+// RESTAURER POSITION
+// ======================================
+
+function restoreGameState(state){
+
+    pieces =
+        state.pieces.map(
+            row => [...row]
+        );
+
 
     currentPlayer =
-        "white";
+        state.currentPlayer;
 
-    selectedRow =
-        null;
-
-    selectedCol =
-        null;
-
-    possibleMoves =
-        [];
 
     gameOver =
-        false;
+        state.gameOver;
 
-    moveHistory =
-        [];
 
     lastMove =
-        null;
+        state.lastMove
+        ? {...state.lastMove}
+        : null;
 
-    enPassantTarget =
-        null;
 
     whiteKingMoved =
-        false;
+        state.whiteKingMoved;
+
 
     blackKingMoved =
-        false;
-
-    whiteLeftRookMoved =
-        false;
-
-    whiteRightRookMoved =
-        false;
-
-    blackLeftRookMoved =
-        false;
-
-    blackRightRookMoved =
-        false;
-
-    whiteCaptured =
-        [];
-
-    blackCaptured =
-        [];
-
-}
+        state.blackKingMoved;
 
 
-// ======================================
-// ÉCOUTER LES COUPS ONLINE
-// ======================================
+    whiteRookLeftMoved =
+        state.whiteRookLeftMoved;
 
-function chessfkSubscribeOnlineMoves(){
 
-    if(
-        !onlineSupabase ||
-        !onlineGameId
-    ){
+    whiteRookRightMoved =
+        state.whiteRookRightMoved;
 
-        return;
 
-    }
+    blackRookLeftMoved =
+        state.blackRookLeftMoved;
 
-    if(
-        onlineChannel
-    ){
 
-        onlineSupabase.removeChannel(
-            onlineChannel
+    blackRookRightMoved =
+        state.blackRookRightMoved;
+
+
+    whiteTime =
+        state.whiteTime;
+
+
+    blackTime =
+        state.blackTime;
+
+
+    clockStarted =
+        state.clockStarted;
+
+
+    moveNumber =
+        state.moveNumber;
+
+
+    whiteMoveNotation =
+        state.whiteMoveNotation;
+
+
+    const moves =
+        document.getElementById(
+            "moves"
         );
 
+
+    if(moves){
+
+        moves.innerHTML =
+            state.movesHTML;
+
     }
 
-    onlineChannel =
-        onlineSupabase
-            .channel(
-                "online-game-" +
-                onlineGameId
-            )
-            .on(
-                "postgres_changes",
-                {
 
-                    event:
-                        "INSERT",
+    selectedRow = null;
 
-                    schema:
-                        "public",
+    selectedCol = null;
 
-                    table:
-                        "online_moves",
+    possibleMoves = [];
 
-                    filter:
-                        "game_id=eq." +
-                        onlineGameId
+    arrows = [];
 
-                },
+    drawingArrow = null;
 
-                payload => {
 
-                    const row =
-                        payload.new;
+    drawBoard();
 
-                    if(
-                        !row
-                    ){
 
-                        return;
+    if(
+        clockStarted &&
+        !gameOver
+    ){
 
-                    }
+        startClock();
 
-                    if(
-                        row.id ===
-                        onlineLastMoveId
-                    ){
+    }
 
-                        return;
+    else{
 
-                    }
+        stopClock();
 
-                    let myId =
-                        null;
+    }
 
-                    try{
 
-                        myId =
-                            localStorage.getItem(
-                                "chess_fk_user_id"
-                            );
+    updateClocks();
 
-                    }catch(error){
-
-                    }
-
-                    if(
-                        myId &&
-                        row.player_id ===
-                        myId
-                    ){
-
-                        onlineLastMoveId =
-                            row.id;
-
-                        return;
-
-                    }
-
-                    let move =
-                        row.move_data;
-
-                    try{
-
-                        if(
-                            typeof move ===
-                            "string"
-                        ){
-
-                            move =
-                                JSON.parse(
-                                    move
-                                );
-
-                        }
-
-                    }catch(error){
-
-                        console.error(
-                            "❌ Move parse error",
-                            error
-                        );
-
-                        return;
-
-                    }
-
-                    onlineLastMoveId =
-                        row.id;
-
-                    console.log(
-                        "📥 ADVERSAIRE JOUE :",
-                        move
-                    );
-
-                    applyOnlineMove(
-                        move,
-                        false
-                    );
-
-                }
-
-            )
-            .subscribe(
-                status => {
-
-                    console.log(
-                        "📡 ONLINE CHANNEL:",
-                        status
-                    );
-
-                }
-            );
+    updateGameStatus();
 
 }
 
 
 // ======================================
-// ENVOYER UN COUP
-// ======================================
-
-async function sendOnlineMove(move){
-
-    if(
-        !isOnlineGame() ||
-        !onlineSupabase ||
-        !onlineGameId
-    ){
-
-        return;
-
-    }
-
-    let playerId =
-        null;
-
-    try{
-
-        playerId =
-            localStorage.getItem(
-                "chess_fk_user_id"
-            );
-
-    }catch(error){
-
-    }
-
-    const result =
-        await onlineSupabase
-            .from("online_moves")
-            .insert({
-
-                game_id:
-                    onlineGameId,
-
-                player_id:
-                    playerId,
-
-                move_data:
-                    move
-
-            })
-            .select()
-            .single();
-
-    if(
-        result.error
-    ){
-
-        console.error(
-            "❌ Impossible d'envoyer le coup :",
-            result.error
-        );
-
-        return;
-
-    }
-
-    onlineLastMoveId =
-        result.data.id;
-
-}
-
-
-// ======================================
-// APPLIQUER UN COUP ONLINE
-// ======================================
-
-function applyOnlineMove(
-    move,
-    fromHistory
-){
-
-    if(
-        !move
-    ){
-
-        return;
-
-    }
-
-    const fromRow =
-        move.fromRow;
-
-    const fromCol =
-        move.fromCol;
-
-    const toRow =
-        move.toRow;
-
-    const toCol =
-        move.toCol;
-
-    if(
-        typeof fromRow !== "number" ||
-        typeof fromCol !== "number" ||
-        typeof toRow !== "number" ||
-        typeof toCol !== "number"
-    ){
-
-        return;
-
-    }
-
-    const piece =
-        pieces[fromRow][fromCol];
-
-    if(
-        !piece
-    ){
-
-        return;
-
-    }
-
-    makeMove(
-        fromRow,
-        fromCol,
-        toRow,
-        toCol,
-        {
-
-            onlineMove:true,
-
-            skipSend:true,
-
-            fromHistory:
-                fromHistory === true
-
-        }
-    );
-
-}
-
-
-// ======================================
-// DESSINER L'ÉCHIQUIER
+// DESSINER LE PLATEAU
 // ======================================
 
 function drawBoard(){
 
-    if(
-        !boardElement
-    ){
+    if(!board){
 
         return;
 
     }
 
-    boardElement.innerHTML =
-        "";
 
-    boardElement.style.display =
-        "grid";
-
-    boardElement.style.gridTemplateColumns =
-        `repeat(8, ${squareSize}px)`;
-
-    boardElement.style.gridTemplateRows =
-        `repeat(8, ${squareSize}px)`;
+    board.innerHTML = "";
 
 
     for(
@@ -991,20 +715,15 @@ function drawBoard(){
                     "div"
                 );
 
-            square.className =
-                "square";
 
-            square.dataset.row =
-                row;
+            square.classList.add(
+                "square"
+            );
 
-            square.dataset.col =
-                col;
 
-            square.style.width =
-                squareSize + "px";
+            square.dataset.row = row;
 
-            square.style.height =
-                squareSize + "px";
+            square.dataset.col = col;
 
 
             if(
@@ -1012,86 +731,132 @@ function drawBoard(){
             ){
 
                 square.classList.add(
-                    "light-square"
+                    "white"
                 );
 
-            }else{
+            }
+
+            else{
 
                 square.classList.add(
-                    "dark-square"
+                    "black"
                 );
 
             }
 
 
-            const piece =
-                pieces[row][col];
-
             if(
-                piece
+                pieces[row][col] === "♔" &&
+                isKingInCheck("white")
             ){
 
-                const pieceElement =
+                square.classList.add(
+                    "king-in-check"
+                );
+
+            }
+
+
+            if(
+                pieces[row][col] === "♚" &&
+                isKingInCheck("black")
+            ){
+
+                square.classList.add(
+                    "king-in-check"
+                );
+
+            }
+
+
+            if(
+                row === selectedRow &&
+                col === selectedCol
+            ){
+
+                square.style.outline =
+                    "4px solid yellow";
+
+            }
+
+
+            if(
+                markedSquare !== null &&
+                markedSquare.row === row &&
+                markedSquare.col === col
+            ){
+
+                square.classList.add(
+                    "marked-square"
+                );
+
+            }
+
+
+            for(
+                let move of possibleMoves
+            ){
+
+                if(
+                    move[0] === row &&
+                    move[1] === col
+                ){
+
+                    square.classList.add(
+                        "possible-move"
+                    );
+
+                }
+
+            }
+
+
+            if(
+                pieces[row][col] !== ""
+            ){
+
+                const piece =
                     document.createElement(
                         "span"
                     );
 
-                pieceElement.className =
-                    "piece";
 
-                pieceElement.textContent =
-                    piece;
+                piece.classList.add(
+                    "piece"
+                );
+
+
+                piece.textContent =
+                    pieces[row][col];
+
+
+                if(
+                    isBlackPiece(
+                        pieces[row][col]
+                    )
+                ){
+
+                    piece.classList.add(
+                        "black-piece"
+                    );
+
+                }
+
+                else if(
+                    isWhitePiece(
+                        pieces[row][col]
+                    )
+                ){
+
+                    piece.classList.add(
+                        "white-piece"
+                    );
+
+                }
+
 
                 square.appendChild(
-                    pieceElement
-                );
-
-            }
-
-
-            if(
-                selectedRow === row &&
-                selectedCol === col
-            ){
-
-                square.classList.add(
-                    "selected"
-                );
-
-            }
-
-
-            if(
-                isPossibleMove(
-                    row,
-                    col
-                )
-            ){
-
-                square.classList.add(
-                    "possible-move"
-                );
-
-            }
-
-
-            if(
-                lastMove &&
-                (
-                    (
-                        lastMove.fromRow === row &&
-                        lastMove.fromCol === col
-                    )
-                    ||
-                    (
-                        lastMove.toRow === row &&
-                        lastMove.toCol === col
-                    )
-                )
-            ){
-
-                square.classList.add(
-                    "last-move"
+                    piece
                 );
 
             }
@@ -1099,7 +864,9 @@ function drawBoard(){
 
             square.addEventListener(
                 "click",
-                () => {
+                function(){
+
+                    clearArrows();
 
                     clickSquare(
                         row,
@@ -1110,7 +877,7 @@ function drawBoard(){
             );
 
 
-            boardElement.appendChild(
+            board.appendChild(
                 square
             );
 
@@ -1118,82 +885,32 @@ function drawBoard(){
 
     }
 
-}
 
+    applyBoardSize();
 
-// ======================================
-// TESTER CASE POSSIBLE
-// ======================================
-
-function isPossibleMove(
-    row,
-    col
-){
-
-    return possibleMoves.some(
-        move =>
-
-            move.row === row &&
-            move.col === col
-    );
+    drawArrows();
 
 }
 
 
 // ======================================
-// CLIC SUR UNE CASE
+// CLIC DROIT — MARQUAGE
 // ======================================
 
-function clickSquare(
-    row,
-    col
-){
+board.addEventListener(
+    "contextmenu",
+    function(event){
 
-    if(
-        gameOver
-    ){
-
-        return;
-
-    }
+        event.preventDefault();
 
 
-    // ONLINE :
-    // le joueur ne peut jouer
-    // que quand c'est sa couleur.
-
-    if(
-        isOnlineGame() &&
-        !canHumanMove()
-    ){
-
-        console.log(
-            "⏳ Ce n'est pas ton tour."
-        );
-
-        return;
-
-    }
+        const square =
+            getSquareFromMouse(
+                event
+            );
 
 
-    const clickedPiece =
-        pieces[row][col];
-
-
-    // ==================================
-    // PREMIER CLIC
-    // ==================================
-
-    if(
-        selectedRow === null
-    ){
-
-        if(
-            currentPlayer === "white" &&
-            !isWhitePiece(
-                clickedPiece
-            )
-        ){
+        if(!square){
 
             return;
 
@@ -1201,2206 +918,82 @@ function clickSquare(
 
 
         if(
-            currentPlayer === "black" &&
-            !isBlackPiece(
-                clickedPiece
-            )
+            markedSquare !== null &&
+            markedSquare.row === square.row &&
+            markedSquare.col === square.col
         ){
 
-            return;
+            markedSquare = null;
+
+        }
+
+        else{
+
+            markedSquare = {
+
+                row: square.row,
+
+                col: square.col
+
+            };
 
         }
 
 
-        selectedRow =
-            row;
-
-        selectedCol =
-            col;
-
-        possibleMoves =
-            getLegalMoves(
-                row,
-                col
-            );
-
         drawBoard();
 
-        return;
-
     }
-
-
-    // ==================================
-    // DEUXIÈME CLIC SUR MÊME CASE
-    // ==================================
-
-    if(
-        selectedRow === row &&
-        selectedCol === col
-    ){
-
-        selectedRow =
-            null;
-
-        selectedCol =
-            null;
-
-        possibleMoves =
-            [];
-
-        drawBoard();
-
-        return;
-
-    }
-
-
-    // ==================================
-    // CHANGER DE PIÈCE
-    // ==================================
-
-    if(
-        getPieceColor(
-            clickedPiece
-        ) === currentPlayer
-    ){
-
-        selectedRow =
-            row;
-
-        selectedCol =
-            col;
-
-        possibleMoves =
-            getLegalMoves(
-                row,
-                col
-            );
-
-        drawBoard();
-
-        return;
-
-    }
-
-
-    // ==================================
-    // VÉRIFIER LE COUP
-    // ==================================
-
-    const legal =
-        possibleMoves.some(
-            move =>
-
-                move.row === row &&
-                move.col === col
-        );
-
-
-    if(
-        !legal
-    ){
-
-        selectedRow =
-            null;
-
-        selectedCol =
-            null;
-
-        possibleMoves =
-            [];
-
-        drawBoard();
-
-        return;
-
-    }
-
-
-    const fromRow =
-        selectedRow;
-
-    const fromCol =
-        selectedCol;
-
-
-    selectedRow =
-        null;
-
-    selectedCol =
-        null;
-
-    possibleMoves =
-        [];
-
-
-    makeMove(
-        fromRow,
-        fromCol,
-        row,
-        col,
-        {
-
-            onlineMove:
-                isOnlineGame(),
-
-            skipSend:
-                false,
-
-            fromHistory:
-                false
-
-        }
-    );
-
-}
+);
 
 
 // ======================================
-// EFFECTUER UN COUP
+// VÉRIFIER COUP LÉGAL
 // ======================================
 
-function makeMove(
+function isMoveLegal(
     fromRow,
     fromCol,
     toRow,
-    toCol,
-    options = {}
+    toCol
 ){
-
-    if(
-        gameOver
-    ){
-
-        return;
-
-    }
 
     const movingPiece =
         pieces[fromRow][fromCol];
 
-    if(
-        !movingPiece
-    ){
 
-        return;
-
-    }
-
-
-    const movingColor =
-        getPieceColor(
-            movingPiece
-        );
-
-    if(
-        movingColor !==
-        currentPlayer
-    ){
-
-        return;
-
-    }
-
-
-    const targetPiece =
+    const capturedPiece =
         pieces[toRow][toCol];
 
-
-    // ==================================
-    // SAUVEGARDE
-    // ==================================
-
-    const moveData = {
-
-        fromRow:
-            fromRow,
-
-        fromCol:
-            fromCol,
-
-        toRow:
-            toRow,
-
-        toCol:
-            toCol,
-
-        piece:
-            movingPiece,
-
-        captured:
-            targetPiece,
-
-        promotion:
-            null,
-
-        castling:
-            false,
-
-        enPassant:
-            false
-
-    };
-
-
-    // ==================================
-    // EN PASSANT
-    // ==================================
-
-    if(
-        (
-            movingPiece === "♙" ||
-            movingPiece === "♟"
-        )
-        &&
-        fromCol !== toCol
-        &&
-        !targetPiece
-    ){
-
-        if(
-            enPassantTarget &&
-            enPassantTarget.row ===
-            toRow &&
-            enPassantTarget.col ===
-            toCol
-        ){
-
-            const capturedRow =
-                movingPiece === "♙"
-                    ? toRow + 1
-                    : toRow - 1;
-
-            const capturedPiece =
-                pieces[capturedRow][toCol];
-
-            if(
-                capturedPiece
-            ){
-
-                moveData.captured =
-                    capturedPiece;
-
-                moveData.enPassant =
-                    true;
-
-                pieces[capturedRow][toCol] =
-                    "";
-
-                if(
-                    isWhitePiece(
-                        capturedPiece
-                    )
-                ){
-
-                    whiteCaptured.push(
-                        capturedPiece
-                    );
-
-                }else{
-
-                    blackCaptured.push(
-                        capturedPiece
-                    );
-
-                }
-
-            }
-
-        }
-
-    }
-
-
-    // ==================================
-    // CAPTURE NORMALE
-    // ==================================
-
-    if(
-        targetPiece
-    ){
-
-        if(
-            isWhitePiece(
-                targetPiece
-            )
-        ){
-
-            whiteCaptured.push(
-                targetPiece
-            );
-
-        }else{
-
-            blackCaptured.push(
-                targetPiece
-            );
-
-        }
-
-    }
-
-
-    // ==================================
-    // DÉPLACEMENT
-    // ==================================
-
-    pieces[toRow][toCol] =
-        movingPiece;
-
-    pieces[fromRow][fromCol] =
-        "";
-
-
-    // ==================================
-    // ROQUE
-    // ==================================
-
-    if(
-        (
-            movingPiece === "♔" ||
-            movingPiece === "♚"
-        )
-        &&
-        Math.abs(
-            toCol - fromCol
-        ) === 2
-    ){
-
-        moveData.castling =
-            true;
-
-
-        if(
-            toCol > fromCol
-        ){
-
-            const rookFromCol =
-                7;
-
-            const rookToCol =
-                5;
-
-            pieces[toRow][rookToCol] =
-                pieces[toRow][rookFromCol];
-
-            pieces[toRow][rookFromCol] =
-                "";
-
-        }else{
-
-            const rookFromCol =
-                0;
-
-            const rookToCol =
-                3;
-
-            pieces[toRow][rookToCol] =
-                pieces[toRow][rookFromCol];
-
-            pieces[toRow][rookFromCol] =
-                "";
-
-        }
-
-    }
-
-
-    // ==================================
-    // MISE À JOUR ROQUES
-    // ==================================
-
-    updateCastlingRights(
-        movingPiece,
-        fromRow,
-        fromCol
-    );
-
-
-    // ==================================
-    // EN PASSANT CIBLE
-    // ==================================
-
-    enPassantTarget =
-        null;
-
-    if(
-        movingPiece === "♙" &&
-        fromRow === 6 &&
-        toRow === 4
-    ){
-
-        enPassantTarget = {
-
-            row:5,
-
-            col:fromCol
-
-        };
-
-    }
-
-    if(
-        movingPiece === "♟" &&
-        fromRow === 1 &&
-        toRow === 3
-    ){
-
-        enPassantTarget = {
-
-            row:2,
-
-            col:fromCol
-
-        };
-
-    }
-
-
-    // ==================================
-    // PROMOTION
-    // ==================================
-
-    if(
-        movingPiece === "♙" &&
-        toRow === 0
-    ){
-
-        const promotionPiece =
-            choosePromotion(
-                "white"
-            );
-
-        pieces[toRow][toCol] =
-            promotionPiece;
-
-        moveData.promotion =
-            promotionPiece;
-
-    }
-
-    if(
-        movingPiece === "♟" &&
-        toRow === 7
-    ){
-
-        const promotionPiece =
-            choosePromotion(
-                "black"
-            );
-
-        pieces[toRow][toCol] =
-            promotionPiece;
-
-        moveData.promotion =
-            promotionPiece;
-
-    }
-
-
-    lastMove =
-        {
-
-            fromRow:
-                fromRow,
-
-            fromCol:
-                fromCol,
-
-            toRow:
-                toRow,
-
-            toCol:
-                toCol
-
-        };
-
-
-    // ==================================
-    // NOTATION
-    // ==================================
-
-    const notation =
-        getMoveNotation(
-            movingPiece,
-            fromRow,
-            fromCol,
-            toRow,
-            toCol,
-            moveData
-        );
-
-    moveHistory.push(
-        notation
-    );
-
-
-    // ==================================
-    // CHANGER LE JOUEUR
-    // ==================================
-
-    currentPlayer =
-        currentPlayer === "white"
-            ? "black"
-            : "white";
-
-
-    updateMoveHistory();
-
-    drawBoard();
-
-    updateTurn();
-
-
-    // ==================================
-    // FIN DE PARTIE
-    // ==================================
-
-    checkGameState();
-
-
-    // ==================================
-    // ENVOI ONLINE
-    // ==================================
-
-    if(
-        options.onlineMove &&
-        !options.skipSend
-    ){
-
-        sendOnlineMove(
-            moveData
-        );
-
-    }
-
-
-    // ==================================
-    // FARIS AI
-    // ==================================
-
-    if(
-        !isOnlineGame() &&
-        !gameOver
-    ){
-
-        startFarisIfNeeded();
-
-    }
-
-}
-
-
-// ======================================
-// PROMOTION
-// ======================================
-
-function choosePromotion(
-    color
-){
-
-    if(
-        color === "white"
-    ){
-
-        return "♕";
-
-    }
-
-    return "♛";
-
-}
-
-
-// ======================================
-// ROQUE - DROITS
-// ======================================
-
-function updateCastlingRights(
-    piece,
-    row,
-    col
-){
-
-    if(
-        piece === "♔"
-    ){
-
-        whiteKingMoved =
-            true;
-
-    }
-
-    if(
-        piece === "♚"
-    ){
-
-        blackKingMoved =
-            true;
-
-    }
-
-    if(
-        piece === "♖"
-    ){
-
-        if(
-            row === 7 &&
-            col === 0
-        ){
-
-            whiteLeftRookMoved =
-                true;
-
-        }
-
-        if(
-            row === 7 &&
-            col === 7
-        ){
-
-            whiteRightRookMoved =
-                true;
-
-        }
-
-    }
-
-    if(
-        piece === "♜"
-    ){
-
-        if(
-            row === 0 &&
-            col === 0
-        ){
-
-            blackLeftRookMoved =
-                true;
-
-        }
-
-        if(
-            row === 0 &&
-            col === 7
-        ){
-
-            blackRightRookMoved =
-                true;
-
-        }
-
-    }
-
-}
-
-
-// ======================================
-// COUPS LÉGAUX
-// ======================================
-
-function getLegalMoves(
-    row,
-    col
-){
-
-    const piece =
-        pieces[row][col];
-
-    if(
-        !piece
-    ){
-
-        return [];
-
-    }
 
     const color =
-        getPieceColor(
-            piece
-        );
-
-    const pseudoMoves =
-        getPossibleMoves(
-            row,
-            col,
-            true
-        );
-
-    const legalMoves =
-        [];
-
-
-    for(
-        const move of pseudoMoves
-    ){
-
-        if(
-            isMoveSafe(
-                row,
-                col,
-                move.row,
-                move.col,
-                color
-            )
-        ){
-
-            legalMoves.push(
-                move
-            );
-
-        }
-
-    }
-
-    return legalMoves;
-
-}
-
-
-// ======================================
-// VÉRIFIER SI LE COUP EST LÉGAL
-// ======================================
-
-function isMoveSafe(
-    fromRow,
-    fromCol,
-    toRow,
-    toCol,
-    color
-){
-
-    const movingPiece =
-        pieces[fromRow][fromCol];
-
-    const targetPiece =
-        pieces[toRow][toCol];
-
-    let enPassantCaptured =
-        null;
-
-    let enPassantRow =
-        null;
-
-    let rookMove =
-        null;
-
-
-    // Simulation du coup
-
-    if(
-        (
-            movingPiece === "♙" ||
-            movingPiece === "♟"
+        isWhitePiece(
+            movingPiece
         )
-        &&
-        fromCol !== toCol &&
-        !targetPiece &&
-        enPassantTarget &&
-        enPassantTarget.row === toRow &&
-        enPassantTarget.col === toCol
-    ){
-
-        enPassantRow =
-            movingPiece === "♙"
-                ? toRow + 1
-                : toRow - 1;
-
-        enPassantCaptured =
-            pieces[enPassantRow][toCol];
-
-        pieces[enPassantRow][toCol] =
-            "";
-
-    }
-
-
-    if(
-        (
-            movingPiece === "♔" ||
-            movingPiece === "♚"
-        )
-        &&
-        Math.abs(
-            toCol - fromCol
-        ) === 2
-    ){
-
-        if(
-            isSquareAttacked(
-                fromRow,
-                fromCol,
-                color === "white"
-                    ? "black"
-                    : "white"
-            )
-        ){
-
-            if(
-                enPassantCaptured
-            ){
-
-                pieces[enPassantRow][toCol] =
-                    enPassantCaptured;
-
-            }
-
-            return false;
-
-        }
-
-
-        const direction =
-            toCol > fromCol
-                ? 1
-                : -1;
-
-        const middleCol =
-            fromCol + direction;
-
-        const enemyColor =
-            color === "white"
-                ? "black"
-                : "white";
-
-
-        // Le roi ne peut pas traverser
-        // une case attaquée.
-
-        if(
-            isSquareAttacked(
-                fromRow,
-                middleCol,
-                enemyColor
-            )
-        ){
-
-            if(
-                enPassantCaptured
-            ){
-
-                pieces[enPassantRow][toCol] =
-                    enPassantCaptured;
-
-            }
-
-            return false;
-
-        }
-
-
-        rookMove =
-            toCol > fromCol
-                ? {
-                    fromCol:7,
-                    toCol:5
-                }
-                : {
-                    fromCol:0,
-                    toCol:3
-                };
-
-
-        pieces[toRow][toCol] =
-            movingPiece;
-
-        pieces[fromRow][fromCol] =
-            "";
-
-        pieces[fromRow][rookMove.toCol] =
-            pieces[fromRow][rookMove.fromCol];
-
-        pieces[fromRow][rookMove.fromCol] =
-            "";
-
-
-        const safe =
-            !isKingInCheck(
-                color
-            );
-
-
-        pieces[fromRow][fromCol] =
-            movingPiece;
-
-        pieces[toRow][toCol] =
-            targetPiece;
-
-        pieces[fromRow][rookMove.fromCol] =
-            pieces[fromRow][rookMove.toCol];
-
-        pieces[fromRow][rookMove.toCol] =
-            "";
-
-
-        if(
-            enPassantCaptured
-        ){
-
-            pieces[enPassantRow][toCol] =
-                enPassantCaptured;
-
-        }
-
-        return safe;
-
-    }
+        ? "white"
+        : "black";
 
 
     pieces[toRow][toCol] =
         movingPiece;
+
 
     pieces[fromRow][fromCol] =
         "";
 
 
-    const safe =
-        !isKingInCheck(
-            color
-        );
+    const kingInCheck =
+        isKingInCheck(color);
 
 
     pieces[fromRow][fromCol] =
         movingPiece;
 
+
     pieces[toRow][toCol] =
-        targetPiece;
+        capturedPiece;
 
 
-    if(
-        enPassantCaptured
-    ){
-
-        pieces[enPassantRow][toCol] =
-            enPassantCaptured;
-
-    }
-
-    return safe;
-
-}
-
-
-// ======================================
-// POSSIBLES MOVES
-// ======================================
-
-function getPossibleMoves(
-    row,
-    col,
-    ignoreCheck = false
-){
-
-    const piece =
-        pieces[row][col];
-
-    if(
-        !piece
-    ){
-
-        return [];
-
-    }
-
-
-    switch(piece){
-
-        case "♙":
-
-            return getWhitePawnMoves(
-                row,
-                col
-            );
-
-        case "♟":
-
-            return getBlackPawnMoves(
-                row,
-                col
-            );
-
-        case "♖":
-
-        case "♜":
-
-            return getRookMoves(
-                row,
-                col
-            );
-
-        case "♗":
-
-        case "♝":
-
-            return getBishopMoves(
-                row,
-                col
-            );
-
-        case "♕":
-
-        case "♛":
-
-            return getQueenMoves(
-                row,
-                col
-            );
-
-        case "♘":
-
-        case "♞":
-
-            return getKnightMoves(
-                row,
-                col
-            );
-
-        case "♔":
-
-        case "♚":
-
-            return getKingMoves(
-                row,
-                col,
-                ignoreCheck
-            );
-
-    }
-
-    return [];
-
-}
-
-
-// ======================================
-// PION BLANC
-// ======================================
-
-function getWhitePawnMoves(
-    row,
-    col
-){
-
-    const moves =
-        [];
-
-
-    if(
-        row > 0 &&
-        pieces[row - 1][col] === ""
-    ){
-
-        moves.push({
-
-            row:row - 1,
-
-            col:col
-
-        });
-
-
-        if(
-            row === 6 &&
-            pieces[row - 2][col] === ""
-        ){
-
-            moves.push({
-
-                row:row - 2,
-
-                col:col
-
-            });
-
-        }
-
-    }
-
-
-    if(
-        row > 0 &&
-        col > 0 &&
-        isBlackPiece(
-            pieces[row - 1][col - 1]
-        )
-    ){
-
-        moves.push({
-
-            row:row - 1,
-
-            col:col - 1
-
-        });
-
-    }
-
-
-    if(
-        row > 0 &&
-        col < 7 &&
-        isBlackPiece(
-            pieces[row - 1][col + 1]
-        )
-    ){
-
-        moves.push({
-
-            row:row - 1,
-
-            col:col + 1
-
-        });
-
-    }
-
-
-    if(
-        enPassantTarget &&
-        row === 3 &&
-        Math.abs(
-            col -
-            enPassantTarget.col
-        ) === 1 &&
-        enPassantTarget.row === 2
-    ){
-
-        moves.push({
-
-            row:
-                enPassantTarget.row,
-
-            col:
-                enPassantTarget.col
-
-        });
-
-    }
-
-    return moves;
-
-}
-
-
-// ======================================
-// PION NOIR
-// ======================================
-
-function getBlackPawnMoves(
-    row,
-    col
-){
-
-    const moves =
-        [];
-
-
-    if(
-        row < 7 &&
-        pieces[row + 1][col] === ""
-    ){
-
-        moves.push({
-
-            row:row + 1,
-
-            col:col
-
-        });
-
-
-        if(
-            row === 1 &&
-            pieces[row + 2][col] === ""
-        ){
-
-            moves.push({
-
-                row:row + 2,
-
-                col:col
-
-            });
-
-        }
-
-    }
-
-
-    if(
-        row < 7 &&
-        col > 0 &&
-        isWhitePiece(
-            pieces[row + 1][col - 1]
-        )
-    ){
-
-        moves.push({
-
-            row:row + 1,
-
-            col:col - 1
-
-        });
-
-    }
-
-
-    if(
-        row < 7 &&
-        col < 7 &&
-        isWhitePiece(
-            pieces[row + 1][col + 1]
-        )
-    ){
-
-        moves.push({
-
-            row:row + 1,
-
-            col:col + 1
-
-        });
-
-    }
-
-
-    if(
-        enPassantTarget &&
-        row === 4 &&
-        Math.abs(
-            col -
-            enPassantTarget.col
-        ) === 1 &&
-        enPassantTarget.row === 5
-    ){
-
-        moves.push({
-
-            row:
-                enPassantTarget.row,
-
-            col:
-                enPassantTarget.col
-
-        });
-
-    }
-
-    return moves;
-
-}
-
-
-// ======================================
-// TOUR
-// ======================================
-
-function getRookMoves(
-    row,
-    col
-){
-
-    const moves =
-        [];
-
-    const directions = [
-
-        [-1,0],
-        [1,0],
-        [0,-1],
-        [0,1]
-
-    ];
-
-
-    for(
-        const direction of directions
-    ){
-
-        let newRow =
-            row + direction[0];
-
-        let newCol =
-            col + direction[1];
-
-
-        while(
-            newRow >= 0 &&
-            newRow < 8 &&
-            newCol >= 0 &&
-            newCol < 8
-        ){
-
-            const target =
-                pieces[newRow][newCol];
-
-
-            if(
-                target === ""
-            ){
-
-                moves.push({
-
-                    row:newRow,
-
-                    col:newCol
-
-                });
-
-            }else{
-
-                if(
-                    getPieceColor(
-                        target
-                    ) !==
-                    getPieceColor(
-                        pieces[row][col]
-                    )
-                ){
-
-                    moves.push({
-
-                        row:newRow,
-
-                        col:newCol
-
-                    });
-
-                }
-
-                break;
-
-            }
-
-
-            newRow +=
-                direction[0];
-
-            newCol +=
-                direction[1];
-
-        }
-
-    }
-
-    return moves;
-
-}
-
-
-// ======================================
-// FOU
-// ======================================
-
-function getBishopMoves(
-    row,
-    col
-){
-
-    const moves =
-        [];
-
-    const directions = [
-
-        [-1,-1],
-        [-1,1],
-        [1,-1],
-        [1,1]
-
-    ];
-
-
-    for(
-        const direction of directions
-    ){
-
-        let newRow =
-            row + direction[0];
-
-        let newCol =
-            col + direction[1];
-
-
-        while(
-            newRow >= 0 &&
-            newRow < 8 &&
-            newCol >= 0 &&
-            newCol < 8
-        ){
-
-            const target =
-                pieces[newRow][newCol];
-
-
-            if(
-                target === ""
-            ){
-
-                moves.push({
-
-                    row:newRow,
-
-                    col:newCol
-
-                });
-
-            }else{
-
-                if(
-                    getPieceColor(
-                        target
-                    ) !==
-                    getPieceColor(
-                        pieces[row][col]
-                    )
-                ){
-
-                    moves.push({
-
-                        row:newRow,
-
-                        col:newCol
-
-                    });
-
-                }
-
-                break;
-
-            }
-
-
-            newRow +=
-                direction[0];
-
-            newCol +=
-                direction[1];
-
-        }
-
-    }
-
-    return moves;
-
-}
-
-
-// ======================================
-// DAME
-// ======================================
-
-function getQueenMoves(
-    row,
-    col
-){
-
-    return [
-
-        ...getRookMoves(
-            row,
-            col
-        ),
-
-        ...getBishopMoves(
-            row,
-            col
-        )
-
-    ];
-
-}
-
-
-// ======================================
-// CAVALIER
-// ======================================
-
-function getKnightMoves(
-    row,
-    col
-){
-
-    const moves =
-        [];
-
-    const directions = [
-
-        [-2,-1],
-        [-2,1],
-
-        [-1,-2],
-        [-1,2],
-
-        [1,-2],
-        [1,2],
-
-        [2,-1],
-        [2,1]
-
-    ];
-
-
-    const ownColor =
-        getPieceColor(
-            pieces[row][col]
-        );
-
-
-    for(
-        const direction of directions
-    ){
-
-        const newRow =
-            row + direction[0];
-
-        const newCol =
-            col + direction[1];
-
-
-        if(
-            newRow < 0 ||
-            newRow > 7 ||
-            newCol < 0 ||
-            newCol > 7
-        ){
-
-            continue;
-
-        }
-
-
-        const target =
-            pieces[newRow][newCol];
-
-
-        if(
-            !target ||
-            getPieceColor(
-                target
-            ) !== ownColor
-        ){
-
-            moves.push({
-
-                row:newRow,
-
-                col:newCol
-
-            });
-
-        }
-
-    }
-
-    return moves;
-
-}
-
-
-// ======================================
-// ROI + ROQUE
-// ======================================
-
-function getKingMoves(
-    row,
-    col,
-    ignoreCheck = false
-){
-
-    const moves =
-        [];
-
-    const directions = [
-
-        [-1,-1],
-        [-1,0],
-        [-1,1],
-
-        [0,-1],
-        [0,1],
-
-        [1,-1],
-        [1,0],
-        [1,1]
-
-    ];
-
-    const ownColor =
-        getPieceColor(
-            pieces[row][col]
-        );
-
-
-    for(
-        const direction of directions
-    ){
-
-        const newRow =
-            row + direction[0];
-
-        const newCol =
-            col + direction[1];
-
-
-        if(
-            newRow < 0 ||
-            newRow > 7 ||
-            newCol < 0 ||
-            newCol > 7
-        ){
-
-            continue;
-
-        }
-
-
-        const target =
-            pieces[newRow][newCol];
-
-
-        if(
-            !target ||
-            getPieceColor(
-                target
-            ) !== ownColor
-        ){
-
-            moves.push({
-
-                row:newRow,
-
-                col:newCol
-
-            });
-
-        }
-
-    }
-
-
-    // ==================================
-    // ROQUE BLANC
-    // ==================================
-
-    if(
-        ownColor === "white" &&
-        !whiteKingMoved &&
-        row === 7 &&
-        col === 4
-    ){
-
-        const enemy =
-            "black";
-
-
-        // Petit roque
-
-        if(
-            !whiteRightRookMoved &&
-            pieces[7][7] === "♖" &&
-            pieces[7][5] === "" &&
-            pieces[7][6] === "" &&
-            !isSquareAttacked(
-                7,
-                4,
-                enemy
-            ) &&
-            !isSquareAttacked(
-                7,
-                5,
-                enemy
-            ) &&
-            !isSquareAttacked(
-                7,
-                6,
-                enemy
-            )
-        ){
-
-            moves.push({
-
-                row:7,
-
-                col:6
-
-            });
-
-        }
-
-
-        // Grand roque
-
-        if(
-            !whiteLeftRookMoved &&
-            pieces[7][0] === "♖" &&
-            pieces[7][1] === "" &&
-            pieces[7][2] === "" &&
-            pieces[7][3] === "" &&
-            !isSquareAttacked(
-                7,
-                4,
-                enemy
-            ) &&
-            !isSquareAttacked(
-                7,
-                3,
-                enemy
-            ) &&
-            !isSquareAttacked(
-                7,
-                2,
-                enemy
-            )
-        ){
-
-            moves.push({
-
-                row:7,
-
-                col:2
-
-            });
-
-        }
-
-    }
-
-
-    // ==================================
-    // ROQUE NOIR
-    // ==================================
-
-    if(
-        ownColor === "black" &&
-        !blackKingMoved &&
-        row === 0 &&
-        col === 4
-    ){
-
-        const enemy =
-            "white";
-
-
-        // Petit roque
-
-        if(
-            !blackRightRookMoved &&
-            pieces[0][7] === "♜" &&
-            pieces[0][5] === "" &&
-            pieces[0][6] === "" &&
-            !isSquareAttacked(
-                0,
-                4,
-                enemy
-            ) &&
-            !isSquareAttacked(
-                0,
-                5,
-                enemy
-            ) &&
-            !isSquareAttacked(
-                0,
-                6,
-                enemy
-            )
-        ){
-
-            moves.push({
-
-                row:0,
-
-                col:6
-
-            });
-
-        }
-
-
-        // Grand roque
-
-        if(
-            !blackLeftRookMoved &&
-            pieces[0][0] === "♜" &&
-            pieces[0][1] === "" &&
-            pieces[0][2] === "" &&
-            pieces[0][3] === "" &&
-            !isSquareAttacked(
-                0,
-                4,
-                enemy
-            ) &&
-            !isSquareAttacked(
-                0,
-                3,
-                enemy
-            ) &&
-            !isSquareAttacked(
-                0,
-                2,
-                enemy
-            )
-        ){
-
-            moves.push({
-
-                row:0,
-
-                col:2
-
-            });
-
-        }
-
-    }
-
-
-    return moves;
-
-}
-
-
-// ======================================
-// CASE ATTAQUÉE
-// ======================================
-
-function isSquareAttacked(
-    targetRow,
-    targetCol,
-    byColor
-){
-
-    for(
-        let row = 0;
-        row < 8;
-        row++
-    ){
-
-        for(
-            let col = 0;
-            col < 8;
-            col++
-        ){
-
-            const piece =
-                pieces[row][col];
-
-            if(
-                !piece ||
-                getPieceColor(
-                    piece
-                ) !== byColor
-            ){
-
-                continue;
-
-            }
-
-
-            // Pions
-
-            if(
-                piece === "♙"
-            ){
-
-                if(
-                    row - 1 === targetRow &&
-                    (
-                        col - 1 === targetCol ||
-                        col + 1 === targetCol
-                    )
-                ){
-
-                    return true;
-
-                }
-
-                continue;
-
-            }
-
-
-            if(
-                piece === "♟"
-            ){
-
-                if(
-                    row + 1 === targetRow &&
-                    (
-                        col - 1 === targetCol ||
-                        col + 1 === targetCol
-                    )
-                ){
-
-                    return true;
-
-                }
-
-                continue;
-
-            }
-
-
-            // Roi
-
-            if(
-                piece === "♔" ||
-                piece === "♚"
-            ){
-
-                if(
-                    Math.abs(
-                        row - targetRow
-                    ) <= 1 &&
-                    Math.abs(
-                        col - targetCol
-                    ) <= 1
-                ){
-
-                    return true;
-
-                }
-
-                continue;
-
-            }
-
-
-            const moves =
-                getPossibleMoves(
-                    row,
-                    col,
-                    true
-                );
-
-
-            for(
-                const move of moves
-            ){
-
-                if(
-                    move.row === targetRow &&
-                    move.col === targetCol
-                ){
-
-                    return true;
-
-                }
-
-            }
-
-        }
-
-    }
-
-    return false;
-
-}
-
-
-// ======================================
-// ROI EN ÉCHEC
-// ======================================
-
-function isKingInCheck(
-    color
-){
-
-    const king =
-        color === "white"
-            ? "♔"
-            : "♚";
-
-
-    for(
-        let row = 0;
-        row < 8;
-        row++
-    ){
-
-        for(
-            let col = 0;
-            col < 8;
-            col++
-        ){
-
-            if(
-                pieces[row][col] ===
-                king
-            ){
-
-                return isSquareAttacked(
-                    row,
-                    col,
-                    color === "white"
-                        ? "black"
-                        : "white"
-                );
-
-            }
-
-        }
-
-    }
-
-    return false;
-
-}
-
-
-// ======================================
-// JOUEUR A UN COUP LÉGAL ?
-// ======================================
-
-function hasLegalMove(
-    color
-){
-
-    for(
-        let row = 0;
-        row < 8;
-        row++
-    ){
-
-        for(
-            let col = 0;
-            col < 8;
-            col++
-        ){
-
-            const piece =
-                pieces[row][col];
-
-            if(
-                !piece ||
-                getPieceColor(
-                    piece
-                ) !== color
-            ){
-
-                continue;
-
-            }
-
-
-            const legalMoves =
-                getLegalMoves(
-                    row,
-                    col
-                );
-
-
-            if(
-                legalMoves.length > 0
-            ){
-
-                return true;
-
-            }
-
-        }
-
-    }
-
-    return false;
-
-}
-
-
-// ======================================
-// VÉRIFIER FIN DE PARTIE
-// ======================================
-
-function checkGameState(){
-
-    if(
-        gameOver
-    ){
-
-        return;
-
-    }
-
-    const player =
-        currentPlayer;
-
-    const inCheck =
-        isKingInCheck(
-            player
-        );
-
-    const hasMove =
-        hasLegalMove(
-            player
-        );
-
-
-    // ==================================
-    // ÉCHEC ET MAT
-    // ==================================
-
-    if(
-        inCheck &&
-        !hasMove
-    ){
-
-        gameOver =
-            true;
-
-        stopClock();
-
-        const winner =
-            player === "white"
-                ? "BLACK"
-                : "WHITE";
-
-        showGameResult(
-            "CHECKMATE",
-            winner +
-            " WINS BY CHECKMATE."
-        );
-
-        return;
-
-    }
-
-
-    // ==================================
-    // PAT / STALEMATE
-    // ==================================
-    //
-    // Le joueur n'est PAS en échec
-    // mais aucune pièce ne peut jouer.
-    // Résultat : MATCH NUL.
-    //
-    // ==================================
-
-    if(
-        !inCheck &&
-        !hasMove
-    ){
-
-        gameOver =
-            true;
-
-        stopClock();
-
-        showGameResult(
-            "DRAW",
-            "STALEMATE — NO LEGAL MOVE."
-        );
-
-        return;
-
-    }
-
-
-    // ==================================
-    // ÉCHEC SIMPLE
-    // ==================================
-
-    updateTurn();
+    return !kingInCheck;
 
 }
 
@@ -3415,555 +1008,185 @@ function getMoveNotation(
     fromCol,
     toRow,
     toCol,
-    moveData
+    captured
 ){
 
     const files =
-        ["a","b","c","d","e","f","g","h"];
+        [
+            "a",
+            "b",
+            "c",
+            "d",
+            "e",
+            "f",
+            "g",
+            "h"
+        ];
 
-    const ranks =
-        ["8","7","6","5","4","3","2","1"];
+
+    const destination =
+        files[toCol]
+        +
+        (8 - toRow);
 
 
     if(
-        moveData.castling
+        piece === "♙" ||
+        piece === "♟"
     ){
 
-        return toCol === 6
-            ? "O-O"
-            : "O-O-O";
+        if(captured){
+
+            return (
+                files[fromCol]
+                +
+                "x"
+                +
+                destination
+            );
+
+        }
+
+
+        return destination;
 
     }
 
 
-    let pieceLetter =
-        "";
+    let letter = "";
 
-    if(
-        piece === "♖" ||
-        piece === "♜"
-    ){
-
-        pieceLetter =
-            "R";
-
-    }
 
     if(
         piece === "♘" ||
         piece === "♞"
     ){
 
-        pieceLetter =
-            "N";
+        letter = "N";
 
     }
 
-    if(
+    else if(
         piece === "♗" ||
         piece === "♝"
     ){
 
-        pieceLetter =
-            "B";
+        letter = "B";
 
     }
 
-    if(
+    else if(
+        piece === "♖" ||
+        piece === "♜"
+    ){
+
+        letter = "R";
+
+    }
+
+    else if(
         piece === "♕" ||
         piece === "♛"
     ){
 
-        pieceLetter =
-            "Q";
+        letter = "Q";
 
     }
 
-    if(
+    else if(
         piece === "♔" ||
         piece === "♚"
     ){
 
-        pieceLetter =
-            "K";
+        letter = "K";
 
     }
 
 
-    const capture =
-        moveData.captured
-            ? "x"
-            : "";
+    if(captured){
 
-
-    let notation =
-        pieceLetter +
-        capture +
-        files[toCol] +
-        ranks[toRow];
-
-
-    if(
-        moveData.promotion
-    ){
-
-        const promotionMap = {
-
-            "♕":"Q",
-            "♖":"R",
-            "♗":"B",
-            "♘":"N",
-
-            "♛":"Q",
-            "♜":"R",
-            "♝":"B",
-            "♞":"N"
-
-        };
-
-        notation +=
-            "=" +
-            (
-                promotionMap[
-                    moveData.promotion
-                ] || "Q"
-            );
+        return (
+            letter
+            +
+            "x"
+            +
+            destination
+        );
 
     }
 
 
-    const enemy =
-        currentPlayer;
-
-    if(
-        isKingInCheck(
-            enemy
-        )
-    ){
-
-        notation +=
-            hasLegalMove(
-                enemy
-            )
-                ? "+"
-                : "#";
-
-    }
-
-    return notation;
+    return (
+        letter
+        +
+        destination
+    );
 
 }
 
 
 // ======================================
-// HISTORIQUE DES COUPS
+// AFFICHER LES COUPS
 // ======================================
 
-function updateMoveHistory(){
+function addMoveToList(
+    notation,
+    player
+){
 
-    if(
-        !movesElement
-    ){
+    const moves =
+        document.getElementById(
+            "moves"
+        );
+
+
+    if(!moves){
 
         return;
 
     }
 
-    movesElement.innerHTML =
-        "";
 
-    for(
-        let i = 0;
-        i < moveHistory.length;
-        i += 2
-    ){
+    if(player === "white"){
 
-        const row =
+        whiteMoveNotation =
+            notation;
+
+    }
+
+    else{
+
+        const moveElement =
             document.createElement(
                 "div"
             );
 
-        row.className =
-            "move-row";
 
-        const moveNumber =
-            document.createElement(
-                "span"
-            );
-
-        moveNumber.className =
-            "move-number";
-
-        moveNumber.textContent =
-            Math.floor(
-                i / 2
-            ) + 1;
+        moveElement.classList.add(
+            "move-row"
+        );
 
 
-        const whiteMove =
-            document.createElement(
-                "span"
-            );
-
-        whiteMove.className =
-            "move-white";
-
-        whiteMove.textContent =
-            moveHistory[i] || "";
-
-
-        const blackMove =
-            document.createElement(
-                "span"
-            );
-
-        blackMove.className =
-            "move-black";
-
-        blackMove.textContent =
-            moveHistory[i + 1] || "";
-
-
-        row.appendChild(
+        moveElement.textContent =
             moveNumber
-        );
-
-        row.appendChild(
-            whiteMove
-        );
-
-        row.appendChild(
-            blackMove
-        );
-
-        movesElement.appendChild(
-            row
-        );
-
-    }
-
-}
+            +
+            ". "
+            +
+            whiteMoveNotation
+            +
+            " - "
+            +
+            notation;
 
 
-// ======================================
-// TOUR
-// ======================================
-
-function updateTurn(){
-
-    if(
-        !turnElement
-    ){
-
-        return;
-
-    }
-
-    if(
-        gameOver
-    ){
-
-        return;
-
-    }
-
-
-    const inCheck =
-        isKingInCheck(
-            currentPlayer
+        moves.appendChild(
+            moveElement
         );
 
 
-    let text =
-        currentPlayer === "white"
-            ? "⚪ White to move"
-            : "⚫ Black to move";
+        moveNumber++;
 
 
-    if(
-        inCheck
-    ){
-
-        text +=
-            " — CHECK!";
-
-    }
-
-
-    if(
-        isOnlineGame()
-    ){
-
-        if(
-            currentPlayer ===
-            onlineMyColor
-        ){
-
-            text =
-                "🟢 YOUR TURN" +
-                (
-                    inCheck
-                        ? " — CHECK!"
-                        : ""
-                );
-
-        }else{
-
-            text =
-                "🔴 OPPONENT'S TURN" +
-                (
-                    inCheck
-                        ? " — CHECK!"
-                        : ""
-                );
-
-        }
-
-    }
-
-    turnElement.textContent =
-        text;
-
-}
-
-
-// ======================================
-// RÉSULTAT
-// ======================================
-
-function showGameResult(
-    title,
-    message
-){
-
-    if(
-        !gameResultElement
-    ){
-
-        alert(
-            title +
-            "\n" +
-            message
-        );
-
-        return;
-
-    }
-
-    const titleElement =
-        gameResultElement.querySelector(
-            ".result-title"
-        );
-
-    const messageElement =
-        gameResultElement.querySelector(
-            ".result-message"
-        );
-
-
-    if(
-        titleElement
-    ){
-
-        titleElement.textContent =
-            title;
-
-    }
-
-
-    if(
-        messageElement
-    ){
-
-        messageElement.textContent =
-            message;
-
-    }
-
-
-    gameResultElement.classList.add(
-        "show"
-    );
-
-    gameResultElement.setAttribute(
-        "aria-hidden",
-        "false"
-    );
-
-}
-
-
-// ======================================
-// PENDULE
-// ======================================
-
-function formatTime(
-    seconds
-){
-
-    const minutes =
-        Math.floor(
-            seconds / 60
-        );
-
-    const secs =
-        seconds % 60;
-
-    return (
-        String(
-            minutes
-        ).padStart(
-            2,
-            "0"
-        )
-        +
-        ":"
-        +
-        String(
-            secs
-        ).padStart(
-            2,
-            "0"
-        )
-    );
-
-}
-
-
-function updateClocks(){
-
-    const clocks =
-        document.querySelectorAll(
-            ".clock"
-        );
-
-    if(
-        clocks.length < 2
-    ){
-
-        return;
-
-    }
-
-
-    const blackClock =
-        clocks[0];
-
-    const whiteClock =
-        clocks[1];
-
-
-    blackClock.textContent =
-        formatTime(
-            blackTime
-        );
-
-    whiteClock.textContent =
-        formatTime(
-            whiteTime
-        );
-
-}
-
-
-function startClock(){
-
-    if(
-        gameTimer
-    ){
-
-        clearInterval(
-            gameTimer
-        );
-
-    }
-
-    gameTimer =
-        setInterval(
-            () => {
-
-                if(
-                    gameOver
-                ){
-
-                    stopClock();
-
-                    return;
-
-                }
-
-
-                if(
-                    currentPlayer ===
-                    "white"
-                ){
-
-                    whiteTime--;
-
-                    if(
-                        whiteTime <= 0
-                    ){
-
-                        whiteTime =
-                            0;
-
-                        gameOver =
-                            true;
-
-                        stopClock();
-
-                        showGameResult(
-                            "TIME OUT",
-                            "BLACK WINS ON TIME."
-                        );
-
-                    }
-
-                }else{
-
-                    blackTime--;
-
-                    if(
-                        blackTime <= 0
-                    ){
-
-                        blackTime =
-                            0;
-
-                        gameOver =
-                            true;
-
-                        stopClock();
-
-                        showGameResult(
-                            "TIME OUT",
-                            "WHITE WINS ON TIME."
-                        );
-
-                    }
-
-                }
-
-                updateClocks();
-
-            },
-            1000
-        );
-
-}
-
-
-function stopClock(){
-
-    if(
-        gameTimer
-    ){
-
-        clearInterval(
-            gameTimer
-        );
-
-        gameTimer =
+        whiteMoveNotation =
             null;
 
     }
@@ -3972,53 +1195,45 @@ function stopClock(){
 
 
 // ======================================
-// FARIS AI
+// CLIC SUR UNE CASE
 // ======================================
 
-function getHumanColor(){
+function clickSquare(row,col){
 
-    const params =
-        new URLSearchParams(
-            window.location.search
+    markedSquare = null;
+
+
+    if(gameOver){
+
+        return;
+
+    }
+
+
+    // ==================================
+    // BLOQUER LE JOUEUR PENDANT FARIS
+    // ==================================
+
+    if(
+        isFarisTurn()
+    ){
+
+        console.log(
+            "🤖 C'est le tour de Faris."
         );
 
-    const color =
-        params.get(
-            "color"
-        );
-
-    if(
-        color === "black"
-    ){
-
-        return "black";
+        return;
 
     }
 
-    return "white";
 
-}
-
-
-function getFarisColor(){
-
-    return (
-        getHumanColor() === "white"
-    )
-        ? "black"
-        : "white";
-
-}
-
-
-function startFarisIfNeeded(){
-
-    // IMPORTANT :
-    // jamais Faris AI
-    // pendant une partie online.
+    // ==================================
+    // FARIS RÉFLÉCHIT
+    // ==================================
 
     if(
-        isOnlineGame()
+        typeof farisThinking !== "undefined" &&
+        farisThinking
     ){
 
         return;
@@ -4026,158 +1241,1421 @@ function startFarisIfNeeded(){
     }
 
 
-    if(
-        typeof farisPlay !==
-        "function"
-    ){
+    // ==================================
+    // PREMIER CLIC
+    // ==================================
 
-        return;
+    if(selectedRow === null){
 
-    }
+        // ==============================
+        // LE JOUEUR DOIT JOUER SA COULEUR
+        // ==============================
 
+        if(
+            !isHumanTurn()
+        ){
 
-    const farisColor =
-        getFarisColor();
-
-
-    if(
-        currentPlayer !==
-        farisColor
-    ){
-
-        return;
-
-    }
-
-
-    setTimeout(
-        () => {
-
-            if(
-                gameOver ||
-                isOnlineGame()
-            ){
-
-                return;
-
-            }
-
-
-            if(
-                currentPlayer !==
-                getFarisColor()
-            ){
-
-                return;
-
-            }
-
-
-            farisPlay();
-
-        },
-        250
-    );
-
-}
-
-
-// ======================================
-// COMPATIBILITÉ FARIS AI
-// ======================================
-
-window.CHESSFK =
-    window.CHESSFK || {};
-
-window.CHESSFK.board = {
-
-    getPieces:
-        () => pieces,
-
-    getCurrentPlayer:
-        () => currentPlayer,
-
-    makeMove:
-        makeMove,
-
-    redraw:
-        drawBoard,
-
-    isOnline:
-        isOnlineGame
-
-};
-
-
-// ======================================
-// BOUTON HOME
-// ======================================
-
-const homeButton =
-    document.getElementById(
-        "homeButton"
-    );
-
-if(
-    homeButton
-){
-
-    homeButton.addEventListener(
-        "click",
-        () => {
-
-            window.location.href =
-                "../index.html";
+            return;
 
         }
-    );
-
-}
 
 
-// ======================================
-// BOUTON RESIGN
-// ======================================
+        if(
+            getHumanColor() === "white" &&
+            !isWhitePiece(
+                pieces[row][col]
+            )
+        ){
 
-const resignButton =
-    document.getElementById(
-        "resignButton"
-    );
+            return;
 
-if(
-    resignButton
-){
+        }
 
-    resignButton.addEventListener(
-        "click",
-        () => {
 
-            if(
-                gameOver
-            ){
+        if(
+            getHumanColor() === "black" &&
+            !isBlackPiece(
+                pieces[row][col]
+            )
+        ){
 
-                return;
+            return;
 
-            }
+        }
 
-            gameOver =
-                true;
 
-            stopClock();
+        if(
+            pieces[row][col] === ""
+        ){
 
-            const winner =
-                currentPlayer === "white"
-                    ? "BLACK"
-                    : "WHITE";
+            return;
 
-            showGameResult(
-                "RESIGNATION",
-                winner +
-                " WINS."
+        }
+
+
+        selectedRow = row;
+
+        selectedCol = col;
+
+
+        possibleMoves =
+            getPossibleMoves(
+                row,
+                col
+            )
+            .filter(
+                move =>
+                    isMoveLegal(
+                        row,
+                        col,
+                        move[0],
+                        move[1]
+                    )
             );
 
+
+        drawBoard();
+
+        return;
+
+    }
+
+
+    // ==================================
+    // DEUXIÈME CLIC
+    // ==================================
+
+    let moveAllowed = false;
+
+
+    for(
+        const move of possibleMoves
+    ){
+
+        if(
+            move[0] === row &&
+            move[1] === col
+        ){
+
+            moveAllowed = true;
+
+            break;
+
         }
+
+    }
+
+
+    // ==================================
+    // MÊME CASE
+    // ==================================
+
+    if(
+        row === selectedRow &&
+        col === selectedCol
+    ){
+
+        selectedRow = null;
+
+        selectedCol = null;
+
+        possibleMoves = [];
+
+        drawBoard();
+
+        return;
+
+    }
+
+
+    // ==================================
+    // COUP INTERDIT
+    // ==================================
+
+    if(!moveAllowed){
+
+        selectedRow = null;
+
+        selectedCol = null;
+
+        possibleMoves = [];
+
+        drawBoard();
+
+        return;
+
+    }
+
+
+    // ==================================
+    // PIÈCE
+    // ==================================
+
+    const movingPiece =
+        pieces[selectedRow][selectedCol];
+
+
+    const capturedPiece =
+        pieces[row][col] !== "";
+
+
+    const movePlayer =
+        currentPlayer;
+
+
+    // ==================================
+    // SÉCURITÉ COULEUR
+    // ==================================
+
+    if(
+        movePlayer !== getHumanColor()
+    ){
+
+        selectedRow = null;
+
+        selectedCol = null;
+
+        possibleMoves = [];
+
+        drawBoard();
+
+        return;
+
+    }
+
+
+    // ==================================
+    // VÉRIFICATION
+    // ==================================
+
+    if(
+        !isMoveLegal(
+            selectedRow,
+            selectedCol,
+            row,
+            col
+        )
+    ){
+
+        selectedRow = null;
+
+        selectedCol = null;
+
+        possibleMoves = [];
+
+        drawBoard();
+
+        return;
+
+    }
+
+
+    // ==================================
+    // HISTORIQUE
+    // ==================================
+
+    moveHistory.push(
+        saveGameState()
     );
+
+
+    // ==================================
+    // NOTATION
+    // ==================================
+
+    let notation =
+        getMoveNotation(
+
+            movingPiece,
+
+            selectedRow,
+            selectedCol,
+
+            row,
+            col,
+
+            capturedPiece
+
+        );
+
+
+    // ==================================
+    // PETIT ROQUE BLANC
+    // ==================================
+
+    if(
+        movingPiece === "♔" &&
+        selectedRow === 7 &&
+        selectedCol === 4 &&
+        row === 7 &&
+        col === 6
+    ){
+
+        pieces[7][5] =
+            pieces[7][7];
+
+        pieces[7][7] =
+            "";
+
+        notation =
+            "O-O";
+
+    }
+
+
+    // ==================================
+    // GRAND ROQUE BLANC
+    // ==================================
+
+    if(
+        movingPiece === "♔" &&
+        selectedRow === 7 &&
+        selectedCol === 4 &&
+        row === 7 &&
+        col === 2
+    ){
+
+        pieces[7][3] =
+            pieces[7][0];
+
+        pieces[7][0] =
+            "";
+
+        notation =
+            "O-O-O";
+
+    }
+
+
+    // ==================================
+    // PETIT ROQUE NOIR
+    // ==================================
+
+    if(
+        movingPiece === "♚" &&
+        selectedRow === 0 &&
+        selectedCol === 4 &&
+        row === 0 &&
+        col === 6
+    ){
+
+        pieces[0][5] =
+            pieces[0][7];
+
+        pieces[0][7] =
+            "";
+
+        notation =
+            "O-O";
+
+    }
+
+
+    // ==================================
+    // GRAND ROQUE NOIR
+    // ==================================
+
+    if(
+        movingPiece === "♚" &&
+        selectedRow === 0 &&
+        selectedCol === 4 &&
+        row === 0 &&
+        col === 2
+    ){
+
+        pieces[0][3] =
+            pieces[0][0];
+
+        pieces[0][0] =
+            "";
+
+        notation =
+            "O-O-O";
+
+    }
+
+
+    // ==================================
+    // EN PASSANT BLANC
+    // ==================================
+
+    if(
+        movingPiece === "♙" &&
+        selectedRow === 3 &&
+        row === 2 &&
+        Math.abs(
+            col - selectedCol
+        ) === 1 &&
+        pieces[row][col] === ""
+    ){
+
+        pieces[3][col] =
+            "";
+
+    }
+
+
+    // ==================================
+    // EN PASSANT NOIR
+    // ==================================
+
+    if(
+        movingPiece === "♟" &&
+        selectedRow === 4 &&
+        row === 5 &&
+        Math.abs(
+            col - selectedCol
+        ) === 1 &&
+        pieces[row][col] === ""
+    ){
+
+        pieces[4][col] =
+            "";
+
+    }
+
+
+    // ==================================
+    // DÉPLACEMENT
+    // ==================================
+
+    pieces[row][col] =
+        pieces[selectedRow][selectedCol];
+
+
+    pieces[selectedRow][selectedCol] =
+        "";
+
+
+    // ==================================
+    // PROMOTION BLANCHE
+    // ==================================
+
+    if(
+        movingPiece === "♙" &&
+        row === 0
+    ){
+
+        promotePawn(
+            row,
+            col,
+            "white"
+        );
+
+    }
+
+
+    // ==================================
+    // PROMOTION NOIRE
+    // ==================================
+
+    if(
+        movingPiece === "♟" &&
+        row === 7
+    ){
+
+        promotePawn(
+            row,
+            col,
+            "black"
+        );
+
+    }
+
+
+    // ==================================
+    // DERNIER COUP
+    // ==================================
+
+    lastMove = {
+
+        piece:
+            movingPiece,
+
+        fromRow:
+            selectedRow,
+
+        fromCol:
+            selectedCol,
+
+        toRow:
+            row,
+
+        toCol:
+            col
+
+    };
+
+
+    // ==================================
+    // ROIS
+    // ==================================
+
+    if(movingPiece === "♔"){
+
+        whiteKingMoved = true;
+
+    }
+
+
+    if(movingPiece === "♚"){
+
+        blackKingMoved = true;
+
+    }
+
+
+    // ==================================
+    // TOURS BLANCHES
+    // ==================================
+
+    if(
+        movingPiece === "♖" &&
+        selectedRow === 7 &&
+        selectedCol === 0
+    ){
+
+        whiteRookLeftMoved = true;
+
+    }
+
+
+    if(
+        movingPiece === "♖" &&
+        selectedRow === 7 &&
+        selectedCol === 7
+    ){
+
+        whiteRookRightMoved = true;
+
+    }
+
+
+    // ==================================
+    // TOURS NOIRES
+    // ==================================
+
+    if(
+        movingPiece === "♜" &&
+        selectedRow === 0 &&
+        selectedCol === 0
+    ){
+
+        blackRookLeftMoved = true;
+
+    }
+
+
+    if(
+        movingPiece === "♜" &&
+        selectedRow === 0 &&
+        selectedCol === 7
+    ){
+
+        blackRookRightMoved = true;
+
+    }
+
+
+    // ==================================
+    // NOTATION
+    // ==================================
+
+    addMoveToList(
+        notation,
+        movePlayer
+    );
+
+
+    // ==================================
+    // INCRÉMENT
+    // ==================================
+
+    addIncrement(
+        movePlayer
+    );
+
+
+    // ==================================
+    // CHRONOMÈTRE
+    // ==================================
+
+    if(!clockStarted){
+
+        clockStarted = true;
+
+        startClock();
+
+    }
+
+
+    // ==================================
+    // CHANGER DE JOUEUR
+    // ==================================
+
+    currentPlayer =
+        currentPlayer === "white"
+            ? "black"
+            : "white";
+
+
+    // ==================================
+    // DÉSÉLECTION
+    // ==================================
+
+    selectedRow = null;
+
+    selectedCol = null;
+
+    possibleMoves = [];
+
+
+    // ==================================
+    // FLÈCHES
+    // ==================================
+
+    clearArrows();
+
+
+    // ==================================
+    // AFFICHAGE
+    // ==================================
+
+    drawBoard();
+
+    updateGameStatus();
+
+
+    // ==================================
+    // FARIS AI
+    // ==================================
+    //
+    // IMPORTANT :
+    // On ne regarde PLUS si le coup vient
+    // des blancs.
+    //
+    // On regarde simplement :
+    //
+    // currentPlayer === farisColor
+    //
+    // Cela permet à Faris d'être blanc OU noir.
+    //
+
+    if(
+        currentPlayer === getFarisColor() &&
+        !gameOver &&
+        typeof farisPlay === "function"
+    ){
+
+        console.log(
+            "🤖 Lancement automatique de Faris..."
+        );
+
+
+        setTimeout(
+            function(){
+
+                if(
+                    !gameOver &&
+                    currentPlayer === getFarisColor() &&
+                    typeof farisPlay === "function"
+                ){
+
+                    farisPlay();
+
+                }
+
+            },
+            100
+        );
+
+    }
+
+}
+
+
+// ======================================
+// PROMOTION
+// ======================================
+
+function promotePawn(
+    row,
+    col,
+    color
+){
+
+    let choice =
+        prompt(
+            "Promotion : Q = Dame, R = Tour, B = Fou, N = Cavalier",
+            "Q"
+        );
+
+
+    if(!choice){
+
+        choice = "Q";
+
+    }
+
+
+    choice =
+        choice.toUpperCase();
+
+
+    let promotedPiece;
+
+
+    if(choice === "R"){
+
+        promotedPiece =
+            color === "white"
+            ? "♖"
+            : "♜";
+
+    }
+
+    else if(choice === "B"){
+
+        promotedPiece =
+            color === "white"
+            ? "♗"
+            : "♝";
+
+    }
+
+    else if(choice === "N"){
+
+        promotedPiece =
+            color === "white"
+            ? "♘"
+            : "♞";
+
+    }
+
+    else{
+
+        promotedPiece =
+            color === "white"
+            ? "♕"
+            : "♛";
+
+    }
+
+
+    pieces[row][col] =
+        promotedPiece;
+
+}
+
+
+// ======================================
+// ÉCHEC ET MAT
+// ======================================
+
+function isCheckmate(color){
+
+    if(!isKingInCheck(color)){
+
+        return false;
+
+    }
+
+
+    for(
+        let row = 0;
+        row < 8;
+        row++
+    ){
+
+        for(
+            let col = 0;
+            col < 8;
+            col++
+        ){
+
+            const piece =
+                pieces[row][col];
+
+
+            if(
+                color === "white" &&
+                !isWhitePiece(piece)
+            ){
+
+                continue;
+
+            }
+
+
+            if(
+                color === "black" &&
+                !isBlackPiece(piece)
+            ){
+
+                continue;
+
+            }
+
+
+            if(piece === ""){
+
+                continue;
+
+            }
+
+
+            const moves =
+                getPossibleMoves(
+                    row,
+                    col
+                );
+
+
+            for(
+                let move of moves
+            ){
+
+                if(
+                    isMoveLegal(
+                        row,
+                        col,
+                        move[0],
+                        move[1]
+                    )
+                ){
+
+                    return false;
+
+                }
+
+            }
+
+        }
+
+    }
+
+
+    return true;
+
+}
+
+
+// ======================================
+// ÉTAT DU JEU
+// ======================================
+
+function updateGameStatus(){
+
+    const turn =
+        document.querySelector(
+            ".turn"
+        );
+
+
+    if(!turn){
+
+        return;
+
+    }
+
+
+    if(isCheckmate("white")){
+
+        finishGame(
+            "👑 CHECKMATE ! BLACK WINS !"
+        );
+
+        return;
+
+    }
+
+
+    if(isCheckmate("black")){
+
+        finishGame(
+            "👑 CHECKMATE ! WHITE WINS !"
+        );
+
+        return;
+
+    }
+
+
+    if(isKingInCheck("white")){
+
+        turn.textContent =
+            "🚨 CHECK ! WHITE KING !";
+
+        return;
+
+    }
+
+
+    if(isKingInCheck("black")){
+
+        turn.textContent =
+            "🚨 CHECK ! BLACK KING !";
+
+        return;
+
+    }
+
+
+    if(currentPlayer === "white"){
+
+        turn.textContent =
+            "⚪ White to move";
+
+    }
+
+    else{
+
+        turn.textContent =
+            "⚫ Black to move";
+
+    }
+
+}
+
+
+// ======================================
+// TERMINER PARTIE
+// ======================================
+
+function finishGame(message){
+
+    gameOver = true;
+
+    stopClock();
+
+
+    if(
+        typeof farisMoveToken !== "undefined"
+    ){
+
+        farisMoveToken++;
+
+    }
+
+
+    if(
+        typeof farisThinking !== "undefined"
+    ){
+
+        farisThinking = false;
+
+    }
+
+
+    const turn =
+        document.querySelector(
+            ".turn"
+        );
+
+
+    if(turn){
+
+        turn.textContent =
+            message;
+
+    }
+
+
+    showGameResult(message);
+
+}
+
+
+// ======================================
+// ÉCRAN RÉSULTAT
+// ======================================
+
+function showGameResult(message){
+
+    let result =
+        document.getElementById(
+            "gameResult"
+        );
+
+
+    if(!result){
+
+        result =
+            document.createElement(
+                "div"
+            );
+
+
+        result.id =
+            "gameResult";
+
+
+        result.innerHTML = `
+
+            <div class="result-box">
+
+                <div class="result-title">
+                    🏆 GAME OVER
+                </div>
+
+                <div
+                    class="result-message"
+                    id="resultMessage">
+                </div>
+
+                <div class="result-buttons">
+
+                    <button
+                        id="resultRestartButton">
+                        🔄 Nouvelle partie
+                    </button>
+
+                    <button
+                        id="resultCloseButton">
+                        ✕ Fermer
+                    </button>
+
+                </div>
+
+            </div>
+
+        `;
+
+
+        document.body.appendChild(
+            result
+        );
+
+
+        document
+            .getElementById(
+                "resultRestartButton"
+            )
+            .addEventListener(
+                "click",
+                restartGame
+            );
+
+
+        document
+            .getElementById(
+                "resultCloseButton"
+            )
+            .addEventListener(
+                "click",
+                closeGameResult
+            );
+
+    }
+
+
+    const resultMessage =
+        document.getElementById(
+            "resultMessage"
+        );
+
+
+    if(resultMessage){
+
+        resultMessage.textContent =
+            message;
+
+    }
+
+
+    result.classList.add(
+        "show"
+    );
+
+}
+
+
+// ======================================
+// FERMER RÉSULTAT
+// ======================================
+
+function closeGameResult(){
+
+    const result =
+        document.getElementById(
+            "gameResult"
+        );
+
+
+    if(result){
+
+        result.classList.remove(
+            "show"
+        );
+
+    }
+
+}
+
+
+// ======================================
+// ABANDONNER
+// ======================================
+
+function resignGame(){
+
+    if(gameOver){
+
+        return;
+
+    }
+
+
+    let winner;
+
+
+    if(currentPlayer === "white"){
+
+        winner =
+            "BLACK WINS";
+
+    }
+
+    else{
+
+        winner =
+            "WHITE WINS";
+
+    }
+
+
+    const answer =
+        confirm(
+            "🏳️ Êtes-vous sûr de vouloir abandonner ?"
+        );
+
+
+    if(!answer){
+
+        return;
+
+    }
+
+
+    finishGame(
+        "🏳️ RESIGNATION — "
+        +
+        winner
+        +
+        " !"
+    );
+
+}
+
+
+// ======================================
+// NULLE
+// ======================================
+
+function offerDraw(){
+
+    if(gameOver){
+
+        return;
+
+    }
+
+
+    const answer =
+        confirm(
+            "🤝 Voulez-vous proposer une nulle ?"
+        );
+
+
+    if(!answer){
+
+        return;
+
+    }
+
+
+    const opponent =
+        confirm(
+            "🤝 L'adversaire accepte-t-il la nulle ?"
+        );
+
+
+    if(opponent){
+
+        finishGame(
+            "🤝 NULLE — PARTIE TERMINÉE"
+        );
+
+    }
+
+}
+
+
+// ======================================
+// UNDO
+// ======================================
+
+function undoMove(){
+
+    if(
+        moveHistory.length === 0
+    ){
+
+        alert(
+            "↩️ Aucun coup à annuler."
+        );
+
+        return;
+
+    }
+
+
+    if(gameOver){
+
+        gameOver = false;
+
+        closeGameResult();
+
+    }
+
+
+    if(
+        typeof resetFarisAI === "function"
+    ){
+
+        resetFarisAI();
+
+    }
+
+
+    const previousState =
+        moveHistory.pop();
+
+
+    restoreGameState(
+        previousState
+    );
+
+
+    // ==================================
+    // SI FARIS EST À NOUVEAU AU TRAIT
+    // ==================================
+
+    if(
+        !gameOver &&
+        currentPlayer === getFarisColor() &&
+        typeof farisPlay === "function"
+    ){
+
+        setTimeout(
+            farisPlay,
+            150
+        );
+
+    }
+
+}
+
+
+// ======================================
+// NOUVELLE PARTIE
+// ======================================
+
+function restartGame(){
+
+    const answer =
+        confirm(
+            "🔄 Recommencer la partie ?"
+        );
+
+
+    if(!answer){
+
+        return;
+
+    }
+
+
+    stopClock();
+
+
+    if(
+        typeof resetFarisAI === "function"
+    ){
+
+        resetFarisAI();
+
+    }
+
+
+    // ==================================
+    // RESET PIÈCES
+    // ==================================
+
+    pieces =
+        initialPieces.map(
+            row => [...row]
+        );
+
+
+    // ==================================
+    // RESET SÉLECTION
+    // ==================================
+
+    selectedRow = null;
+
+    selectedCol = null;
+
+    possibleMoves = [];
+
+    markedSquare = null;
+
+
+    // ==================================
+    // RESET JOUEUR
+    // ==================================
+
+    currentPlayer = "white";
+
+
+    // ==================================
+    // RESET PARTIE
+    // ==================================
+
+    gameOver = false;
+
+    lastMove = null;
+
+
+    // ==================================
+    // RESET ROQUE
+    // ==================================
+
+    whiteKingMoved = false;
+
+    blackKingMoved = false;
+
+    whiteRookLeftMoved = false;
+
+    whiteRookRightMoved = false;
+
+    blackRookLeftMoved = false;
+
+    blackRookRightMoved = false;
+
+
+    // ==================================
+    // RESET TEMPS
+    // ==================================
+
+    whiteTime =
+        selectedGameTime;
+
+    blackTime =
+        selectedGameTime;
+
+
+    clockStarted = false;
+
+
+    // ==================================
+    // RESET NOTATION
+    // ==================================
+
+    moveNumber = 1;
+
+    whiteMoveNotation = null;
+
+
+    // ==================================
+    // RESET HISTORIQUE
+    // ==================================
+
+    moveHistory = [];
+
+
+    // ==================================
+    // RESET FLÈCHES
+    // ==================================
+
+    arrows = [];
+
+    drawingArrow = null;
+
+
+    // ==================================
+    // RESET COUPS
+    // ==================================
+
+    const moves =
+        document.getElementById(
+            "moves"
+        );
+
+
+    if(moves){
+
+        moves.innerHTML = "";
+
+    }
+
+
+    // ==================================
+    // FERMER RÉSULTAT
+    // ==================================
+
+    closeGameResult();
+
+
+    // ==================================
+    // AFFICHAGE
+    // ==================================
+
+    updateClocks();
+
+    drawBoard();
+
+    updateGameStatus();
+
+
+    // ==================================
+    // SI FARIS EST BLANC
+    // ==================================
+
+    if(
+        getFarisColor() === "white" &&
+        typeof farisPlay === "function"
+    ){
+
+        setTimeout(
+            function(){
+
+                if(
+                    !gameOver &&
+                    currentPlayer === "white"
+                ){
+
+                    farisPlay();
+
+                }
+
+            },
+            400
+        );
+
+    }
+
+}
+
+
+// ======================================
+// ACCUEIL
+// ======================================
+
+function goHome(){
+
+    window.location.href =
+        "../index.html";
 
 }
 
@@ -4186,20 +2664,10 @@ if(
 // TAILLE DE L'ÉCHIQUIER
 // ======================================
 
-function updateBoardSize(){
-
-    if(
-        boardSizeLabel
-    ){
-
-        boardSizeLabel.textContent =
-            squareSize;
-
-    }
-
-    drawBoard();
-
-}
+const increaseBoard =
+    document.getElementById(
+        "increaseBoard"
+    );
 
 
 const decreaseBoard =
@@ -4207,53 +2675,203 @@ const decreaseBoard =
         "decreaseBoard"
     );
 
-const increaseBoard =
+
+const boardSizeLabel =
     document.getElementById(
-        "increaseBoard"
+        "boardSizeLabel"
     );
 
 
-if(
-    decreaseBoard
-){
+let boardSize = 60;
 
-    decreaseBoard.addEventListener(
-        "click",
-        () => {
 
-            if(
-                squareSize > 40
-            ){
+// ======================================
+// APPLIQUER TAILLE
+// ======================================
 
-                squareSize -=
-                    5;
+function applyBoardSize(){
 
-                updateBoardSize();
+    if(!board){
 
-            }
+        return;
+
+    }
+
+
+    const boardPixels =
+        boardSize * 8;
+
+
+    board.style.width =
+        boardPixels + "px";
+
+
+    board.style.height =
+        boardPixels + "px";
+
+
+    board.style.gridTemplateColumns =
+        `repeat(8, ${boardSize}px)`;
+
+
+    board.style.gridTemplateRows =
+        `repeat(8, ${boardSize}px)`;
+
+
+    const squares =
+        board.querySelectorAll(
+            ".square"
+        );
+
+
+    squares.forEach(
+        function(square){
+
+            square.style.width =
+                boardSize + "px";
+
+            square.style.height =
+                boardSize + "px";
 
         }
     );
 
+
+    const piecesHTML =
+        board.querySelectorAll(
+            ".piece"
+        );
+
+
+    const pieceSize =
+        Math.max(
+            25,
+            Math.round(
+                boardSize * 0.75
+            )
+        );
+
+
+    piecesHTML.forEach(
+        function(piece){
+
+            piece.style.fontSize =
+                pieceSize + "px";
+
+        }
+    );
+
+
+    const numbers =
+        document.querySelector(
+            ".numbers"
+        );
+
+
+    if(numbers){
+
+        numbers.style.height =
+            boardPixels + "px";
+
+        numbers.style.width =
+            "25px";
+
+
+        const numberSpans =
+            numbers.querySelectorAll(
+                "span"
+            );
+
+
+        numberSpans.forEach(
+            function(span){
+
+                span.style.height =
+                    boardSize + "px";
+
+            }
+        );
+
+    }
+
+
+    const letters =
+        document.querySelector(
+            ".letters"
+        );
+
+
+    if(letters){
+
+        letters.style.width =
+            boardPixels + "px";
+
+
+        letters.style.gridTemplateColumns =
+            `repeat(8, ${boardSize}px)`;
+
+
+        const letterSpans =
+            letters.querySelectorAll(
+                "span"
+            );
+
+
+        letterSpans.forEach(
+            function(span){
+
+                span.style.width =
+                    boardSize + "px";
+
+            }
+        );
+
+    }
+
+
+    const players =
+        document.querySelectorAll(
+            ".player"
+        );
+
+
+    players.forEach(
+        function(player){
+
+            player.style.width =
+                boardPixels + "px";
+
+        }
+    );
+
+
+    if(boardSizeLabel){
+
+        boardSizeLabel.textContent =
+            boardSize;
+
+    }
+
 }
 
 
-if(
-    increaseBoard
-){
+// ======================================
+// AGRANDIR
+// ======================================
+
+if(increaseBoard){
 
     increaseBoard.addEventListener(
         "click",
-        () => {
+        function(){
 
-            if(
-                squareSize < 100
-            ){
+            if(boardSize < 90){
 
-                squareSize +=
-                    5;
+                boardSize += 5;
 
-                updateBoardSize();
+                applyBoardSize();
+
+                drawArrows();
 
             }
 
@@ -4261,6 +2879,974 @@ if(
     );
 
 }
+
+
+// ======================================
+// RÉDUIRE
+// ======================================
+
+if(decreaseBoard){
+
+    decreaseBoard.addEventListener(
+        "click",
+        function(){
+
+            if(boardSize > 40){
+
+                boardSize -= 5;
+
+                applyBoardSize();
+
+                drawArrows();
+
+            }
+
+        }
+    );
+
+}
+
+
+// ======================================
+// COORDONNÉES SOURIS
+// ======================================
+
+function getSquareFromMouse(event){
+
+    const rect =
+        board.getBoundingClientRect();
+
+
+    const x =
+        event.clientX -
+        rect.left;
+
+
+    const y =
+        event.clientY -
+        rect.top;
+
+
+    if(
+        x < 0 ||
+        y < 0 ||
+        x > rect.width ||
+        y > rect.height
+    ){
+
+        return null;
+
+    }
+
+
+    const squareWidth =
+        rect.width / 8;
+
+
+    const squareHeight =
+        rect.height / 8;
+
+
+    const col =
+        Math.floor(
+            x / squareWidth
+        );
+
+
+    const row =
+        Math.floor(
+            y / squareHeight
+        );
+
+
+    if(
+        row < 0 ||
+        row > 7 ||
+        col < 0 ||
+        col > 7
+    ){
+
+        return null;
+
+    }
+
+
+    return {
+
+        row: row,
+
+        col: col
+
+    };
+
+}
+
+
+// ======================================
+// COULEUR DU THÈME
+// ======================================
+
+function getChessAccentColor(){
+
+    const root =
+        getComputedStyle(
+            document.documentElement
+        );
+
+
+    const body =
+        getComputedStyle(
+            document.body
+        );
+
+
+    const variables = [
+
+        "--accent-color",
+
+        "--theme-color",
+
+        "--primary-color",
+
+        "--accent",
+
+        "--red",
+
+        "--main-color"
+
+    ];
+
+
+    for(
+        const variable of variables
+    ){
+
+        const rootValue =
+            root
+                .getPropertyValue(
+                    variable
+                )
+                .trim();
+
+
+        if(rootValue){
+
+            return rootValue;
+
+        }
+
+
+        const bodyValue =
+            body
+                .getPropertyValue(
+                    variable
+                )
+                .trim();
+
+
+        if(bodyValue){
+
+            return bodyValue;
+
+        }
+
+    }
+
+
+    const theme =
+        document.documentElement.dataset.theme ||
+        document.body.dataset.theme ||
+        "red";
+
+
+    const colors = {
+
+        red: "#ff3030",
+
+        rouge: "#ff3030",
+
+        blue: "#3b82f6",
+
+        bleu: "#3b82f6",
+
+        green: "#22c55e",
+
+        vert: "#22c55e",
+
+        purple: "#a855f7",
+
+        violet: "#a855f7",
+
+        orange: "#f97316",
+
+        yellow: "#eab308",
+
+        gold: "#eab308",
+
+        pink: "#ec4899"
+
+    };
+
+
+    return (
+        colors[
+            String(theme)
+                .toLowerCase()
+        ]
+        ||
+        "#ff3030"
+    );
+
+}
+
+
+// ======================================
+// CRÉER SVG FLÈCHES
+// ======================================
+
+function createArrowSVG(){
+
+    let svg =
+        document.getElementById(
+            "chessArrows"
+        );
+
+
+    if(svg){
+
+        return svg;
+
+    }
+
+
+    svg =
+        document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "svg"
+        );
+
+
+    svg.id =
+        "chessArrows";
+
+
+    svg.style.position =
+        "absolute";
+
+
+    svg.style.left =
+        "0";
+
+
+    svg.style.top =
+        "0";
+
+
+    svg.style.width =
+        "100%";
+
+
+    svg.style.height =
+        "100%";
+
+
+    svg.style.pointerEvents =
+        "none";
+
+
+    svg.style.zIndex =
+        "50";
+
+
+    if(board.parentElement){
+
+        board.parentElement.appendChild(
+            svg
+        );
+
+    }
+
+
+    return svg;
+
+}
+
+
+// ======================================
+// DESSINER UNE FLÈCHE
+// ======================================
+
+function drawSingleArrow(
+    svg,
+    arrow
+){
+
+    if(!arrow){
+
+        return;
+
+    }
+
+
+    if(
+        arrow.fromRow === arrow.toRow &&
+        arrow.fromCol === arrow.toCol
+    ){
+
+        return;
+
+    }
+
+
+    const rect =
+        board.getBoundingClientRect();
+
+
+    const squareWidth =
+        rect.width / 8;
+
+
+    const squareHeight =
+        rect.height / 8;
+
+
+    const startX =
+        (
+            arrow.fromCol + 0.5
+        )
+        *
+        squareWidth;
+
+
+    const startY =
+        (
+            arrow.fromRow + 0.5
+        )
+        *
+        squareHeight;
+
+
+    const endX =
+        (
+            arrow.toCol + 0.5
+        )
+        *
+        squareWidth;
+
+
+    const endY =
+        (
+            arrow.toRow + 0.5
+        )
+        *
+        squareHeight;
+
+
+    const dx =
+        endX - startX;
+
+
+    const dy =
+        endY - startY;
+
+
+    const distance =
+        Math.sqrt(
+            dx * dx +
+            dy * dy
+        );
+
+
+    if(distance <= 0){
+
+        return;
+
+    }
+
+
+    const startOffset =
+        Math.min(
+            squareWidth * 0.18,
+            distance * 0.12
+        );
+
+
+    const endOffset =
+        Math.min(
+            squareWidth * 0.25,
+            distance * 0.18
+        );
+
+
+    const startRatio =
+        startOffset / distance;
+
+
+    const endRatio =
+        endOffset / distance;
+
+
+    const finalStartX =
+        startX +
+        dx *
+        startRatio;
+
+
+    const finalStartY =
+        startY +
+        dy *
+        startRatio;
+
+
+    const finalEndX =
+        endX -
+        dx *
+        endRatio;
+
+
+    const finalEndY =
+        endY -
+        dy *
+        endRatio;
+
+
+    const line =
+        document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "line"
+        );
+
+
+    line.setAttribute(
+        "x1",
+        finalStartX
+    );
+
+
+    line.setAttribute(
+        "y1",
+        finalStartY
+    );
+
+
+    line.setAttribute(
+        "x2",
+        finalEndX
+    );
+
+
+    line.setAttribute(
+        "y2",
+        finalEndY
+    );
+
+
+    const color =
+        getChessAccentColor();
+
+
+    line.setAttribute(
+        "stroke",
+        color
+    );
+
+
+    line.setAttribute(
+        "stroke-width",
+        Math.max(
+            4,
+            squareWidth * 0.075
+        )
+    );
+
+
+    line.setAttribute(
+        "stroke-linecap",
+        "round"
+    );
+
+
+    line.setAttribute(
+        "stroke-linejoin",
+        "round"
+    );
+
+
+    line.setAttribute(
+        "opacity",
+        "0.92"
+    );
+
+
+    line.setAttribute(
+        "marker-end",
+        "url(#chessArrowHead)"
+    );
+
+
+    line.style.filter =
+        "drop-shadow(0 0 5px "
+        +
+        color
+        +
+        ")";
+
+
+    svg.appendChild(
+        line
+    );
+
+}
+
+
+// ======================================
+// DESSINER TOUTES LES FLÈCHES
+// ======================================
+
+function drawArrows(){
+
+    const svg =
+        createArrowSVG();
+
+
+    if(!svg){
+
+        return;
+
+    }
+
+
+    svg.innerHTML =
+        "";
+
+
+    const color =
+        getChessAccentColor();
+
+
+    const defs =
+        document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "defs"
+        );
+
+
+    const marker =
+        document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "marker"
+        );
+
+
+    marker.id =
+        "chessArrowHead";
+
+
+    marker.setAttribute(
+        "markerWidth",
+        "10"
+    );
+
+
+    marker.setAttribute(
+        "markerHeight",
+        "10"
+    );
+
+
+    marker.setAttribute(
+        "refX",
+        "8"
+    );
+
+
+    marker.setAttribute(
+        "refY",
+        "5"
+    );
+
+
+    marker.setAttribute(
+        "orient",
+        "auto"
+    );
+
+
+    marker.setAttribute(
+        "markerUnits",
+        "userSpaceOnUse"
+    );
+
+
+    const polygon =
+        document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "polygon"
+        );
+
+
+    polygon.setAttribute(
+        "points",
+        "0,0 10,5 0,10"
+    );
+
+
+    polygon.setAttribute(
+        "fill",
+        color
+    );
+
+
+    polygon.style.filter =
+        "drop-shadow(0 0 4px "
+        +
+        color
+        +
+        ")";
+
+
+    marker.appendChild(
+        polygon
+    );
+
+
+    defs.appendChild(
+        marker
+    );
+
+
+    svg.appendChild(
+        defs
+    );
+
+
+    if(lastMove){
+
+        drawSingleArrow(
+            svg,
+            lastMove
+        );
+
+    }
+
+
+    if(
+        Array.isArray(arrows)
+    ){
+
+        for(
+            const arrow of arrows
+        ){
+
+            drawSingleArrow(
+                svg,
+                arrow
+            );
+
+        }
+
+    }
+
+
+    if(drawingArrow){
+
+        drawSingleArrow(
+            svg,
+            drawingArrow
+        );
+
+    }
+
+}
+
+
+// ======================================
+// EFFACER FLÈCHES MANUELLES
+// ======================================
+
+function clearArrows(){
+
+    arrows = [];
+
+    drawingArrow = null;
+
+    drawArrows();
+
+}
+
+
+// ======================================
+// CLIC GAUCHE / DROIT
+// ======================================
+
+board.addEventListener(
+    "mousedown",
+    function(event){
+
+        if(event.button === 0){
+
+            if(
+                Array.isArray(arrows) &&
+                arrows.length > 0
+            ){
+
+                arrows = [];
+
+                drawArrows();
+
+            }
+
+            return;
+
+        }
+
+
+        if(event.button !== 2){
+
+            return;
+
+        }
+
+
+        event.preventDefault();
+
+
+        const square =
+            getSquareFromMouse(
+                event
+            );
+
+
+        if(!square){
+
+            return;
+
+        }
+
+
+        drawingArrow = {
+
+            fromRow:
+                square.row,
+
+            fromCol:
+                square.col,
+
+            toRow:
+                square.row,
+
+            toCol:
+                square.col
+
+        };
+
+
+        drawArrows();
+
+    }
+);
+
+
+// ======================================
+// SOURIS — DÉPLACEMENT
+// ======================================
+
+board.addEventListener(
+    "mousemove",
+    function(event){
+
+        if(!drawingArrow){
+
+            return;
+
+        }
+
+
+        const square =
+            getSquareFromMouse(
+                event
+            );
+
+
+        if(!square){
+
+            return;
+
+        }
+
+
+        drawingArrow.toRow =
+            square.row;
+
+
+        drawingArrow.toCol =
+            square.col;
+
+
+        drawArrows();
+
+    }
+);
+
+
+// ======================================
+// SOURIS — FIN FLÈCHE
+// ======================================
+
+document.addEventListener(
+    "mouseup",
+    function(event){
+
+        if(event.button !== 2){
+
+            return;
+
+        }
+
+
+        if(!drawingArrow){
+
+            return;
+
+        }
+
+
+        event.preventDefault();
+
+
+        const square =
+            getSquareFromMouse(
+                event
+            );
+
+
+        if(square){
+
+            drawingArrow.toRow =
+                square.row;
+
+            drawingArrow.toCol =
+                square.col;
+
+        }
+
+
+        if(
+            drawingArrow.fromRow !==
+                drawingArrow.toRow ||
+
+            drawingArrow.fromCol !==
+                drawingArrow.toCol
+        ){
+
+            arrows.push({
+
+                fromRow:
+                    drawingArrow.fromRow,
+
+                fromCol:
+                    drawingArrow.fromCol,
+
+                toRow:
+                    drawingArrow.toRow,
+
+                toCol:
+                    drawingArrow.toCol
+
+            });
+
+        }
+
+
+        drawingArrow = null;
+
+
+        drawArrows();
+
+    }
+);
+
+
+// ======================================
+// EMPÊCHER MENU CLIC DROIT
+// ======================================
+
+board.addEventListener(
+    "contextmenu",
+    function(event){
+
+        event.preventDefault();
+
+    }
+);
+
+
+// ======================================
+// CHANGEMENT AUTOMATIQUE DU THÈME
+// ======================================
+
+const chessThemeObserver =
+    new MutationObserver(
+        function(){
+
+            drawArrows();
+
+        }
+    );
+
+
+chessThemeObserver.observe(
+    document.documentElement,
+    {
+
+        attributes: true,
+
+        attributeFilter: [
+
+            "class",
+
+            "data-theme",
+
+            "style"
+
+        ]
+
+    }
+);
+
+
+chessThemeObserver.observe(
+    document.body,
+    {
+
+        attributes: true,
+
+        attributeFilter: [
+
+            "class",
+
+            "data-theme",
+
+            "style"
+
+        ]
+
+    }
+);
+
+
+// ======================================
+// REDIMENSIONNEMENT FENÊTRE
+// ======================================
+
+window.addEventListener(
+    "resize",
+    function(){
+
+        drawArrows();
+
+    }
+);
 
 
 // ======================================
@@ -4272,42 +3858,39 @@ const undoButton =
         "undoButton"
     );
 
-if(
-    undoButton
-){
+
+if(undoButton){
 
     undoButton.addEventListener(
         "click",
-        () => {
-
-            // Undo désactivé en online :
-            // sinon les deux joueurs
-            // ne seraient plus synchronisés.
-
-            if(
-                isOnlineGame()
-            ){
-
-                alert(
-                    "UNDO is not available in online games."
-                );
-
-                return;
-
-            }
-
-            alert(
-                "UNDO will be available soon."
-            );
-
-        }
+        undoMove
     );
 
 }
 
 
 // ======================================
-// BOUTON DRAW
+// BOUTON ABANDON
+// ======================================
+
+const resignButton =
+    document.getElementById(
+        "resignButton"
+    );
+
+
+if(resignButton){
+
+    resignButton.addEventListener(
+        "click",
+        resignGame
+    );
+
+}
+
+
+// ======================================
+// BOUTON NULLE
 // ======================================
 
 const drawButton =
@@ -4315,77 +3898,184 @@ const drawButton =
         "drawButton"
     );
 
-if(
-    drawButton
-){
+
+if(drawButton){
 
     drawButton.addEventListener(
         "click",
-        () => {
-
-            if(
-                gameOver
-            ){
-
-                return;
-
-            }
-
-            if(
-                isOnlineGame()
-            ){
-
-                alert(
-                    "Draw offer sent."
-                );
-
-                return;
-
-            }
-
-            gameOver =
-                true;
-
-            stopClock();
-
-            showGameResult(
-                "DRAW",
-                "GAME DRAWN."
-            );
-
-        }
+        offerDraw
     );
 
 }
 
 
 // ======================================
-// INITIALISATION
+// BOUTON ACCUEIL
+// ======================================
+
+const homeButton =
+    document.getElementById(
+        "homeButton"
+    );
+
+
+if(homeButton){
+
+    homeButton.addEventListener(
+        "click",
+        goHome
+    );
+
+}
+
+
+// ======================================
+// CLAVIER
+// ======================================
+
+document.addEventListener(
+    "keydown",
+    function(event){
+
+        if(
+            event.key === "ArrowLeft"
+        ){
+
+            undoMove();
+
+        }
+
+    }
+);
+
+
+// ======================================
+// DÉMARRAGE
 // ======================================
 
 drawBoard();
 
-updateMoveHistory();
-
-updateTurn();
+updateGameStatus();
 
 updateClocks();
 
-startClock();
+applyBoardSize();
+
+drawArrows();
 
 
 // ======================================
-// ONLINE OU FARIS
+// FARIS BLANC AU DÉMARRAGE
+// ======================================
+//
+// Si l'URL contient :
+//
+// ?faris=18&color=white
+//
+// Faris joue automatiquement 1.e4.
+//
+// Si :
+//
+// ?faris=18&color=black
+//
+// le joueur joue les blancs normalement.
+//
+
+setTimeout(
+    function(){
+
+        if(
+            !gameOver &&
+            getFarisColor() === "white" &&
+            currentPlayer === "white" &&
+            typeof farisPlay === "function"
+        ){
+
+            console.log(
+                "🤖 FARIS EST BLANC → IL COMMENCE"
+            );
+
+
+            farisPlay();
+
+        }
+
+    },
+    500
+);
+
+
+// ======================================
+// DEBUG TIME CONTROL
 // ======================================
 
-if(
-    isOnlineGame()
-){
+console.log(
+    "⏱️ CHESS_FK TIME CONTROL"
+);
 
-    chessfkStartOnlineGame();
+console.log(
+    "🎯 Selected time:",
+    selectedGameTime,
+    "seconds"
+);
 
-}else{
+console.log(
+    "⏱️ Display:",
+    formatTime(selectedGameTime)
+);
 
-    chessfkStartOnlineGame();
+console.log(
+    "➕ Increment:",
+    selectedIncrement,
+    "seconds"
+);
 
-}
+
+// ======================================
+// DEBUG FARIS
+// ======================================
+
+console.log(
+    "=========================================="
+);
+
+console.log(
+    "🤖 CHESS_FK FARIS COLOR SYSTEM"
+);
+
+console.log(
+    "🤖 Faris:",
+    getFarisColor()
+);
+
+console.log(
+    "👤 Human:",
+    getHumanColor()
+);
+
+console.log(
+    "🎯 Current player:",
+    currentPlayer
+);
+
+console.log(
+    "=========================================="
+);
+
+
+// ======================================
+// CHESS_FK BOARD READY
+// ======================================
+
+console.log(
+    "♟️ CHESS_FK BOARD ENGINE READY"
+);
+
+console.log(
+    "🎯 Board size:",
+    boardSize
+);
+
+console.log(
+    "➡️ Arrow system: READY"
+);
